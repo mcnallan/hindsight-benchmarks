@@ -1,0 +1,44 @@
+services:
+  db:
+    image: pgvector/pgvector:pg18
+    environment:
+      POSTGRES_DB: benchmark
+      POSTGRES_USER: benchmark
+      POSTGRES_PASSWORD: benchmark
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U benchmark -d benchmark"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:${QUALITY_HINDSIGHT_VERSION:-0.9.2}
+    env_file:
+      - ${QUALITY_CONFIG_ENV_FILE}
+    environment:
+      HINDSIGHT_API_DATABASE_BACKEND: postgresql
+      HINDSIGHT_API_DATABASE_URL: postgresql://benchmark:benchmark@db:5432/benchmark
+      HINDSIGHT_API_HOST: 0.0.0.0
+      HINDSIGHT_API_PORT: "8888"
+      HINDSIGHT_API_VECTOR_EXTENSION: pgvector
+      HINDSIGHT_ENABLE_API: "true"
+      HINDSIGHT_ENABLE_CP: "false"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 127.0.0.1:${QUALITY_HINDSIGHT_PORT}:8888
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8888/health', timeout=5)",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+      start_period: 20s

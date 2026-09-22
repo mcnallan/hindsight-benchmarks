@@ -9,8 +9,8 @@ dependencies = [
     "openai>=1.0.0",
     "python-dotenv>=1.2.1",
     "google-genai>=1.64.0",
-    "hindsight-embed",
-    "hindsight-client",
+    "hindsight-embed==0.9.2",
+    "hindsight-client==0.9.2",
     "testcontainers>=4.14.1",
     "tiktoken>=0.7.0",
 ]
@@ -19,9 +19,6 @@ dependencies = [
 rag-benchmark = "hindsight_benchmark.main:main"
 hindsight-benchmark = "hindsight_benchmark.cli:main"
 hindsight-evals = "hindsight_benchmark.evals:main"
-
-[tool.uv.sources]
-hindsight-embed = { path = "/Users/nicoloboschi/dev/memory-poc/hindsight-embed", editable = true }
 
 [build-system]
 requires = ["hatchling"]
