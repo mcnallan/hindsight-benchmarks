@@ -15,7 +15,6 @@ import os
 import sys
 import time
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, Optional
 
 from openai import OpenAI
@@ -249,6 +248,19 @@ def _count_stored_fact_tokens(client, bank_id: str) -> Optional[int]:
         return None
 
 
+def _list_stored_facts(client, bank_id: str) -> list[dict]:
+    items = []
+    offset = 0
+    page_size = 500
+    while True:
+        page = client.list_memories(bank_id=bank_id, limit=page_size, offset=offset)
+        page_items = page.items or []
+        items.extend(page_items)
+        offset += page_size
+        if len(page_items) < page_size or offset >= (page.total or 0):
+            return items
+
+
 def _save_quality_result(provider_id: str, model_id: str, result: dict):
     """Merge quality result into the unified leaderboard file."""
     LEADERBOARD_DIR.mkdir(parents=True, exist_ok=True)
@@ -265,6 +277,16 @@ def _save_quality_result(provider_id: str, model_id: str, result: dict):
     return path
 
 
+def _save_quality_trace(provider_id: str, model_id: str, run_ts: int, trace: dict):
+    trace_dir = LEADERBOARD_DIR.parent.parent / "traces" / "quality"
+    trace_dir.mkdir(parents=True, exist_ok=True)
+    safe_model = model_id.replace("/", "_").replace(" ", "-").lower()
+    path = trace_dir / f"{provider_id}-{safe_model}-{run_ts}.json"
+    with open(path, "w") as f:
+        json.dump(trace, f, indent=2, default=str)
+    return path
+
+
 # ── benchmark class ───────────────────────────────────────────────────────────
 
 
@@ -278,8 +300,25 @@ class QualityBenchmark:
         vertex_project: Optional[str] = None,
         gemini_api_key: Optional[str] = None,
         vertex_judge_port: int = VERTEX_JUDGE_PROXY_PORT,
+        openai_base_url: Optional[str] = None,
+        openai_api_key: Optional[str] = None,
+        openai_model: Optional[str] = None,
+        reasoning_effort: Optional[str] = None,
     ):
-        if vertex_project:
+        self.judge_base_url = None
+        self.reasoning_effort = reasoning_effort
+        self.generation_errors = 0
+        self.judge_errors = 0
+        self.last_judge_reasoning = None
+        if openai_base_url and openai_api_key and openai_model:
+            self.llm_client = OpenAI(
+                api_key=openai_api_key,
+                base_url=openai_base_url,
+                timeout=120.0,
+            )
+            self.model_name = openai_model
+            self.judge_base_url = openai_base_url
+        elif vertex_project:
             from .gcp import start_token_proxy, vertex_openai_upstream
             start_token_proxy(vertex_openai_upstream(vertex_project), vertex_judge_port)
             self.llm_client = OpenAI(
@@ -288,6 +327,7 @@ class QualityBenchmark:
                 timeout=120.0,
             )
             self.model_name = VERTEX_JUDGE_MODEL
+            self.judge_base_url = f"http://127.0.0.1:{vertex_judge_port}/v1"
         elif gemini_api_key:
             self.llm_client = OpenAI(
                 api_key=gemini_api_key,
@@ -295,13 +335,19 @@ class QualityBenchmark:
                 timeout=120.0,
             )
             self.model_name = ANSWER_GENERATOR_MODEL
+            self.judge_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
         else:
             raise ValueError(
-                "A vertex_project or GEMINI_API_KEY is required: the "
+                "An OpenAI-compatible endpoint, vertex_project, or GEMINI_API_KEY is required: the "
                 f"generator/judge is pinned to {JUDGE_MODEL}."
             )
         print(f"Using {self.model_name} for generator and judge")
         self._verify_judge()
+
+    def _completion_kwargs(self) -> dict:
+        if not self.reasoning_effort:
+            return {}
+        return {"extra_body": {"reasoning_effort": self.reasoning_effort}}
 
     def _verify_judge(self):
         """One throwaway completion before any spend: a judge model id that
@@ -312,6 +358,7 @@ class QualityBenchmark:
                 model=self.model_name,
                 messages=[{"role": "user", "content": "Reply with the single word: ok"}],
                 max_tokens=100,
+                **self._completion_kwargs(),
             )
             content = (response.choices[0].message.content or "").strip()
         except Exception as e:
@@ -319,6 +366,26 @@ class QualityBenchmark:
         if not content:
             raise RuntimeError(f"Judge model {self.model_name} preflight returned empty content")
         print(f"Judge preflight ok ({content[:20]!r})")
+
+    def verify_benchmark_calls(self):
+        """Exercise the benchmark's real generation and JSON-judge call shapes."""
+        empty_recall = type("RecallResponse", (), {"results": []})()
+        generated = self._generate_answer(
+            "What color did the user say they prefer?",
+            empty_recall,
+            datetime.fromisoformat("2024-01-01T00:00:00+00:00"),
+        )
+        if not generated or self.generation_errors:
+            raise RuntimeError("Benchmark answer-generation preflight failed")
+        judged = self._judge_answer(
+            "What is two plus two?",
+            "Four.",
+            [],
+            "Four.",
+        )
+        if not judged or self.judge_errors:
+            raise RuntimeError("Benchmark judge preflight failed")
+        print("Benchmark generation and judge preflights ok")
 
     def run(
         self,
@@ -329,6 +396,7 @@ class QualityBenchmark:
         max_conversations: Optional[int] = None,
         save: bool = True,
         reuse_bank_ts: Optional[int] = None,
+        run_metadata: Optional[dict] = None,
     ) -> Dict[str, Any]:
         """reuse_bank_ts: re-evaluate against banks from an earlier run (its
         bank-id timestamp) instead of ingesting. The extraction under test is
@@ -364,10 +432,18 @@ class QualityBenchmark:
         except Exception:
             hindsight_version = None
 
+        benchmark_t0 = time.time()
+        retain_wall_s = 0.0
+        evaluation_wall_s = 0.0
         correct = 0
         total = 0
+        recalled_fact_count = 0
+        recall_empty_count = 0
         per_ability: Dict[str, Dict[str, int]] = {}
         stored_fact_tokens = 0
+        stored_fact_tokens_by_conversation = {}
+        stored_facts_by_conversation = {}
+        question_traces = []
         stored_tokens_known = True
         self.generation_errors = 0
         self.judge_errors = 0
@@ -397,19 +473,28 @@ class QualityBenchmark:
                         timestamp=session_date,
                         document_id=f"{sample_id}_session_{si}_{run_ts}",
                     )
-                    print(f"  ✓ Ingested session {si}/{len(item['sessions'])} ({time.time() - t0:.0f}s)", flush=True)
+                    elapsed = time.time() - t0
+                    retain_wall_s += elapsed
+                    print(f"  ✓ Ingested session {si}/{len(item['sessions'])} ({elapsed:.0f}s)", flush=True)
 
             bank_tokens = _count_stored_fact_tokens(client, bank_id)
             if bank_tokens is None:
                 stored_tokens_known = False
             else:
                 stored_fact_tokens += bank_tokens
+                stored_fact_tokens_by_conversation[sample_id] = bank_tokens
                 print(f"  Stored fact tokens: {bank_tokens}")
+            if save:
+                try:
+                    stored_facts_by_conversation[sample_id] = _list_stored_facts(client, bank_id)
+                except Exception as e:
+                    stored_facts_by_conversation[sample_id] = {"error": str(e)}
 
             qa_pairs = item["qa"]
             if max_questions_per_conversation:
                 qa_pairs = qa_pairs[:max_questions_per_conversation]
             print(f"  Evaluating {len(qa_pairs)} questions...")
+            evaluation_t0 = time.time()
 
             for i, qa in enumerate(qa_pairs, 1):
                 question = qa["question"]
@@ -428,8 +513,28 @@ class QualityBenchmark:
                             print(f"  Recall failed after 2 attempts: {e}", flush=True)
                             recall_response = type("obj", (), {"results": []})()
 
+                recalled = recall_response.results or []
+                recalled_fact_count += len(recalled)
+                if not recalled:
+                    recall_empty_count += 1
+
                 predicted = self._generate_answer(question, recall_response, last_session_date)
                 is_correct = self._judge_answer(question, qa.get("answer"), qa.get("rubric") or [], predicted)
+                question_traces.append({
+                    "sample_id": sample_id,
+                    "bank_id": bank_id,
+                    "question_index": i,
+                    "ability": ability,
+                    "question": question,
+                    "question_timestamp": last_session_date.isoformat(),
+                    "gold_answer": qa.get("answer"),
+                    "rubric": qa.get("rubric") or [],
+                    "retrieved_context": _format_context(recall_response),
+                    "retrieved_fact_count": len(recalled),
+                    "generated_answer": predicted,
+                    "judge_reasoning": self.last_judge_reasoning,
+                    "correct": is_correct,
+                })
                 print(f"  {'✓' if is_correct else '✗'} [{ability}] Q{i}: {question[:60]}...", flush=True)
                 if not is_correct:
                     expected_str = qa.get("answer") or f"rubric: {(qa.get('rubric') or [])[:2]}"
@@ -451,6 +556,7 @@ class QualityBenchmark:
                 if is_correct:
                     correct += 1
                     stats["correct"] += 1
+            evaluation_wall_s += time.time() - evaluation_t0
 
         accuracy = round(correct / total * 100, 1) if total > 0 else 0
         print(f"\n=== Results ===")
@@ -465,22 +571,46 @@ class QualityBenchmark:
             "correct": correct,
             "total": total,
             "dataset": DATASET_NAME,
-            "judge_model": JUDGE_MODEL,
+            "judge_model": self.model_name,
+            "judge_base_url": self.judge_base_url,
+            "judge_reasoning_effort": self.reasoning_effort,
             "context_mode": CONTEXT_MODE,
             "hindsight_version": hindsight_version,
             "stored_fact_tokens": stored_fact_tokens if stored_tokens_known else None,
+            "stored_fact_tokens_by_conversation": (
+                stored_fact_tokens_by_conversation if stored_tokens_known else None
+            ),
             "token_counter": TOKEN_COUNTER,
             "per_ability": per_ability,
             "generation_errors": self.generation_errors,
             "judge_errors": self.judge_errors,
+            "recalled_fact_count": recalled_fact_count,
+            "recall_empty_count": recall_empty_count,
             "partial": partial,
             "model_id": model_id,
             "provider_id": provider_id,
             "sample_ids": [c["sample_id"] for c in dataset],
+            "retain_wall_clock_seconds": round(retain_wall_s, 3),
+            "evaluation_wall_clock_seconds": round(evaluation_wall_s, 3),
+            "end_to_end_wall_clock_seconds": round(time.time() - benchmark_t0, 3),
         }
+        if run_metadata:
+            result.update(run_metadata)
         if save:
+            trace_path = _save_quality_trace(
+                provider_id,
+                model_id,
+                run_ts,
+                {
+                    "result": result,
+                    "questions": question_traces,
+                    "stored_facts_by_conversation": stored_facts_by_conversation,
+                },
+            )
+            result["trace_path"] = str(trace_path)
             path = _save_quality_result(provider_id, model_id, result)
             print(f"Results saved to {path}")
+            print(f"Traces saved to {trace_path}")
         else:
             print("Not saving results (--no-save)")
         return result
@@ -520,6 +650,7 @@ Answer:
                     model=self.model_name,
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.1,
+                    **self._completion_kwargs(),
                 )
                 return (response.choices[0].message.content or "").strip()
             except Exception as e:
@@ -532,6 +663,7 @@ Answer:
         return "Error generating answer"
 
     def _judge_answer(self, question: str, expected: Optional[str], rubric: list[str], predicted: str) -> bool:
+        self.last_judge_reasoning = None
         grading = _format_grading_material(expected, rubric)
         prompt = f"""{JUDGE_PROMPT}
 
@@ -551,8 +683,11 @@ Respond with JSON: {{"reasoning": "...", "correct": true or false}}"""
                     messages=[{"role": "user", "content": prompt}],
                     response_format={"type": "json_object"},
                     temperature=0,
+                    **self._completion_kwargs(),
                 )
-                return bool(json.loads(response.choices[0].message.content).get("correct", False))
+                judgment = json.loads(response.choices[0].message.content)
+                self.last_judge_reasoning = judgment.get("reasoning")
+                return bool(judgment.get("correct", False))
             except Exception as e:
                 if attempt < 1:
                     print(f"Warning: judge failed ({e}), retrying...", flush=True)

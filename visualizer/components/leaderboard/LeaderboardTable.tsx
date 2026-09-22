@@ -243,7 +243,7 @@ export default function LeaderboardTable({ models, type, variant = 'retain' }: L
           <div className="px-6 py-4 text-xs text-muted-foreground leading-relaxed" title={servingTooltip}>
             {ctx && <div>{ctx}</div>}
             {gpu && <div>{gpu}</div>}
-            {!dep && <div>API provider</div>}
+            {!dep && <div>{row.original.config.pricing_type === 'local' ? 'Local endpoint' : 'API provider'}</div>}
             {hsVersion && <div>Hindsight v{hsVersion}</div>}
           </div>
         )

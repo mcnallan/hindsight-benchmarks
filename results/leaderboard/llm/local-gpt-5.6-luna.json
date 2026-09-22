@@ -1,0 +1,91 @@
+{
+  "model_id": "gpt-5.6-luna",
+  "provider_id": "local",
+  "quality": {
+    "accuracy": 41.2,
+    "correct": 33,
+    "total": 80,
+    "dataset": "beam_128k_subset",
+    "judge_model": "gpt-5.6-luna",
+    "judge_base_url": "http://127.0.0.1:2455/v1",
+    "judge_reasoning_effort": "medium",
+    "context_mode": "facts_only",
+    "hindsight_version": "0.9.2",
+    "stored_fact_tokens": 145817,
+    "stored_fact_tokens_by_conversation": {
+      "beam-100k-1": 35340,
+      "beam-100k-13": 29746,
+      "beam-100k-16": 37585,
+      "beam-100k-18": 43146
+    },
+    "token_counter": "cl100k_base",
+    "per_ability": {
+      "abstention": {
+        "correct": 3,
+        "total": 8
+      },
+      "contradiction_resolution": {
+        "correct": 0,
+        "total": 8
+      },
+      "event_ordering": {
+        "correct": 0,
+        "total": 8
+      },
+      "information_extraction": {
+        "correct": 4,
+        "total": 8
+      },
+      "instruction_following": {
+        "correct": 7,
+        "total": 8
+      },
+      "knowledge_update": {
+        "correct": 4,
+        "total": 8
+      },
+      "multi_session_reasoning": {
+        "correct": 2,
+        "total": 8
+      },
+      "preference_following": {
+        "correct": 7,
+        "total": 8
+      },
+      "summarization": {
+        "correct": 0,
+        "total": 8
+      },
+      "temporal_reasoning": {
+        "correct": 6,
+        "total": 8
+      }
+    },
+    "generation_errors": 0,
+    "judge_errors": 0,
+    "recalled_fact_count": 2400,
+    "recall_empty_count": 0,
+    "partial": false,
+    "model_id": "gpt-5.6-luna",
+    "provider_id": "local",
+    "sample_ids": [
+      "beam-100k-1",
+      "beam-100k-13",
+      "beam-100k-16",
+      "beam-100k-18"
+    ],
+    "retain_wall_clock_seconds": 4578.089,
+    "evaluation_wall_clock_seconds": 1383.493,
+    "end_to_end_wall_clock_seconds": 5961.962,
+    "model_label": "GPT-5.6 Luna sanity check",
+    "retain_llm_base_url": "http://host.docker.internal:2455/v1",
+    "retain_llm_concurrency": 4,
+    "retain_batch_tokens": 50000,
+    "embedding_provider": "openai",
+    "embedding_model": "embedding",
+    "embedding_dimensions": 768,
+    "reranker_provider": "cohere",
+    "reranker_model": "reranker",
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/traces/quality/local-gpt-5.6-luna-1790041194.json"
+  }
+}
