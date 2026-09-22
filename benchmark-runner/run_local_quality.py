@@ -26,13 +26,15 @@ HINDSIGHT_VERSION = "0.9.2"
 
 PRODUCTION_LIKE_CONFIG = {
     "HINDSIGHT_API_EMBEDDINGS_PROVIDER": "openai",
-    "HINDSIGHT_API_EMBEDDINGS_OPENAI_BASE_URL": "http://host.docker.internal:4000/v1",
-    "HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL": "embedding",
+    "HINDSIGHT_API_EMBEDDINGS_OPENAI_BASE_URL": "http://host.docker.internal:8183/v1",
+    "HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL": "jina-embeddings-v5-text-small",
     "HINDSIGHT_API_EMBEDDINGS_OPENAI_DIMENSIONS": "768",
     "HINDSIGHT_API_EMBEDDINGS_OPENAI_BATCH_SIZE": "8",
+    "HINDSIGHT_API_EMBEDDINGS_QUERY_PREFIX": "Query: ",
+    "HINDSIGHT_API_EMBEDDINGS_PASSAGE_PREFIX": "Document: ",
     "HINDSIGHT_API_RERANKER_PROVIDER": "cohere",
-    "HINDSIGHT_API_RERANKER_COHERE_BASE_URL": "http://host.docker.internal:4000/v1/rerank",
-    "HINDSIGHT_API_RERANKER_COHERE_MODEL": "reranker",
+    "HINDSIGHT_API_RERANKER_COHERE_BASE_URL": "http://host.docker.internal:8184/v1/rerank",
+    "HINDSIGHT_API_RERANKER_COHERE_MODEL": "jina-reranker-v3.5",
     "HINDSIGHT_API_RERANKER_COHERE_TIMEOUT": "60",
     "HINDSIGHT_API_LLM_REASONING_EFFORT": "low",
     "HINDSIGHT_API_REFLECT_LLM_REASONING_EFFORT": "medium",
@@ -54,9 +56,7 @@ NEMOTRON_EXTRA_BODY_CONFIG = {
     ),
 }
 
-# Ling 3.0 Tiny otherwise emits its private reasoning as ordinary completion
-# text, which exhausts the retain request timeout before its structured answer.
-LING_NO_THINKING_EXTRA_BODY_CONFIG = {
+NEMOTRON_NO_THINKING_EXTRA_BODY_CONFIG = {
     "HINDSIGHT_API_RETAIN_LLM_EXTRA_BODY": (
         '{"extra_body":{"chat_template_kwargs":{"enable_thinking":false}}}'
     ),
@@ -65,6 +65,35 @@ LING_NO_THINKING_EXTRA_BODY_CONFIG = {
     ),
     "HINDSIGHT_API_CONSOLIDATION_LLM_EXTRA_BODY": (
         '{"extra_body":{"chat_template_kwargs":{"enable_thinking":false}}}'
+    ),
+}
+
+# Ling 3.0 Tiny otherwise emits its private reasoning as ordinary completion
+# text, which exhausts the retain request timeout before its structured answer.
+LING_NO_THINKING_EXTRA_BODY_CONFIG = {
+    "HINDSIGHT_API_RETAIN_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false}}'
+    ),
+    "HINDSIGHT_API_REFLECT_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false}}'
+    ),
+    "HINDSIGHT_API_CONSOLIDATION_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false}}'
+    ),
+}
+
+LING_THINKING_EXTRA_BODY_CONFIG = {
+    # Ling's published thinking-mode recipe requires stochastic sampling.
+    "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "1.0",
+    "HINDSIGHT_API_RETAIN_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":true},'
+        '"top_p":0.95,"top_k":20}'
+    ),
+    "HINDSIGHT_API_REFLECT_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":true}}'
+    ),
+    "HINDSIGHT_API_CONSOLIDATION_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":true}}'
     ),
 }
 
@@ -104,8 +133,12 @@ def _effective_config(
         **(
             NEMOTRON_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "nemotron"
+            else NEMOTRON_NO_THINKING_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "nemotron-no-thinking"
             else LING_NO_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "ling-no-thinking"
+            else LING_THINKING_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "ling-thinking"
             else {}
         ),
         "HINDSIGHT_API_LLM_PROVIDER": "openai",
@@ -118,6 +151,10 @@ def _effective_config(
     if args.retain_concurrency is not None:
         config["HINDSIGHT_API_RETAIN_LLM_MAX_CONCURRENT"] = str(
             args.retain_concurrency
+        )
+    if args.retain_max_completion_tokens is not None:
+        config["HINDSIGHT_API_RETAIN_MAX_COMPLETION_TOKENS"] = str(
+            args.retain_max_completion_tokens
         )
     config.pop("HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL", None)
     return config
@@ -216,21 +253,24 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("nemotron", "ling-no-thinking", "none"),
+        choices=("nemotron", "nemotron-no-thinking", "ling-no-thinking", "ling-thinking", "none"),
         default="nemotron",
     )
+    parser.add_argument("--result-model-id")
     parser.add_argument("--max-conversations", type=int)
     parser.add_argument("--max-questions", type=int)
     parser.add_argument("--retain-concurrency", type=int, choices=range(1, 9))
+    parser.add_argument("--retain-max-completion-tokens", type=int)
     parser.add_argument("--no-save", action="store_true")
     parser.add_argument("--preflight-only", action="store_true")
     args = parser.parse_args()
 
-    litellm_api_key = os.environ.get("QUALITY_LITELLM_API_KEY")
-    retain_api_key = os.environ.get("QUALITY_RETAIN_API_KEY", litellm_api_key)
+    # The benchmark retrieval sidecars are local, unauthenticated endpoints.
+    # Keep a configurable value for OpenAI/Cohere client compatibility without
+    # requiring or persisting a real LiteLLM credential.
+    retrieval_api_key = os.environ.get("QUALITY_RETRIEVAL_API_KEY", "local")
+    retain_api_key = os.environ.get("QUALITY_RETAIN_API_KEY", retrieval_api_key)
     codex_lb_token = os.environ.get("CODEX_LB_TOKEN")
-    if not litellm_api_key:
-        raise SystemExit("QUALITY_LITELLM_API_KEY is required")
     if not codex_lb_token:
         raise SystemExit("CODEX_LB_TOKEN is required")
 
@@ -253,7 +293,7 @@ def main() -> None:
     )
     benchmark.verify_benchmark_calls()
 
-    config = _effective_config(args, litellm_api_key, retain_api_key)
+    config = _effective_config(args, retrieval_api_key, retain_api_key)
     _print_config(config)
     if args.preflight_only:
         return
@@ -271,8 +311,9 @@ def main() -> None:
     api_url = f"http://127.0.0.1:{port}"
     try:
         _compose(project, compose_env, "up", "-d", "--wait")
+        result_model_id = args.result_model_id or args.retain_model
         result = benchmark.run(
-            model_id=args.retain_model,
+            model_id=result_model_id,
             provider_id=args.provider_id,
             api_url=api_url,
             max_questions_per_conversation=args.max_questions,
@@ -280,6 +321,10 @@ def main() -> None:
             save=not args.no_save,
             run_metadata={
                 "model_label": args.label,
+                "retain_llm_model": args.retain_model,
+                "retain_extra_body_profile": args.extra_body_profile,
+                "retain_thinking_enabled": args.extra_body_profile in ("nemotron", "ling-thinking"),
+                "retain_thinking_budget_tokens": 512 if args.extra_body_profile == "nemotron" else None,
                 "retain_llm_base_url": args.retain_base_url,
                 "retain_llm_concurrency": int(
                     config["HINDSIGHT_API_RETAIN_LLM_MAX_CONCURRENT"]
@@ -287,11 +332,20 @@ def main() -> None:
                 "retain_batch_tokens": int(
                     config["HINDSIGHT_API_RETAIN_BATCH_TOKENS"]
                 ),
+                "retain_max_completion_tokens": int(
+                    config.get("HINDSIGHT_API_RETAIN_MAX_COMPLETION_TOKENS", 64000)
+                ),
                 "embedding_provider": config["HINDSIGHT_API_EMBEDDINGS_PROVIDER"],
                 "embedding_model": config["HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL"],
                 "embedding_dimensions": int(
                     config["HINDSIGHT_API_EMBEDDINGS_OPENAI_DIMENSIONS"]
                 ),
+                "embedding_query_prefix": config[
+                    "HINDSIGHT_API_EMBEDDINGS_QUERY_PREFIX"
+                ],
+                "embedding_passage_prefix": config[
+                    "HINDSIGHT_API_EMBEDDINGS_PASSAGE_PREFIX"
+                ],
                 "reranker_provider": config["HINDSIGHT_API_RERANKER_PROVIDER"],
                 "reranker_model": config["HINDSIGHT_API_RERANKER_COHERE_MODEL"],
             },
@@ -306,7 +360,7 @@ def main() -> None:
             compose_env,
             run_id,
             args.retain_model,
-            (litellm_api_key, retain_api_key, codex_lb_token),
+            (retrieval_api_key, retain_api_key, codex_lb_token),
         )
         _compose(project, compose_env, "down", "--volumes", check=False)
         env_file.unlink(missing_ok=True)

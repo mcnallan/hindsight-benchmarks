@@ -1,9 +1,9 @@
 {
-  "model_id": "nemotron-lightning",
+  "model_id": "ling-3.0-tiny",
   "provider_id": "local",
   "quality": {
-    "accuracy": 35.0,
-    "correct": 28,
+    "accuracy": 37.5,
+    "correct": 30,
     "total": 80,
     "dataset": "beam_128k_subset",
     "judge_model": "gpt-5.6-luna",
@@ -11,17 +11,17 @@
     "judge_reasoning_effort": "medium",
     "context_mode": "facts_only",
     "hindsight_version": "0.9.2",
-    "stored_fact_tokens": 196156,
+    "stored_fact_tokens": 230065,
     "stored_fact_tokens_by_conversation": {
-      "beam-100k-1": 33032,
-      "beam-100k-13": 42935,
-      "beam-100k-16": 50356,
-      "beam-100k-18": 69833
+      "beam-100k-1": 42369,
+      "beam-100k-13": 52400,
+      "beam-100k-16": 61938,
+      "beam-100k-18": 73358
     },
     "token_counter": "cl100k_base",
     "per_ability": {
       "abstention": {
-        "correct": 3,
+        "correct": 2,
         "total": 8
       },
       "contradiction_resolution": {
@@ -33,7 +33,7 @@
         "total": 8
       },
       "information_extraction": {
-        "correct": 4,
+        "correct": 3,
         "total": 8
       },
       "instruction_following": {
@@ -41,15 +41,15 @@
         "total": 8
       },
       "knowledge_update": {
-        "correct": 5,
+        "correct": 4,
         "total": 8
       },
       "multi_session_reasoning": {
-        "correct": 2,
+        "correct": 1,
         "total": 8
       },
       "preference_following": {
-        "correct": 6,
+        "correct": 7,
         "total": 8
       },
       "summarization": {
@@ -57,7 +57,7 @@
         "total": 8
       },
       "temporal_reasoning": {
-        "correct": 2,
+        "correct": 7,
         "total": 8
       }
     },
@@ -66,7 +66,7 @@
     "recalled_fact_count": 2400,
     "recall_empty_count": 0,
     "partial": false,
-    "model_id": "nemotron-lightning",
+    "model_id": "ling-3.0-tiny",
     "provider_id": "local",
     "sample_ids": [
       "beam-100k-1",
@@ -74,18 +74,18 @@
       "beam-100k-16",
       "beam-100k-18"
     ],
-    "retain_wall_clock_seconds": 5027.899,
-    "evaluation_wall_clock_seconds": 1853.417,
-    "end_to_end_wall_clock_seconds": 6882.01,
-    "model_label": "Nemotron 3.5 Lightning (thinking, 512-token budget)",
-    "retain_llm_model": "nemotron-lightning",
-    "retain_extra_body_profile": "nemotron",
-    "retain_thinking_enabled": true,
-    "retain_thinking_budget_tokens": 512,
-    "retain_llm_base_url": "http://host.docker.internal:4000/v1",
+    "retain_wall_clock_seconds": 1800.135,
+    "evaluation_wall_clock_seconds": 1594.56,
+    "end_to_end_wall_clock_seconds": 3395.43,
+    "model_label": "Ling 3.0 Tiny (local, no thinking)",
+    "retain_llm_model": "ling-3.0-tiny",
+    "retain_extra_body_profile": "ling-no-thinking",
+    "retain_thinking_enabled": false,
+    "retain_thinking_budget_tokens": null,
+    "retain_llm_base_url": "http://192.168.39.245:8000/v1",
     "retain_llm_concurrency": 8,
     "retain_batch_tokens": 50000,
-    "retain_max_completion_tokens": 64000,
+    "retain_max_completion_tokens": 4096,
     "embedding_provider": "openai",
     "embedding_model": "jina-embeddings-v5-text-small",
     "embedding_dimensions": 768,
@@ -93,6 +93,6 @@
     "embedding_passage_prefix": "Document: ",
     "reranker_provider": "cohere",
     "reranker_model": "jina-reranker-v3.5",
-    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/traces/quality/local-nemotron-lightning-1790095522.json"
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/traces/quality/local-ling-3.0-tiny-1790095270.json"
   }
 }

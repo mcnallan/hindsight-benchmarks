@@ -1,16 +1,24 @@
 .idea
-benchmark-runner/.env
 
-# Exclude uncompressed result files (keep only .gz versions)
+# Large top-level benchmark datasets are stored compressed; leaderboard JSON stays trackable.
 results/*.json
 !results/*.json.gz
-results/traces
+
+# Local benchmark diagnostics and raw model traces (not leaderboard results).
+results/runs/
+results/traces/
 
 # Machine-specific benchmark metadata (temp dir paths)
 benchmark-runner/datasets/embedding_banks.json
-.env.local
 
 # Local dev config, OS cruft, and branch working notes
+.env
+.env.*
+!.env.example
+.venv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
 .DS_Store
 .claude/
 docs/superpowers/
