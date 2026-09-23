@@ -351,7 +351,7 @@
       "url": "http://192.168.39.245:8000/v1",
       "input_price_per_1m": 0,
       "output_price_per_1m": 0,
-      "notes": "Local vLLM endpoint; enable_thinking=true, sampling 1.0/0.95/top-k 20; 16,384-token total completion cap (not a separate reasoning budget).",
+      "notes": "Local GPU2 vLLM endpoint, MAX_NUM_SEQS=8; enable_thinking=true, sampling 1.0/0.95/top-k 20; 16,384-token total completion cap (not a separate reasoning budget).",
       "benchmarks": ["retain", "quality"]
     },
     {
