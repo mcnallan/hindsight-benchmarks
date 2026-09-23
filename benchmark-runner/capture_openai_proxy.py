@@ -50,10 +50,11 @@ class CaptureProxy(BaseHTTPRequestHandler):
         )
 
         target = self.upstream.rstrip("/") + self.path
+        # Forward authentication unchanged; headers are never included in traces.
         headers = {
             key: value
             for key, value in self.headers.items()
-            if key.lower() not in {"host", "content-length", "authorization"}
+            if key.lower() not in {"host", "content-length"}
         }
         started = time.monotonic()
         try:

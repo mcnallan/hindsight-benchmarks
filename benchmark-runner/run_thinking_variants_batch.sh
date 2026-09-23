@@ -74,7 +74,9 @@ run_nemotron_no_thinking() {
     --retain-base-url http://host.docker.internal:4000/v1 \
     --retain-preflight-url http://127.0.0.1:4000/v1 \
     --extra-body-profile nemotron-no-thinking \
-    --retain-concurrency 8
+    --retain-concurrency 8 \
+    --strict-retain-schema \
+    --retain-max-completion-tokens 4096
 }
 
 record supervisor batch running
