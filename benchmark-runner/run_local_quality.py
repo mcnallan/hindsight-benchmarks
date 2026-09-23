@@ -9,11 +9,12 @@ import socket
 import subprocess
 import tempfile
 import time
+from datetime import datetime
 from pathlib import Path
 
 import requests
 
-from hindsight_benchmark.quality import QualityBenchmark
+from hindsight_benchmark.quality import QualityBenchmark, _count_stored_fact_tokens, _retain_with_polling
 from run_all_quality import BASE_CONFIG
 
 RUNNER_DIR = Path(__file__).resolve().parent
@@ -82,6 +83,18 @@ LING_NO_THINKING_EXTRA_BODY_CONFIG = {
     ),
 }
 
+QWEN_NO_THINKING_EXTRA_BODY_CONFIG = {
+    "HINDSIGHT_API_RETAIN_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false}}'
+    ),
+    "HINDSIGHT_API_REFLECT_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false}}'
+    ),
+    "HINDSIGHT_API_CONSOLIDATION_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false}}'
+    ),
+}
+
 LING_THINKING_EXTRA_BODY_CONFIG = {
     # Ling's published thinking-mode recipe requires stochastic sampling.
     "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "1.0",
@@ -135,6 +148,8 @@ def _effective_config(
             if args.extra_body_profile == "nemotron"
             else NEMOTRON_NO_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "nemotron-no-thinking"
+            else QWEN_NO_THINKING_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "qwen-no-thinking"
             else LING_NO_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "ling-no-thinking"
             else LING_THINKING_EXTRA_BODY_CONFIG
@@ -156,6 +171,8 @@ def _effective_config(
         config["HINDSIGHT_API_RETAIN_MAX_COMPLETION_TOKENS"] = str(
             args.retain_max_completion_tokens
         )
+    if args.strict_retain_schema:
+        config["HINDSIGHT_API_LLM_STRICT_SCHEMA_RETAIN"] = "true"
     config.pop("HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL", None)
     return config
 
@@ -253,7 +270,7 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("nemotron", "nemotron-no-thinking", "ling-no-thinking", "ling-thinking", "none"),
+        choices=("nemotron", "nemotron-no-thinking", "qwen-no-thinking", "ling-no-thinking", "ling-thinking", "none"),
         default="nemotron",
     )
     parser.add_argument("--result-model-id")
@@ -261,8 +278,11 @@ def main() -> None:
     parser.add_argument("--max-questions", type=int)
     parser.add_argument("--retain-concurrency", type=int, choices=range(1, 9))
     parser.add_argument("--retain-max-completion-tokens", type=int)
+    parser.add_argument("--strict-retain-schema", action="store_true")
     parser.add_argument("--no-save", action="store_true")
     parser.add_argument("--preflight-only", action="store_true")
+    parser.add_argument("--diagnostic-sample-id", help="Retain one original BEAM session without scoring")
+    parser.add_argument("--diagnostic-session-index", type=int, default=1)
     args = parser.parse_args()
 
     # The benchmark retrieval sidecars are local, unauthenticated endpoints.
@@ -311,6 +331,37 @@ def main() -> None:
     api_url = f"http://127.0.0.1:{port}"
     try:
         _compose(project, compose_env, "up", "-d", "--wait")
+        if args.diagnostic_sample_id:
+            from hindsight_client import Hindsight
+
+            with benchmark.DATASET_PATH.open() as handle:
+                item = next(
+                    (row for row in json.load(handle) if row["sample_id"] == args.diagnostic_sample_id),
+                    None,
+                )
+            if item is None or not 1 <= args.diagnostic_session_index <= len(item["sessions"]):
+                raise ValueError("Unknown diagnostic sample ID or session index")
+            session = item["sessions"][args.diagnostic_session_index - 1]
+            with Hindsight(base_url=api_url, timeout=600.0) as client:
+                bank_id = f"diagnostic_{_slug(args.retain_model)}_{run_id}".replace("-", "_")
+                client.create_bank(bank_id=bank_id)
+                started = time.monotonic()
+                _retain_with_polling(
+                    client,
+                    bank_id=bank_id,
+                    content=json.dumps(session["messages"]),
+                    context=f"Chat between user and assistant about {item['title']} (session {args.diagnostic_session_index})",
+                    timestamp=datetime.fromisoformat(session["date_time"]),
+                    document_id=f"{item['sample_id']}_session_{args.diagnostic_session_index}_{run_id}",
+                )
+                print(
+                    "Diagnostic retain succeeded: "
+                    f"sample={item['sample_id']} session={args.diagnostic_session_index} "
+                    f"elapsed_s={time.monotonic() - started:.1f} "
+                    f"stored_fact_tokens={_count_stored_fact_tokens(client, bank_id)}",
+                    flush=True,
+                )
+            return
         result_model_id = args.result_model_id or args.retain_model
         result = benchmark.run(
             model_id=result_model_id,
@@ -335,6 +386,7 @@ def main() -> None:
                 "retain_max_completion_tokens": int(
                     config.get("HINDSIGHT_API_RETAIN_MAX_COMPLETION_TOKENS", 64000)
                 ),
+                "strict_retain_schema": args.strict_retain_schema,
                 "embedding_provider": config["HINDSIGHT_API_EMBEDDINGS_PROVIDER"],
                 "embedding_model": config["HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL"],
                 "embedding_dimensions": int(
