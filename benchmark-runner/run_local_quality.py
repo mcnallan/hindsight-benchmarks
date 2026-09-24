@@ -95,6 +95,40 @@ QWEN_NO_THINKING_EXTRA_BODY_CONFIG = {
     ),
 }
 
+QWEN_THINKING_EXTRA_BODY_CONFIG = {
+    # Qwen3.5's published thinking recipe prevents repetitive reasoning loops
+    # seen at the upstream retain temperature of 0.1 on real extraction input.
+    "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "1.0",
+    "HINDSIGHT_API_RETAIN_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":true},'
+        '"top_p":0.95,"top_k":20,"presence_penalty":1.5}'
+    ),
+    "HINDSIGHT_API_REFLECT_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":true},'
+        '"top_p":0.95,"top_k":20,"presence_penalty":1.5}'
+    ),
+    "HINDSIGHT_API_CONSOLIDATION_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":true},'
+        '"top_p":0.95,"top_k":20,"presence_penalty":1.5}'
+    ),
+}
+
+QWEN_DISTILLED_NO_THINKING_EXTRA_BODY_CONFIG = {
+    "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "1.0",
+    "HINDSIGHT_API_RETAIN_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false},'
+        '"top_p":0.95,"top_k":20,"presence_penalty":1.5}'
+    ),
+    "HINDSIGHT_API_REFLECT_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false},'
+        '"top_p":0.95,"top_k":20,"presence_penalty":1.5}'
+    ),
+    "HINDSIGHT_API_CONSOLIDATION_LLM_EXTRA_BODY": (
+        '{"chat_template_kwargs":{"enable_thinking":false},'
+        '"top_p":0.95,"top_k":20,"presence_penalty":1.5}'
+    ),
+}
+
 ORNITH_NO_THINKING_EXTRA_BODY_CONFIG = QWEN_NO_THINKING_EXTRA_BODY_CONFIG
 
 ORNITH_THINKING_EXTRA_BODY_CONFIG = {
@@ -164,6 +198,10 @@ def _effective_config(
             if args.extra_body_profile == "nemotron-no-thinking"
             else QWEN_NO_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "qwen-no-thinking"
+            else QWEN_THINKING_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "qwen-thinking"
+            else QWEN_DISTILLED_NO_THINKING_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "qwen-distilled-no-thinking"
             else ORNITH_NO_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "ornith-no-thinking"
             else ORNITH_THINKING_EXTRA_BODY_CONFIG
@@ -288,7 +326,7 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("nemotron", "nemotron-no-thinking", "qwen-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "none"),
+        choices=("nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "none"),
         default="nemotron",
     )
     parser.add_argument("--result-model-id")
@@ -392,7 +430,7 @@ def main() -> None:
                 "model_label": args.label,
                 "retain_llm_model": args.retain_model,
                 "retain_extra_body_profile": args.extra_body_profile,
-                "retain_thinking_enabled": args.extra_body_profile in ("nemotron", "ornith-thinking", "ling-thinking"),
+                "retain_thinking_enabled": args.extra_body_profile in ("nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking"),
                 "retain_thinking_budget_tokens": 512 if args.extra_body_profile == "nemotron" else None,
                 "retain_llm_base_url": args.retain_base_url,
                 "retain_llm_concurrency": int(

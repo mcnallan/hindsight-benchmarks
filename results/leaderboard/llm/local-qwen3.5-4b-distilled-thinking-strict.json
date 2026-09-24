@@ -1,0 +1,99 @@
+{
+  "model_id": "qwen3.5-4b-distilled-thinking-strict",
+  "provider_id": "local",
+  "quality": {
+    "accuracy": 36.2,
+    "correct": 29,
+    "total": 80,
+    "dataset": "beam_128k_subset",
+    "judge_model": "gpt-5.6-luna",
+    "judge_base_url": "http://127.0.0.1:2455/v1",
+    "judge_reasoning_effort": "medium",
+    "context_mode": "facts_only",
+    "hindsight_version": "0.9.2",
+    "stored_fact_tokens": 185837,
+    "stored_fact_tokens_by_conversation": {
+      "beam-100k-1": 42289,
+      "beam-100k-13": 41024,
+      "beam-100k-16": 43085,
+      "beam-100k-18": 59439
+    },
+    "token_counter": "cl100k_base",
+    "per_ability": {
+      "abstention": {
+        "correct": 1,
+        "total": 8
+      },
+      "contradiction_resolution": {
+        "correct": 0,
+        "total": 8
+      },
+      "event_ordering": {
+        "correct": 0,
+        "total": 8
+      },
+      "information_extraction": {
+        "correct": 5,
+        "total": 8
+      },
+      "instruction_following": {
+        "correct": 6,
+        "total": 8
+      },
+      "knowledge_update": {
+        "correct": 5,
+        "total": 8
+      },
+      "multi_session_reasoning": {
+        "correct": 3,
+        "total": 8
+      },
+      "preference_following": {
+        "correct": 6,
+        "total": 8
+      },
+      "summarization": {
+        "correct": 0,
+        "total": 8
+      },
+      "temporal_reasoning": {
+        "correct": 3,
+        "total": 8
+      }
+    },
+    "generation_errors": 0,
+    "judge_errors": 0,
+    "recalled_fact_count": 2400,
+    "recall_empty_count": 0,
+    "partial": false,
+    "model_id": "qwen3.5-4b-distilled-thinking-strict",
+    "provider_id": "local",
+    "sample_ids": [
+      "beam-100k-1",
+      "beam-100k-13",
+      "beam-100k-16",
+      "beam-100k-18"
+    ],
+    "retain_wall_clock_seconds": 3242.238,
+    "evaluation_wall_clock_seconds": 1094.786,
+    "end_to_end_wall_clock_seconds": 4337.677,
+    "model_label": "Qwen3.5 4B Opus Reasoning Distilled v2 (local, thinking, strict extraction)",
+    "retain_llm_model": "qwen3.5-4b-distilled",
+    "retain_extra_body_profile": "qwen-thinking",
+    "retain_thinking_enabled": true,
+    "retain_thinking_budget_tokens": null,
+    "retain_llm_base_url": "http://192.168.39.245:8121/v1",
+    "retain_llm_concurrency": 8,
+    "retain_batch_tokens": 50000,
+    "retain_max_completion_tokens": 16384,
+    "strict_retain_schema": true,
+    "embedding_provider": "openai",
+    "embedding_model": "jina-embeddings-v5-text-small",
+    "embedding_dimensions": 768,
+    "embedding_query_prefix": "Query: ",
+    "embedding_passage_prefix": "Document: ",
+    "reranker_provider": "cohere",
+    "reranker_model": "jina-reranker-v3.5",
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/traces/quality/local-qwen3.5-4b-distilled-thinking-strict-1790272437.json"
+  }
+}
