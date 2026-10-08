@@ -21,7 +21,7 @@ RUNNER_DIR = Path(__file__).resolve().parent
 COMPOSE_FILE = RUNNER_DIR / "compose.local-quality.yml"
 TRACE_LOG_DIR = RUNNER_DIR.parent / "results" / "traces" / "hindsight"
 JUDGE_BASE_URL = "http://127.0.0.1:2455/v1"
-JUDGE_MODEL = "gpt-5.6-luna"
+JUDGE_MODEL = os.environ.get("QUALITY_JUDGE_MODEL", "gpt-5.6-luna")
 JUDGE_REASONING_EFFORT = "medium"
 HINDSIGHT_VERSION = "0.9.2"
 
@@ -40,6 +40,25 @@ PRODUCTION_LIKE_CONFIG = {
     "HINDSIGHT_API_LLM_REASONING_EFFORT": "low",
     "HINDSIGHT_API_REFLECT_LLM_REASONING_EFFORT": "medium",
     "HINDSIGHT_API_CONSOLIDATION_LLM_REASONING_EFFORT": "low",
+}
+
+BGE_MINILM_CONFIG = {
+    "HINDSIGHT_API_EMBEDDINGS_OPENAI_BASE_URL": "http://host.docker.internal:4000/v1",
+    "HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL": "BAAI/bge-small-en-v1.5",
+    "HINDSIGHT_API_EMBEDDINGS_OPENAI_DIMENSIONS": "384",
+    "HINDSIGHT_API_EMBEDDINGS_QUERY_PREFIX": "Represent this sentence for searching relevant passages: ",
+    "HINDSIGHT_API_EMBEDDINGS_PASSAGE_PREFIX": "",
+    "HINDSIGHT_API_RERANKER_COHERE_BASE_URL": "http://host.docker.internal:4000/v1/rerank",
+    "HINDSIGHT_API_RERANKER_COHERE_MODEL": "cross-encoder/ms-marco-MiniLM-L6-v2",
+}
+
+BRILLIANCE_LOGIC_EXTRA_BODY_CONFIG = {
+    "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "0.1",
+    **{
+        f"HINDSIGHT_API_{scope}_LLM_EXTRA_BODY":
+        '{"chat_template_kwargs":{"reasoning_effort":"logic","enable_thinking":true}}'
+        for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
+    },
 }
 
 NEMOTRON_EXTRA_BODY_CONFIG = {
@@ -191,8 +210,11 @@ def _effective_config(
     config = {
         **BASE_CONFIG,
         **PRODUCTION_LIKE_CONFIG,
+        **(BGE_MINILM_CONFIG if args.retrieval_profile == "bge-minilm" else {}),
         **(
-            NEMOTRON_EXTRA_BODY_CONFIG
+            BRILLIANCE_LOGIC_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "brilliance-logic"
+            else NEMOTRON_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "nemotron"
             else NEMOTRON_NO_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "nemotron-no-thinking"
@@ -249,6 +271,9 @@ def _write_env_file(config: dict[str, str]) -> Path:
         mode="w", prefix="hindsight-quality-", suffix=".env", delete=False
     ) as handle:
         for key, value in sorted(config.items()):
+            # dotenv otherwise trims the query prefix's separating space.
+            if key in {"HINDSIGHT_API_EMBEDDINGS_QUERY_PREFIX", "HINDSIGHT_API_EMBEDDINGS_PASSAGE_PREFIX"}:
+                value = json.dumps(value)
             handle.write(f"{key}={value}\n")
     path = Path(handle.name)
     path.chmod(0o600)
@@ -326,10 +351,13 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "none"),
+        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "none"),
         default="nemotron",
     )
     parser.add_argument("--result-model-id")
+    parser.add_argument("--retrieval-profile", choices=("jina", "bge-minilm"), default="jina")
+    parser.add_argument("--retain-upstream-base-url", help="Actual endpoint when retain traffic uses a capture proxy")
+    parser.add_argument("--retain-wire-trace", help="Extraction request/response trace path for result provenance")
     parser.add_argument("--max-conversations", type=int)
     parser.add_argument("--max-questions", type=int)
     parser.add_argument("--retain-concurrency", type=int, choices=range(1, 9))
@@ -430,9 +458,14 @@ def main() -> None:
                 "model_label": args.label,
                 "retain_llm_model": args.retain_model,
                 "retain_extra_body_profile": args.extra_body_profile,
-                "retain_thinking_enabled": args.extra_body_profile in ("nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking"),
+                "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking"),
+                "retain_thinking_type": "logic" if args.extra_body_profile == "brilliance-logic" else None,
                 "retain_thinking_budget_tokens": 512 if args.extra_body_profile == "nemotron" else None,
                 "retain_llm_base_url": args.retain_base_url,
+                "retain_llm_upstream_base_url": args.retain_upstream_base_url or args.retain_base_url,
+                "retain_wire_trace": args.retain_wire_trace,
+                "retain_temperature": float(config.get("HINDSIGHT_API_LLM_TEMPERATURE_RETAIN", "0.1")),
+                "retrieval_profile": args.retrieval_profile,
                 "retain_llm_concurrency": int(
                     config["HINDSIGHT_API_RETAIN_LLM_MAX_CONCURRENT"]
                 ),
@@ -445,6 +478,8 @@ def main() -> None:
                 "strict_retain_schema": args.strict_retain_schema,
                 "embedding_provider": config["HINDSIGHT_API_EMBEDDINGS_PROVIDER"],
                 "embedding_model": config["HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL"],
+                "embedding_base_url": config["HINDSIGHT_API_EMBEDDINGS_OPENAI_BASE_URL"],
+                "embedding_batch_size": int(config["HINDSIGHT_API_EMBEDDINGS_OPENAI_BATCH_SIZE"]),
                 "embedding_dimensions": int(
                     config["HINDSIGHT_API_EMBEDDINGS_OPENAI_DIMENSIONS"]
                 ),
@@ -456,6 +491,7 @@ def main() -> None:
                 ],
                 "reranker_provider": config["HINDSIGHT_API_RERANKER_PROVIDER"],
                 "reranker_model": config["HINDSIGHT_API_RERANKER_COHERE_MODEL"],
+                "reranker_base_url": config["HINDSIGHT_API_RERANKER_COHERE_BASE_URL"],
             },
         )
         print("Result JSON:")
