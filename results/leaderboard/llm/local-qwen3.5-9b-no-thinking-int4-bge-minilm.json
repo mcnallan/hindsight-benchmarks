@@ -1,0 +1,313 @@
+{
+  "model_id": "qwen3.5-9b-no-thinking-int4-bge-minilm",
+  "provider_id": "local",
+  "quality": {
+    "accuracy": 37.5,
+    "correct": 30,
+    "total": 80,
+    "dataset": "beam_128k_subset",
+    "judge_model": "gpt-5.6-luna",
+    "judge_base_url": "http://127.0.0.1:2455/v1",
+    "judge_reasoning_effort": "medium",
+    "context_mode": "facts_only",
+    "hindsight_version": "0.9.2",
+    "stored_fact_tokens": 217770,
+    "stored_fact_tokens_by_conversation": {
+      "beam-100k-1": 38314,
+      "beam-100k-13": 43135,
+      "beam-100k-16": 56648,
+      "beam-100k-18": 79673
+    },
+    "token_counter": "cl100k_base",
+    "per_ability": {
+      "abstention": {
+        "correct": 3,
+        "total": 8
+      },
+      "contradiction_resolution": {
+        "correct": 0,
+        "total": 8
+      },
+      "event_ordering": {
+        "correct": 0,
+        "total": 8
+      },
+      "information_extraction": {
+        "correct": 4,
+        "total": 8
+      },
+      "instruction_following": {
+        "correct": 5,
+        "total": 8
+      },
+      "knowledge_update": {
+        "correct": 5,
+        "total": 8
+      },
+      "multi_session_reasoning": {
+        "correct": 2,
+        "total": 8
+      },
+      "preference_following": {
+        "correct": 7,
+        "total": 8
+      },
+      "summarization": {
+        "correct": 0,
+        "total": 8
+      },
+      "temporal_reasoning": {
+        "correct": 4,
+        "total": 8
+      }
+    },
+    "generation_errors": 0,
+    "judge_errors": 0,
+    "recalled_fact_count": 2400,
+    "recall_empty_count": 0,
+    "partial": false,
+    "model_id": "qwen3.5-9b-no-thinking-int4-bge-minilm",
+    "provider_id": "local",
+    "sample_ids": [
+      "beam-100k-1",
+      "beam-100k-13",
+      "beam-100k-16",
+      "beam-100k-18"
+    ],
+    "retain_wall_clock_seconds": 4570.702,
+    "evaluation_wall_clock_seconds": 489.14,
+    "end_to_end_wall_clock_seconds": 5060.472,
+    "model_label": "Qwen3.5 9B (local INT4, no thinking, BGE/MiniLM)",
+    "retain_llm_model": "qwen3.5-9b-test",
+    "retain_extra_body_profile": "no-thinking",
+    "retain_thinking_enabled": false,
+    "retain_thinking_type": null,
+    "retain_thinking_budget_tokens": null,
+    "retain_llm_base_url": "http://host.docker.internal:54335/v1",
+    "retain_llm_upstream_base_url": "http://192.168.39.244:8129/v1",
+    "retain_wire_trace": "/home/blake/Projects/hindsight-benchmarks/benchmark-runner/../results/traces/qwen35-9b-qwen35-9b-none-cpu0-20261008-2255/full.ndjson",
+    "retain_deployment": {
+      "ready": true,
+      "frozen_at_utc": "2026-10-08T22:52:42.893744+00:00",
+      "selection": "RedHat no speculation, INT8 activation deployment; CPU KV0 frozen throughout evaluation",
+      "api": {
+        "base_url": "http://192.168.39.244:8129/v1",
+        "metrics_url": "http://192.168.39.244:8129/metrics",
+        "model": "qwen3.5-9b-test",
+        "authentication_required": false,
+        "api_key_environment": null,
+        "headers_logged": false
+      },
+      "checkpoint": {
+        "id": "RedHatAI/Qwen3.5-9B-quantized.w4a16",
+        "revision": "a398088c4228b0ae0c8c78df88fd1e4bf445f068",
+        "weight_files": [
+          {
+            "name": "model.safetensors",
+            "size": 10950193416,
+            "verified_sha256": "48e5ff6e04503c79e4e8101fc05ec4d0c4af48300c8902112f43b9d98ea2cd17",
+            "cache_address": "48e5ff6e04503c79e4e8101fc05ec4d0c4af48300c8902112f43b9d98ea2cd17"
+          },
+          {
+            "name": "model_mtp.safetensors",
+            "size": 486582848,
+            "verified_sha256": "e9f83dae0fed4d0633fba652cd7eb942642491a283b11072c3cfc77731e0fae9",
+            "cache_address": "e9f83dae0fed4d0633fba652cd7eb942642491a283b11072c3cfc77731e0fae9"
+          }
+        ],
+        "weight_manifest_sha256": "ae69f92c939fa60a62c264b340b5b8c958cb73add6a5fe39465759e82ccd2058",
+        "weight_hash_verification": "Full sequential SHA256 with bounded 4MiB buffer and POSIX_FADV_DONTNEED",
+        "quantization": "compressed-tensors pack-quantized INT4 symmetric group128; sensitive GDN projections excluded"
+      },
+      "image": {
+        "reference": "qwen35-4b-dynamo:1.5.0",
+        "resolved_image_id": "sha256:68d4a7a5303358be89f9cc6e035fa4d719a5fac554d912e6b31d16998b35a268",
+        "known_base_pin": "ghcr.io/avesed/vllm-ampere-optimized@sha256:6744eac95c9d0ee426c5c60ebaf72437da551e8a1786e8d2270e5164fb17dbfc"
+      },
+      "versions": {
+        "vllm": "0.29.0",
+        "torch": "2.13.0+cu130",
+        "flashinfer-python": "0.6.18",
+        "compressed-tensors": "0.17.0",
+        "transformers": "5.17.0"
+      },
+      "physical_gpu": {
+        "index": 1,
+        "uuid": "GPU-0737ffee-bce8-5e82-274c-883b5ee58522",
+        "name": "NVIDIA GeForce RTX 3090",
+        "vram_mib": 24576
+      },
+      "runtime": {
+        "container_id": "576abbc242c1d9905feda2fd54899d888cbe8226d6984cd3c179239d60bacc8e",
+        "effective_env": {
+          "MAX_NUM_BATCHED_TOKENS": "8192",
+          "MAMBA_SSM_CACHE_DTYPE": "float32",
+          "QUANTIZATION": "compressed-tensors",
+          "SERVED_MODEL_NAME": "qwen3.5-9b-test",
+          "ATTENTION_BACKEND": "FLASHINFER",
+          "SPECULATIVE_METHOD": "none",
+          "CPU_KV_CACHE_BYTES": "0",
+          "KV_CACHE_DTYPE": "fp8_e4m3",
+          "FAMP_MARLIN": "1",
+          "MTP_NUM_SPEC_TOKENS": "3",
+          "MAX_NUM_SEQS": "8",
+          "REASONING_PARSER": "qwen3",
+          "MODEL_REVISION": "a398088c4228b0ae0c8c78df88fd1e4bf445f068",
+          "NVIDIA_VISIBLE_DEVICES": "1",
+          "MODEL_ID": "RedHatAI/Qwen3.5-9B-quantized.w4a16",
+          "KV_CACHE_BYTES": "9663676416",
+          "TOOL_CALL_PARSER": "qwen3_coder",
+          "MAX_MODEL_LEN": "131072",
+          "USE_PREFIX_STABLE_CHAT_TEMPLATE": "1",
+          "VLLM_MARLIN_INPUT_DTYPE": "int8"
+        },
+        "effective_env_sha256": "08bb17b69734453aa16d77c24cef4cf56a8eae61be47bc6645748e95e539da9a",
+        "speculative_decoding": "none",
+        "activation_path": "eligible INT8 / FampMarlinKernel; excluded GDN remains BF16",
+        "text_only": true,
+        "model_layers_offloaded_to_cpu": false,
+        "gpu_kv_bytes": 9663676416,
+        "reported_gpu_kv_tokens": 558306,
+        "cpu_kv_bytes": 0,
+        "max_num_seqs": 8,
+        "max_model_len": 131072,
+        "prefill_chunk_tokens": 8192,
+        "kv_dtype": "fp8_e4m3",
+        "attention_backend": "FLASHINFER flashinfer-native SM86; BF16 queries",
+        "recurrent_state_dtype": "float32",
+        "restart_policy": "no"
+      },
+      "source": {
+        "checkout_commit": "e8c80b21f9c3b4d82f54520b162e9fb05e7235b9",
+        "source_files": [
+          {
+            "mounted_destination": "/opt/qwen35/start-vllm.sh",
+            "repo_relative_path": "platform/inference/vllm/qwen35-9b/start-vllm.sh",
+            "sha256": "dd57bc532cc4e8b70c4d69892d3e0adfcf18bb770685f1a788ce4ecb02aeae9b",
+            "read_only": true
+          },
+          {
+            "mounted_destination": "/opt/qwen35/qwen35-nonthinking-prefix-stable.jinja",
+            "repo_relative_path": "platform/inference/dynamo/prod-qwen35-4b/qwen35-nonthinking-prefix-stable.jinja",
+            "sha256": "80974902005388ace2fbe36a69b1a92098a5eecea27bd6b683a1b6eddee73cb8",
+            "read_only": true
+          }
+        ]
+      },
+      "sampling": {
+        "generation_config": "auto; unspecified options use pinned checkpoint defaults",
+        "diagnostic_temperature": 0,
+        "diagnostic_max_tokens": 128,
+        "fidelity_temperature": 0,
+        "fidelity_max_tokens": 2048,
+        "real_replay_temperature": "captured request temperature, unchanged",
+        "real_replay_max_tokens": 16384,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        },
+        "reasoning_parser": "qwen3",
+        "tool_call_parser": "qwen3_coder"
+      },
+      "evidence": {
+        "final_abi": ".artifacts/inference/qwen35-9b-fp8-20261008/selected-redhat-none/basic-abi-summary.json",
+        "final_startup": ".artifacts/inference/qwen35-9b-fp8-20261008/selected-redhat-none/startup.log",
+        "none_frozen_protocol2": ".artifacts/inference/qwen35-9b-fp8-20261008/redhat-none-final/hindsight-fidelity-v2.json",
+        "none_actual_replays": ".artifacts/inference/qwen35-9b-fp8-20261008/redhat-none/actual-retain-replay.ndjson",
+        "mtp_protocol2_control": ".artifacts/inference/qwen35-9b-fp8-20261008/redhat-mtp-final/hindsight-fidelity-v2.json",
+        "mtp_actual_replay_admission": ".artifacts/inference/qwen35-9b-fp8-20261008/redhat-mtp-final/strict-replay-admission.json",
+        "historical_none_performance": ".artifacts/inference/qwen35-9b-fp8-20261008/redhat-none",
+        "performance_caveat": "Historical matrices used CPU KV16GiB and overlapped Mellum calibration; not relabeled CPU0 measurements. No matched NONE strict replay timing."
+      },
+      "limitations": [
+        "Both candidates showed scheduled-to-completed source-status errors; final selection does not claim a passing full evaluation.",
+        "Synthetic checks are bounded and include known relative-date validator false positive; preserve raw review.",
+        "Capacity8, representative isolated BEAM smoke and full evaluation are delegated next; not yet proven by this release."
+      ],
+      "coordination": {
+        "released_to": "/root/hindsight_eval_setup",
+        "qwen_api_traffic_owner": "evaluation coordinator after this release",
+        "do_not_restart_until_active_evaluation_completes": true,
+        "do_not_restore_cpu_kv_during_evaluation": true
+      }
+    },
+    "retain_temperature": 0.1,
+    "retrieval_profile": "bge-minilm",
+    "retain_llm_concurrency": 8,
+    "retain_batch_tokens": 50000,
+    "retain_max_completion_tokens": 16384,
+    "strict_retain_schema": true,
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_base_url": "http://host.docker.internal:4000/v1",
+    "embedding_batch_size": 8,
+    "embedding_dimensions": 384,
+    "embedding_query_prefix": "Represent this sentence for searching relevant passages: ",
+    "embedding_passage_prefix": "",
+    "reranker_provider": "cohere",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "reranker_base_url": "http://host.docker.internal:4000/v1/rerank",
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/traces/quality/local-qwen3.5-9b-no-thinking-int4-bge-minilm-1791500478.json",
+    "retain_trace_validation": {
+      "passed": false,
+      "state": "trace_admission_failed",
+      "scoring_completed": true,
+      "strict_response_attempts": 1627,
+      "failed_response_attempts": 10,
+      "failed_response_attempt_percent": 0.615,
+      "failed_check_count": 21,
+      "unique_failed_source_chunks": 9,
+      "failed_sources_recovered_by_existing_retries": 9,
+      "truncated_invalid_json_attempts": 10,
+      "whitespace_loop_attempts": 1,
+      "repeated_fact_content_loop_attempts": 9,
+      "completion_cap": 16384,
+      "transport_errors": 0,
+      "missing_terminal_responses": 0,
+      "reasoning_tokens": 0,
+      "first_failed_response_timestamp": "2026-10-08T23:07:37.912499+00:00",
+      "first_failed_request_id": "05a27d33-eb2c-4e67-a6c2-e35265a29741",
+      "note": "All 80 questions scored, but full strict trace admission failed. Existing retries recovered all nine affected source chunks; failures remain visible and no full rerun was performed.",
+      "usage_aggregate": {
+        "all": {
+          "responses": 1627,
+          "prompt_tokens": 3691969,
+          "completion_tokens": 980605,
+          "total_tokens": 4672574,
+          "summed_recorded_request_seconds": 15000.215
+        },
+        "failed": {
+          "responses": 10,
+          "prompt_tokens": 24555,
+          "completion_tokens": 163840,
+          "total_tokens": 188395,
+          "summed_recorded_request_seconds": 2159.921
+        },
+        "clean": {
+          "responses": 1617,
+          "prompt_tokens": 3667414,
+          "completion_tokens": 816765,
+          "total_tokens": 4484179,
+          "summed_recorded_request_seconds": 12840.294
+        },
+        "failed_completion_token_percent": 16.708,
+        "failed_request_durations_range_seconds": [
+          202.178,
+          227.976
+        ],
+        "caveat": "Request durations overlap under concurrency8; their sum is neither wall time nor pure GPU decode time. Token shares measure response usage, not exclusive causal wall-time attribution."
+      },
+      "repetition_evidence": {
+        "complete_fact_objects_across_loop_attempts": 1340,
+        "duplicate_exact_fact_objects_across_loop_attempts": 1111,
+        "max_identical_complete_fact_repetitions": 120,
+        "interpretation": "Exact whole-object duplicates in malformed responses prove repeated generation, not just repeatedwhat text across legitimate distinct facts. These objects were not validated/persisted facts."
+      }
+    },
+    "benchmark_validation_status": "completed_scoring_trace_admission_failed",
+    "validation_notes": [
+      "Numeric 30/80 score retained unchanged. This is Qwen extraction plus BGE/MiniLM recall plus GPT-5.6 Luna answer/judge quality.",
+      "Full response-attempt conformance failed: ten cap-truncated malformed JSON responses, including one whitespace loop and nine repeated fact/object loops.",
+      "Targeted smoke source review found recurring instructional-to-completed-action attribution and phase/date errors; not a fully faithful extraction claim."
+    ]
+  }
+}

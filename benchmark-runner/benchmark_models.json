@@ -13,7 +13,11 @@
       "api_key_env": "OPENAI_API_KEY",
       "input_price_per_1m": 0.15,
       "output_price_per_1m": 0.6,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -26,9 +30,13 @@
       "method": "url",
       "url": "https://api.openai.com",
       "api_key_env": "OPENAI_API_KEY",
-      "input_price_per_1m": 0.40,
-      "output_price_per_1m": 1.60,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "input_price_per_1m": 0.4,
+      "output_price_per_1m": 1.6,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -41,9 +49,13 @@
       "method": "url",
       "url": "https://api.openai.com",
       "api_key_env": "OPENAI_API_KEY",
-      "input_price_per_1m": 0.10,
-      "output_price_per_1m": 0.40,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "input_price_per_1m": 0.1,
+      "output_price_per_1m": 0.4,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -58,7 +70,11 @@
       "api_key_env": "OPENAI_API_KEY",
       "input_price_per_1m": 1.75,
       "output_price_per_1m": 14.0,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -71,9 +87,13 @@
       "method": "url",
       "url": "https://api.openai.com",
       "api_key_env": "OPENAI_API_KEY",
-      "input_price_per_1m": 2.50,
+      "input_price_per_1m": 2.5,
       "output_price_per_1m": 15.0,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -88,7 +108,11 @@
       "api_key_env": "OPENAI_API_KEY",
       "input_price_per_1m": 0.25,
       "output_price_per_1m": 2.0,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -103,7 +127,11 @@
       "api_key_env": "OPENAI_API_KEY",
       "input_price_per_1m": 0.05,
       "output_price_per_1m": 0.4,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -117,8 +145,12 @@
       "url": "https://api.openai.com",
       "api_key_env": "OPENAI_API_KEY",
       "input_price_per_1m": 0.75,
-      "output_price_per_1m": 4.50,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "output_price_per_1m": 4.5,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "openai",
@@ -131,9 +163,13 @@
       "method": "url",
       "url": "https://api.openai.com",
       "api_key_env": "OPENAI_API_KEY",
-      "input_price_per_1m": 0.20,
+      "input_price_per_1m": 0.2,
       "output_price_per_1m": 1.25,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "groq",
@@ -147,7 +183,11 @@
       "api_key_env": "GROQ_API_KEY",
       "input_price_per_1m": 0.05,
       "output_price_per_1m": 0.08,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "groq",
@@ -161,7 +201,11 @@
       "api_key_env": "GROQ_API_KEY",
       "input_price_per_1m": 0.1,
       "output_price_per_1m": 0.16,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "groq",
@@ -175,7 +219,11 @@
       "api_key_env": "GROQ_API_KEY",
       "input_price_per_1m": 0.05,
       "output_price_per_1m": 0.08,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "groq",
@@ -189,7 +237,11 @@
       "api_key_env": "GROQ_API_KEY",
       "input_price_per_1m": 0.59,
       "output_price_per_1m": 0.79,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "gemini",
@@ -201,9 +253,13 @@
       "gemini_model": "gemini-2.5-flash",
       "method": "gemini",
       "api_key_env": "GEMINI_API_KEY",
-      "input_price_per_1m": 0.30,
-      "output_price_per_1m": 2.50,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "input_price_per_1m": 0.3,
+      "output_price_per_1m": 2.5,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "gemini",
@@ -215,9 +271,13 @@
       "gemini_model": "gemini-2.5-flash-lite",
       "method": "gemini",
       "api_key_env": "GEMINI_API_KEY",
-      "input_price_per_1m": 0.10,
-      "output_price_per_1m": 0.40,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "input_price_per_1m": 0.1,
+      "output_price_per_1m": 0.4,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "gemini",
@@ -229,9 +289,13 @@
       "gemini_model": "gemini-3-flash-preview",
       "method": "gemini",
       "api_key_env": "GEMINI_API_KEY",
-      "input_price_per_1m": 0.50,
-      "output_price_per_1m": 3.00,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "input_price_per_1m": 0.5,
+      "output_price_per_1m": 3.0,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "gemini",
@@ -244,8 +308,12 @@
       "method": "gemini",
       "api_key_env": "GEMINI_API_KEY",
       "input_price_per_1m": 0.25,
-      "output_price_per_1m": 1.50,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "output_price_per_1m": 1.5,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "gemini",
@@ -257,9 +325,13 @@
       "gemini_model": "gemini-3.5-flash",
       "method": "gemini",
       "api_key_env": "GEMINI_API_KEY",
-      "input_price_per_1m": 1.50,
-      "output_price_per_1m": 9.00,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "input_price_per_1m": 1.5,
+      "output_price_per_1m": 9.0,
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
     },
     {
       "provider_id": "ollama-cloud",
@@ -274,7 +346,87 @@
       "api_key_env": "OLLAMA_API_KEY",
       "input_price_per_1m": 0,
       "output_price_per_1m": 0,
-      "benchmarks": ["retain", "quality", "reflect"]
+      "benchmarks": [
+        "retain",
+        "quality",
+        "reflect"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.5-9b-no-thinking-int4-bge-minilm",
+      "model_name": "Qwen3.5 9B (local INT4, no thinking, BGE/MiniLM) [trace gate failed]",
+      "api_model": "qwen3.5-9b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8129/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Use run_gpu1_quality.sh after deployment performance/sanity validation. Thinking disabled; strict retain schema; concurrency 8; 16,384 retain completion cap; BGE-small/MiniLM through local LiteLLM; verified GPT-5.6 Luna generator/judge. Sanitized selected deployment recipe is stored with results. Full BEAM scoring completed 30/80 (37.5%), but strict trace admission failed ten of 1,627 response attempts (one whitespace loop, nine repeated fact loops); all nine affected source chunks recovered through existing retries. Numeric score retained. The display label refers to this current failed trace gate; a future verified clean full run would require updating it.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-no-thinking-int4-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, no thinking, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Use run_gpu1_quality.sh after deployment performance/sanity validation. Thinking disabled; strict retain schema; concurrency 8; 16,384 retain completion cap; BGE-small/MiniLM through local LiteLLM; verified GPT-5.6 Luna generator/judge. Sanitized selected deployment recipe is stored with results.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-thinking-int4-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, thinking, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Independent GPU0 endpoint, explicit enable_thinking=true on all retain requests. Strict schema, concurrency eight, completion cap 16,384, separated reasoning checked in both reasoning fields. BGE-small 384 dimensions/MiniLM through local LiteLLM; GPT-5.6 Luna answering/judging. Exact frozen activation/KV/cache recipe is saved in deployment provenance.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2-12b-instruct-int4-bge-minilm",
+      "model_name": "Mellum 2 12B Instruct (local INT4, native nonreasoning, BGE/MiniLM)",
+      "api_model": "mellum2-instruct-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8122/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Independent GPU1 endpoint with native Instruct template and no thinking override. cyankiwi/Mellum2-12B-A2.5B-Instruct-AWQ-INT4; activation path recorded from validated selected deployment. Strict schema, concurrency eight, completion cap 16,384; BGE-small/MiniLM through local LiteLLM, GPT-5.6 Luna answering/judging.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -290,7 +442,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "logic",
       "notes": "Use run_brilliance_quality.sh: thinking enabled with chat_template_kwargs.reasoning_effort=logic, temperature 0.1, strict retain schema, 16,384 total completion tokens, concurrency 8. BGE-small 384-dimensional embeddings and MiniLM-L6 reranking through local LiteLLM; GPT-5.6 Luna generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -306,7 +461,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Self-hosted OpenAI-compatible route used by run_local_quality.py; Nemotron thinking enabled with a 512-token budget.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -322,7 +480,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Self-hosted OpenAI-compatible route used by run_local_quality.py; this retain sanity check uses GPT-5.6 Luna as both retain model and answer generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -338,7 +499,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Local GPU2 vLLM endpoint; enable_thinking=false; strict retain JSON schema; 16,384-token retain completion cap; Jina retrieval and GPT-5.6 Luna generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -354,7 +518,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Local GPU1 vLLM with DFlash speculative decoding; enable_thinking=true; Qwen3.5 thinking sampling (temperature 1.0, top_p 0.95, top_k 20, presence_penalty 1.5); strict retain JSON schema; 16,384-token retain completion cap; Jina retrieval and GPT-5.6 Luna generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -370,7 +537,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Local GPU2 vLLM; enable_thinking=true; temperature 1.0, top_p 0.95, top_k 20, presence_penalty 1.5; strict retain JSON schema; 16,384-token retain completion cap; Jina retrieval and GPT-5.6 Luna generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -386,7 +556,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Local GPU2 vLLM; enable_thinking=false; temperature 1.0, top_p 0.95, top_k 20, presence_penalty 1.5 (same sampling as its thinking run); strict retain JSON schema; 16,384-token retain completion cap; Jina retrieval and GPT-5.6 Luna generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -402,7 +575,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Local GPU2 vLLM endpoint; enable_thinking=false; strict retain JSON schema; 16,384-token retain completion cap; Jina retrieval and GPT-5.6 Luna generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -418,7 +594,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Local GPU2 vLLM endpoint; enable_thinking=true; strict retain JSON schema; 16,384-token retain completion cap shared with no-thinking variant; Jina retrieval and GPT-5.6 Luna generator/judge.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -434,7 +613,10 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "low",
       "notes": "Local self-hosted vLLM endpoint; enable_thinking=false; 4,096-token total completion cap.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -449,7 +631,10 @@
       "input_price_per_1m": 0,
       "output_price_per_1m": 0,
       "notes": "Local LiteLLM/Dynamo route; enable_thinking=false; same BEAM/Jina evaluation configuration.",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local",
@@ -464,7 +649,10 @@
       "input_price_per_1m": 0,
       "output_price_per_1m": 0,
       "notes": "Local GPU2 vLLM endpoint, MAX_NUM_SEQS=8; enable_thinking=true, sampling 1.0/0.95/top-k 20; 16,384-token total completion cap (not a separate reasoning budget).",
-      "benchmarks": ["retain", "quality"]
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -477,7 +665,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 0.7,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -490,7 +680,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 7.0,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -503,7 +695,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 0.4,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -516,7 +710,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 1.9,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -529,7 +725,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 1.0,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -542,7 +740,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 0.3,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -555,7 +755,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 1.1,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -568,7 +770,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 1.6,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -581,7 +785,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 2.0,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "local-ollama",
@@ -594,7 +800,9 @@
       "method": "url",
       "url": "http://localhost:11434",
       "size_gb": 3.0,
-      "benchmarks": ["retain"]
+      "benchmarks": [
+        "retain"
+      ]
     },
     {
       "provider_id": "gemini",
@@ -606,8 +814,8 @@
       "method": "gemini",
       "gemini_model": "gemini-3.1-pro-preview",
       "api_key_env": "GEMINI_API_KEY",
-      "input_price_per_1m": 2.00,
-      "output_price_per_1m": 12.00,
+      "input_price_per_1m": 2.0,
+      "output_price_per_1m": 12.0,
       "benchmarks": [
         "retain",
         "quality",
