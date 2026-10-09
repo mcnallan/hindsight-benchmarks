@@ -114,6 +114,13 @@ QWEN_NO_THINKING_EXTRA_BODY_CONFIG = {
     ),
 }
 
+THINKING_EXTRA_BODY_CONFIG = {
+    # Preserve upstream retain sampling; model-specific Qwen sampling is separate.
+    f"HINDSIGHT_API_{scope}_LLM_EXTRA_BODY":
+    '{"chat_template_kwargs":{"enable_thinking":true}}'
+    for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
+}
+
 QWEN_THINKING_EXTRA_BODY_CONFIG = {
     # Qwen3.5's published thinking recipe prevents repetitive reasoning loops
     # seen at the upstream retain temperature of 0.1 on real extraction input.
@@ -219,7 +226,9 @@ def _effective_config(
             else NEMOTRON_NO_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "nemotron-no-thinking"
             else QWEN_NO_THINKING_EXTRA_BODY_CONFIG
-            if args.extra_body_profile == "qwen-no-thinking"
+            if args.extra_body_profile in ("no-thinking", "qwen-no-thinking")
+            else THINKING_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "thinking"
             else QWEN_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "qwen-thinking"
             else QWEN_DISTILLED_NO_THINKING_EXTRA_BODY_CONFIG
@@ -252,6 +261,11 @@ def _effective_config(
     if args.strict_retain_schema:
         config["HINDSIGHT_API_LLM_STRICT_SCHEMA_RETAIN"] = "true"
     config.pop("HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL", None)
+    if args.extra_body_profile == "native-instruct":
+        # Native nonreasoning templates receive neither a thinking override nor
+        # inherited reasoning-effort options from reasoning model profiles.
+        for scope in ("", "RETAIN_", "REFLECT_", "CONSOLIDATION_"):
+            config.pop(f"HINDSIGHT_API_{scope}LLM_REASONING_EFFORT", None)
     return config
 
 
@@ -351,13 +365,14 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "none"),
+        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "no-thinking", "thinking", "native-instruct", "none"),
         default="nemotron",
     )
     parser.add_argument("--result-model-id")
     parser.add_argument("--retrieval-profile", choices=("jina", "bge-minilm"), default="jina")
     parser.add_argument("--retain-upstream-base-url", help="Actual endpoint when retain traffic uses a capture proxy")
     parser.add_argument("--retain-wire-trace", help="Extraction request/response trace path for result provenance")
+    parser.add_argument("--retain-deployment-metadata", type=Path, help="Sanitized deployment recipe JSON for result provenance; never pass credentials")
     parser.add_argument("--max-conversations", type=int)
     parser.add_argument("--max-questions", type=int)
     parser.add_argument("--retain-concurrency", type=int, choices=range(1, 9))
@@ -368,6 +383,11 @@ def main() -> None:
     parser.add_argument("--diagnostic-sample-id", help="Retain one original BEAM session without scoring")
     parser.add_argument("--diagnostic-session-index", type=int, default=1)
     args = parser.parse_args()
+    deployment_metadata = {}
+    if args.retain_deployment_metadata:
+        deployment_metadata = json.loads(args.retain_deployment_metadata.read_text())
+        if not isinstance(deployment_metadata, dict):
+            parser.error("--retain-deployment-metadata must contain a JSON object")
 
     # The benchmark retrieval sidecars are local, unauthenticated endpoints.
     # Keep a configurable value for OpenAI/Cohere client compatibility without
@@ -458,12 +478,13 @@ def main() -> None:
                 "model_label": args.label,
                 "retain_llm_model": args.retain_model,
                 "retain_extra_body_profile": args.extra_body_profile,
-                "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking"),
+                "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking", "thinking"),
                 "retain_thinking_type": "logic" if args.extra_body_profile == "brilliance-logic" else None,
                 "retain_thinking_budget_tokens": 512 if args.extra_body_profile == "nemotron" else None,
                 "retain_llm_base_url": args.retain_base_url,
                 "retain_llm_upstream_base_url": args.retain_upstream_base_url or args.retain_base_url,
                 "retain_wire_trace": args.retain_wire_trace,
+                "retain_deployment": deployment_metadata,
                 "retain_temperature": float(config.get("HINDSIGHT_API_LLM_TEMPERATURE_RETAIN", "0.1")),
                 "retrieval_profile": args.retrieval_profile,
                 "retain_llm_concurrency": int(
