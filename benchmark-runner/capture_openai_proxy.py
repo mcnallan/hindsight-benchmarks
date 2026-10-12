@@ -19,6 +19,7 @@ class CaptureProxy(BaseHTTPRequestHandler):
     upstream: str
     output_path: Path
     timeout: float
+    dynamo_worker_id: int | None = None
     write_lock = threading.Lock()
 
     def _record(self, record: dict) -> None:
@@ -39,6 +40,17 @@ class CaptureProxy(BaseHTTPRequestHandler):
             except json.JSONDecodeError:
                 parsed_body = body.decode("utf-8", errors="replace")
 
+        # Explicit benchmark placement uses Dynamo's supported request controls.
+        # Capture the effective wire body; prompts and scoring inputs are unchanged.
+        pinned = (self.dynamo_worker_id is not None and self.command == "POST"
+                  and urlsplit(self.path).path in {"/v1/chat/completions", "/v1/completions"})
+        if pinned:
+            if not isinstance(parsed_body, dict) or not isinstance(parsed_body.get("nvext", {}), dict):
+                self.send_error(400, "Dynamo worker pin requires an object request and nvext")
+                return
+            parsed_body["nvext"] = {**parsed_body.get("nvext", {}), "decode_worker_id": self.dynamo_worker_id}
+            body = json.dumps(parsed_body).encode()
+
         self._record(
             {
                 "event": "request",
@@ -56,6 +68,8 @@ class CaptureProxy(BaseHTTPRequestHandler):
             for key, value in self.headers.items()
             if key.lower() not in {"host", "content-length"}
         }
+        if pinned:
+            headers["x-dynamo-worker-instance-id"] = str(self.dynamo_worker_id)
         started = time.monotonic()
         try:
             response = requests.request(
@@ -126,7 +140,11 @@ def main() -> None:
     parser.add_argument("--upstream", required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--timeout", type=float, default=610)
+    parser.add_argument("--dynamo-worker-id", type=int,
+                        help="Pin completions with Dynamo nvext/header; captured bodies include the pin")
     args = parser.parse_args()
+    if args.dynamo_worker_id is not None and args.dynamo_worker_id < 0:
+        parser.error("--dynamo-worker-id must be nonnegative")
 
     parsed = urlsplit(args.upstream)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
@@ -135,6 +153,7 @@ def main() -> None:
     CaptureProxy.upstream = args.upstream.rstrip("/")
     CaptureProxy.output_path = args.output
     CaptureProxy.timeout = args.timeout
+    CaptureProxy.dynamo_worker_id = args.dynamo_worker_id
     server = ThreadingHTTPServer((args.listen_host, args.listen_port), CaptureProxy)
     print(f"Capturing {args.listen_host}:{args.listen_port} -> {CaptureProxy.upstream}")
     print(f"Trace: {CaptureProxy.output_path}")

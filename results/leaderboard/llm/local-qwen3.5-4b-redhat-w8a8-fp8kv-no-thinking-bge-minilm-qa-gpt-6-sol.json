@@ -1,0 +1,139 @@
+{
+  "model_id": "qwen3.5-4b-redhat-w8a8-fp8kv-no-thinking-bge-minilm-qa-gpt-6-sol",
+  "provider_id": "local",
+  "quality": {
+    "accuracy": 35.0,
+    "correct": 28,
+    "total": 80,
+    "dataset": "beam_128k_subset",
+    "answer_generator_model": "gpt-6-sol",
+    "judge_model": "gpt-6-sol",
+    "judge_base_url": "http://127.0.0.1:2455/v1",
+    "judge_reasoning_effort": "medium",
+    "context_mode": "facts_only",
+    "hindsight_version": "0.9.2",
+    "stored_fact_tokens": 249662,
+    "stored_fact_tokens_by_conversation": {
+      "beam-100k-1": 50578,
+      "beam-100k-13": 50983,
+      "beam-100k-16": 62940,
+      "beam-100k-18": 85161
+    },
+    "token_counter": "cl100k_base",
+    "per_ability": {
+      "abstention": {
+        "correct": 2,
+        "total": 8
+      },
+      "contradiction_resolution": {
+        "correct": 0,
+        "total": 8
+      },
+      "event_ordering": {
+        "correct": 0,
+        "total": 8
+      },
+      "information_extraction": {
+        "correct": 4,
+        "total": 8
+      },
+      "instruction_following": {
+        "correct": 6,
+        "total": 8
+      },
+      "knowledge_update": {
+        "correct": 3,
+        "total": 8
+      },
+      "multi_session_reasoning": {
+        "correct": 2,
+        "total": 8
+      },
+      "preference_following": {
+        "correct": 5,
+        "total": 8
+      },
+      "summarization": {
+        "correct": 0,
+        "total": 8
+      },
+      "temporal_reasoning": {
+        "correct": 6,
+        "total": 8
+      }
+    },
+    "generation_errors": 0,
+    "judge_errors": 0,
+    "recalled_fact_count": 2400,
+    "recall_empty_count": 0,
+    "partial": false,
+    "model_id": "qwen3.5-4b-redhat-w8a8-fp8kv-no-thinking-bge-minilm-qa-gpt-6-sol",
+    "provider_id": "local",
+    "sample_ids": [
+      "beam-100k-1",
+      "beam-100k-13",
+      "beam-100k-16",
+      "beam-100k-18"
+    ],
+    "question_abilities": [],
+    "retain_wall_clock_seconds": 3767.358,
+    "evaluation_wall_clock_seconds": 708.535,
+    "end_to_end_wall_clock_seconds": 4476.735,
+    "model_label": "Qwen3.5 4B RedHat (native W8A8, FP8 KV, no thinking, BGE/MiniLM) [answers and judge: gpt-6-sol]",
+    "retain_llm_model": "qwen35-redhat-w8a8",
+    "retain_extra_body_profile": "no-thinking",
+    "retain_thinking_enabled": false,
+    "retain_thinking_type": null,
+    "retain_thinking_budget_tokens": null,
+    "retain_llm_base_url": "http://host.docker.internal:40551/v1",
+    "retain_llm_upstream_base_url": "http://127.0.0.1:18142/v1",
+    "retain_wire_trace": "/home/blake/Projects/hindsight-benchmarks/benchmark-runner/../results/traces/qwen35-4b-redhat-w8a8-qwen35-4b-redhat-w8a8-fp8-six-20261012-123854/full.ndjson",
+    "retain_deployment": {
+      "model_id": "RedHatAI/Qwen3.5-4B-quantized.w8a8",
+      "model_revision": "c30ff438442b337db924cadb5136847bbf3fb95a",
+      "served_model_name": "qwen35-redhat-w8a8",
+      "rig": "GPU1",
+      "physical_gpu": 0,
+      "gpu": "RTX 3090",
+      "image": "vllm/vllm-openai@sha256:02b51ccd46ab3fe7e0abb42aa55e3f27a52daae40d9b5c4dbd3ebb86902a2d7c",
+      "vllm_version": "0.31.1rc1.dev296+gfe4df3df0",
+      "linear_activation_dtype": "int8",
+      "linear_kernel": "CutlassInt8ScaledMMLinearKernel",
+      "quantization": "compressed-tensors W8A8 dynamic-per-token activations/channelwise weights",
+      "recurrent_projection_weights": "bfloat16",
+      "kv_dtype": "fp8_e4m3",
+      "attention_backend": "FLASHINFER",
+      "runtime_kv_tokens": 868477,
+      "gpu_kv_bytes": 15032385536,
+      "loaded_weight_gib": 5.61,
+      "server_max_num_seqs": 8,
+      "server_max_model_len": 131072,
+      "max_num_batched_tokens": 8192,
+      "recurrent_state_dtype": "float32",
+      "cpu_kv_bytes": 0,
+      "cpu_model_offload_gb": 0,
+      "speculation": null,
+      "cuda_graphs": true,
+      "text_only": true,
+      "thinking": false,
+      "prefix_stable_chat_template": true
+    },
+    "retain_temperature": 0.1,
+    "retrieval_profile": "bge-minilm",
+    "retain_llm_concurrency": 8,
+    "retain_batch_tokens": 50000,
+    "retain_max_completion_tokens": 16384,
+    "strict_retain_schema": true,
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_base_url": "http://host.docker.internal:4000/v1",
+    "embedding_batch_size": 8,
+    "embedding_dimensions": 384,
+    "embedding_query_prefix": "Represent this sentence for searching relevant passages: ",
+    "embedding_passage_prefix": "",
+    "reranker_provider": "cohere",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "reranker_base_url": "http://host.docker.internal:4000/v1/rerank",
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/runs/qwen35-4b-redhat-w8a8-fp8-six-20261012-123854/full-question-trace.private.json"
+  }
+}
