@@ -173,7 +173,7 @@ def _format_grading_material(answer: Optional[str], rubric: list[str]) -> str:
     return "\n".join(parts) if parts else "Gold answer: (none provided)"
 
 
-def _retain_with_polling(client, bank_id: str, content: str, context: str, timestamp: datetime, document_id: str):
+def _retain_with_polling(client, bank_id: str, content: str, context: str, timestamp: datetime, document_id: str, *, poll_interval_s=None):
     """Submit retain asynchronously and poll until the server finishes.
 
     A synchronous retain of a full BEAM session blows through any reasonable
@@ -181,6 +181,9 @@ def _retain_with_polling(client, bank_id: str, content: str, context: str, times
     async path returns an operation id immediately; extraction progress is
     the server's business.
     """
+    interval = RETAIN_POLL_INTERVAL_S if poll_interval_s is None else poll_interval_s
+    if interval <= 0:
+        raise ValueError('Retain polling interval must be positive')
     resp = client.retain(
         bank_id=bank_id,
         content=content,
@@ -198,7 +201,7 @@ def _retain_with_polling(client, bank_id: str, content: str, context: str, times
     while pending:
         if time.time() > deadline:
             raise RuntimeError(f"Retain of {document_id} exceeded {RETAIN_DEADLINE_S}s (pending: {pending})")
-        time.sleep(RETAIN_POLL_INTERVAL_S)
+        time.sleep(interval)
         # client.operations is the raw async API; run its coroutines through
         # the same loop helper the sync wrapper methods use.
         from hindsight_client.hindsight_client import _run_async
