@@ -1531,8 +1531,10 @@
       "notes": "Pinned upstream native INT8 linear kernels; FP8 E4M3 FlashInfer KV, FP32 recurrent state, text-only, no speculation, eight slots; explicit no-thinking strict extraction at 16384 cap. Loopback endpoint requires its SSH tunnel. Smoke/review required before full; prepared row does not imply completed results. GPT-6 Sol answers and judge.",
       "benchmarks": [
         "retain",
-        "quality"
-      ]
+        "quality",
+        "reflect"
+      ],
+      "reflect_notes": "Local LoComo conv-43 paired reflect benchmark; shared bank retained once by GPT-6 Sol, BGE/MiniLM retrieval, GPT-6 Sol judge, native LiteLLM reflect provider, thinking off, low budget, 4096 completion cap. Separate from historical Gemini-retain/judge reflect conditions."
     },
     {
       "provider_id": "local",
@@ -1569,8 +1571,10 @@
       "notes": "Fresh production Dynamo baseline routed to GPU2 while GPU1 LLMs serve independent W8 trials; Ampere W4A8 Marlin, FP8 FlashInfer, FP32 state, eight slots, no speculation, CPU KV LRU retained. Same strict extraction, BGE/MiniLM and GPT-6 Sol answer/judge pipeline as W8 comparison. Historical results remain separate.",
       "benchmarks": [
         "retain",
-        "quality"
-      ]
+        "quality",
+        "reflect"
+      ],
+      "reflect_notes": "Local LoComo conv-43 paired reflect benchmark; shared bank retained once by GPT-6 Sol, BGE/MiniLM retrieval, GPT-6 Sol judge, native LiteLLM reflect provider, thinking off, low budget, 4096 completion cap. Separate from historical Gemini-retain/judge reflect conditions."
     }
   ]
 }

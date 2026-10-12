@@ -47,8 +47,21 @@ class ReflectBenchmark:
     DATASET_PATH = DATASETS_DIR / "locomo_quality.json"
     TARGET_CONVERSATION = "conv-43"
 
-    def __init__(self, gemini_api_key: str = None, openai_api_key: str = None):
-        if gemini_api_key:
+    def __init__(self, gemini_api_key: str = None, openai_api_key: str = None, *,
+                 judge_base_url: str = None, judge_api_key: str = None,
+                 judge_model: str = None, judge_reasoning_effort: str = None,
+                 strict_judge: bool = False):
+        self.judge_reasoning_effort = judge_reasoning_effort
+        self.strict_judge = strict_judge
+        self.judge_errors = 0
+        self.last_judge_reasoning = None
+        if judge_base_url:
+            if not judge_api_key or not judge_model:
+                raise ValueError("Custom judge requires base URL, API key and model")
+            self.llm_client = OpenAI(api_key=judge_api_key, base_url=judge_base_url, timeout=120.0)
+            self.judge_model = judge_model
+            print(f"Using {judge_model} for judge")
+        elif gemini_api_key:
             print(f"Using {JUDGE_MODEL} for judge")
             self.llm_client = OpenAI(
                 api_key=gemini_api_key,
@@ -192,7 +205,9 @@ class ReflectBenchmark:
         print(f"Results saved to {path}")
         return result
 
-    def run_with_bank(self, model_id: str, provider_id: str, api_url: str, bank_id: str, max_questions: Optional[int] = None) -> Dict[str, Any]:
+    def run_with_bank(self, model_id: str, provider_id: str, api_url: str, bank_id: str,
+                      max_questions: Optional[int] = None, *, no_save: bool = False,
+                      question_trace_path: Optional[Path] = None) -> Dict[str, Any]:
         """Run reflect benchmark against an already-ingested shared bank (skips retain step)."""
         try:
             from hindsight_client import Hindsight
@@ -220,6 +235,22 @@ class ReflectBenchmark:
         print(f"\nEvaluating {len(qa_pairs)} questions via reflect()...")
 
         correct = 0
+        question_records = []
+        judge_errors_before = self.judge_errors
+        run_started = time.monotonic()
+
+        def save_question_trace(complete=False, result=None):
+            if question_trace_path is None:
+                return
+            path = Path(question_trace_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            value = {"complete": complete, "questions": question_records}
+            if result is not None:
+                value["result"] = result
+            temporary = path.with_suffix(path.suffix + ".tmp")
+            temporary.write_text(json.dumps(value, indent=2) + "\n")
+            temporary.chmod(0o600)
+            temporary.replace(path)
         total_latency = 0.0
         successful_calls = 0
         consecutive_failures = 0
@@ -270,8 +301,13 @@ class ReflectBenchmark:
             print(f"  {'✓' if is_correct else '✗'} Q{i} ({latency:.1f}s): {question[:60]}...", flush=True)
             if is_correct:
                 correct += 1
+            question_records.append({"question_index": i, "question": question,
+                                     "gold_answer": expected, "generated_answer": predicted,
+                                     "call_succeeded": call_succeeded, "latency_s": latency,
+                                     "correct": is_correct, "judge_reasoning": self.last_judge_reasoning})
+            save_question_trace()
 
-        total = len(qa_pairs)
+        total = len(question_records)
         accuracy = round(correct / total * 100, 1) if total > 0 else 0
         avg_latency_s = round(total_latency / successful_calls, 3) if successful_calls > 0 else 0
         print(f"\n=== Results ===")
@@ -286,13 +322,29 @@ class ReflectBenchmark:
             "model_id": model_id,
             "provider_id": provider_id,
             "sample_id": sample_id,
+            "dataset": "locomo_conv43",
+            "selected_questions": len(qa_pairs),
+            "dataset_questions": len(item["qa"]),
+            "partial": total != len(item["qa"]),
+            "successful_calls": successful_calls,
+            "reflect_errors": total - successful_calls,
+            "judge_errors": self.judge_errors - judge_errors_before,
+            "judge_model": self.judge_model,
+            "judge_reasoning_effort": self.judge_reasoning_effort,
+            "budget": "low",
+            "elapsed_seconds": round(time.monotonic() - run_started, 3),
         }
-        path = _save_reflect_result(provider_id, model_id, result)
-        print(f"Results saved to {path}")
+        save_question_trace(complete=total == len(qa_pairs), result=result)
+        if not no_save:
+            path = _save_reflect_result(provider_id, model_id, result)
+            print(f"Results saved to {path}")
         return result
 
     def _judge_answer(self, question: str, expected: str, predicted: str) -> bool:
+        self.last_judge_reasoning = None
         if not self.llm_client:
+            if self.strict_judge:
+                raise RuntimeError("Strict judging requires a configured judge")
             return expected.lower() in predicted.lower()
 
         prompt = f"""{LOCOMO_JUDGE_PROMPT}
@@ -306,13 +358,22 @@ If it's correct, set correct=true.
 Respond with JSON: {{"reasoning": "...", "correct": true or false}}"""
 
         try:
+            kwargs = {"reasoning_effort": self.judge_reasoning_effort} if self.judge_reasoning_effort else {}
             response = self.llm_client.chat.completions.create(
                 model=self.judge_model,
                 messages=[{"role": "user", "content": prompt}],
                 response_format={"type": "json_object"},
                 temperature=0,
+                **kwargs,
             )
-            return bool(json.loads(response.choices[0].message.content).get("correct", False))
+            data = json.loads(response.choices[0].message.content)
+            if self.strict_judge and not isinstance(data.get("correct"), bool):
+                raise ValueError("Judge must return a boolean correct field")
+            self.last_judge_reasoning = data.get("reasoning")
+            return bool(data.get("correct", False))
         except Exception as e:
+            self.judge_errors += 1
+            if self.strict_judge:
+                raise RuntimeError("Reflect judge failed; string-match fallback is disabled") from e
             print(f"Warning: Judge failed ({e}), falling back to string matching", flush=True)
             return expected.lower() in predicted.lower()
