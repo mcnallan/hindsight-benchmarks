@@ -1514,6 +1514,63 @@
         "retain",
         "quality"
       ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.5-4b-redhat-w8a8-fp8kv-no-thinking-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Qwen3.5 4B Redhat (W8A8, FP8 KV, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "qwen35-redhat-w8a8",
+      "method": "url",
+      "url": "http://127.0.0.1:18142/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Pinned upstream native INT8 linear kernels; FP8 E4M3 FlashInfer KV, FP32 recurrent state, text-only, no speculation, eight slots; explicit no-thinking strict extraction at 16384 cap. Loopback endpoint requires its SSH tunnel. Smoke/review required before full; prepared row does not imply completed results. GPT-6 Sol answers and judge.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.5-4b-kiln-w8a8-fp8kv-no-thinking-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Qwen3.5 4B Kiln (W8A8, FP8 KV, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "qwen35-kiln-w8a8",
+      "method": "url",
+      "url": "http://127.0.0.1:18143/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Rejected after two repeated strict-extraction 16384-token whitespace failures. Worker stopped; no full evaluation launched. Prepared row preserves candidate identity, not a completed score. First clean smoke and raw failures remain private. Native W8A8, FP8 FlashInfer, no thinking, eight slots.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.5-4b-production-w4a8-fp8kv-no-thinking-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Qwen3.5 4B production Dynamo (W4A8, FP8 KV, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "qwen3.5-4b",
+      "method": "url",
+      "url": "http://10.10.5.1:8000/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Fresh production Dynamo baseline routed to GPU2 while GPU1 LLMs serve independent W8 trials; Ampere W4A8 Marlin, FP8 FlashInfer, FP32 state, eight slots, no speculation, CPU KV LRU retained. Same strict extraction, BGE/MiniLM and GPT-6 Sol answer/judge pipeline as W8 comparison. Historical results remain separate.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     }
   ]
 }

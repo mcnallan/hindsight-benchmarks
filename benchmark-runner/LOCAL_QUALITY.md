@@ -85,6 +85,63 @@ watch -n 5 'bash benchmark-runner/monitor_brilliance_quality.sh /absolute/path/t
 For the standalone GPU1-host endpoints, use
 `run_gpu1_quality.sh PROFILE RUN_DIR [smoke|full|auto]`.
 
+`qwen35-4b-redhat-w8a8` and `qwen35-4b-kiln-w8a8` target the independent
+loopback SSH-forwarded ports 18142/18143. Both select native INT8 linear kernels,
+FP8 E4M3 KV with FlashInfer, FP32 recurrent state, thinking OFF, text-only loading
+and eight scheduler slots. Supply selected-deployment provenance with matching
+`served_model_name`, `linear_activation_dtype: int8`, `kv_dtype: fp8_e4m3`,
+positive `runtime_kv_tokens` and `server_max_num_seqs: 8`. Their dashboard IDs
+name the quant, FP8 KV, retrieval and QA model separately from production W4.
+Use explicit `smoke`, inspect the real source/fact and question traces, and
+record the bounded review using `handoff_gpu1_quality.py record-review` before
+explicit `full`; `auto` is refused. Each model uses separate capture ports,
+temporary Hindsight/database stacks, run directories and result IDs. Keep the
+SSH forwards alive through both phases. A prepared dashboard row or running
+smoke does not imply a completed quality score.
+
+`qwen35-4b-production-w4a8` reruns the current production Qwen through Dynamo
+using the same strict schema, retrieval and GPT-6 Sol QA pipeline. Set
+`QUALITY_DYNAMO_WORKER_ID` to the current decimal GPU2 generation instance ID
+from Dynamo `/health`, and record that integer as `dynamo_worker_id` in selected
+deployment provenance. The capture proxy adds both supported Dynamo placement
+controls and records the effective body. Smoke/full bind the same worker pin
+in `quality-profile.json`; obtain a new pin and fresh run if the worker restarts.
+Normal production routing is unchanged. This keeps a GPU2 baseline pinned even
+when another production worker rejoins. A production run may overlap ordinary
+traffic and retains its CPU KV cache, so its retain time is not an isolated
+performance measurement.
+
+For these comparisons, prefer the existing six-question ability selection
+below to supplement the default two abstention questions. Keep the complete
+full evaluation unfiltered. A technical smoke pass establishes serving and
+schema reliability for that run; manual source/recall findings remain quality
+limitations to report. A repeated token-cap whitespace failure remains visible
+even when an earlier smoke passed.
+
+For an explicitly requested diagnostic rerun of this production baseline,
+`QUALITY_DIAGNOSTIC_FULL=1` permits `full` after a completed smoke recovered an
+extraction failure but failed its raw trace gate. This option is limited to
+`qwen35-4b-production-w4a8`; candidate profiles still require a clean technical
+smoke. It requires completed question evidence, stored/recalled facts, no QA
+errors and the same manual source review. The original failed status stays
+unchanged; `diagnostic-admission.json` and a separate admission status explain
+the exception. Full request/response validation remains strict, so recovered
+full-run extraction failures can still produce a failed trace status alongside
+a saved scored result. Do not describe that result as a clean reliability pass.
+Dataset, prompts, retrieval and scoring are unchanged; there is no automatic
+restart or retry of the run.
+
+`monitor_gpu1_quality.sh` reports completed question scoring separately from
+the extraction trace gate. A full invocation can save all 80 scored questions
+and then finish with `trace_failed:1` because the gate inspects every captured
+LLM attempt, including failed attempts recovered by Hindsight retries. It checks
+model/thinking/cap controls, transport and request/response completeness, clean
+finish reasons, schema-valid facts JSON, reasoning and whitespace loops. It
+does not evaluate whether the extracted facts are faithful to their sources;
+that still requires manual source review and the unchanged benchmark scoring.
+Keep the failed trace status alongside the completed score instead of treating
+a retry as a clean reliability pass or restarting a completed benchmark.
+
 When the same reviewed model recipe is staged on a different endpoint, set
 `QUALITY_RETAIN_UPSTREAM_URL` to its HTTP(S) root URL without `/v1` or embedded
 credentials. The override applies to preflight, capture forwarding and Hindsight

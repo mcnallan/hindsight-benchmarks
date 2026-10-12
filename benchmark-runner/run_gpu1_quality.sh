@@ -6,6 +6,12 @@ RUNNER_DIR=${QUALITY_RUNNER_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && 
 PROFILE=${1:?usage: run_gpu1_quality.sh PROFILE RUN_DIR [smoke|full|auto]}
 RUN_DIR=${2:?usage: run_gpu1_quality.sh PROFILE RUN_DIR}
 MODE=${3:-auto}
+DIAGNOSTIC_FULL=${QUALITY_DIAGNOSTIC_FULL:-0}
+case "$DIAGNOSTIC_FULL" in 0|1) ;; *) echo 'QUALITY_DIAGNOSTIC_FULL must be 0 or 1' >&2; exit 2 ;; esac
+if [[ $DIAGNOSTIC_FULL == 1 && ( $MODE != full || $PROFILE != qwen35-4b-production-w4a8 ) ]]; then
+  echo 'Diagnostic full admission is limited to an explicitly requested production baseline full phase' >&2
+  exit 2
+fi
 export QUALITY_JUDGE_MODEL=${QUALITY_JUDGE_MODEL:-gpt-6-sol}
 case "$MODE" in auto|smoke|full) ;; *) echo 'Mode must be auto, smoke, or full' >&2; exit 2 ;; esac
 PYTHON="$RUNNER_DIR/.venv/bin/python"
@@ -13,6 +19,21 @@ EXTRA_BODY_PROFILE=no-thinking
 THINKING_MODE=off
 TRACE_REASONING_ARGS=()
 case "$PROFILE" in
+  qwen35-4b-production-w4a8)
+    MODEL=qwen3.5-4b
+    RESULT_ID=qwen3.5-4b-production-w4a8-fp8kv-no-thinking-bge-minilm
+    LABEL='Qwen3.5 4B production Dynamo (W4A8, FP8 KV, no thinking, BGE/MiniLM)'
+    UPSTREAM=http://10.10.5.1:8000 ;;
+  qwen35-4b-redhat-w8a8)
+    MODEL=qwen35-redhat-w8a8
+    RESULT_ID=qwen3.5-4b-redhat-w8a8-fp8kv-no-thinking-bge-minilm
+    LABEL='Qwen3.5 4B RedHat (native W8A8, FP8 KV, no thinking, BGE/MiniLM)'
+    UPSTREAM=http://127.0.0.1:18142 ;;
+  qwen35-4b-kiln-w8a8)
+    MODEL=qwen35-kiln-w8a8
+    RESULT_ID=qwen3.5-4b-kiln-w8a8-fp8kv-no-thinking-bge-minilm
+    LABEL='Qwen3.5 4B Kiln (native W8A8, FP8 KV, no thinking, BGE/MiniLM)'
+    UPSTREAM=http://127.0.0.1:18143 ;;
   qwen35-9b)
     MODEL=qwen3.5-9b-test
     RESULT_ID=qwen3.5-9b-no-thinking-int4-bge-minilm
@@ -87,12 +108,17 @@ if [[ $QUALITY_JUDGE_MODEL != gpt-5.6-luna ]]; then
   RESULT_ID=$RESULT_ID-qa-$QUALITY_JUDGE_MODEL
   LABEL="$LABEL [answers and judge: $QUALITY_JUDGE_MODEL]"
 fi
-if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* ) && $MODE == auto ]]; then
+if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* ) && $MODE == auto ]]; then
   echo 'This profile requires smoke plus the manual source-review handoff before full' >&2
   exit 2
 fi
 : "${CODEX_LB_TOKEN:?CODEX_LB_TOKEN is required}"
 : "${QUALITY_MODEL_PROVENANCE_FILE:?Set a sanitized selected-deployment JSON after performance/sanity validation}"
+DYNAMO_PIN_ARGS=()
+if [[ -n ${QUALITY_DYNAMO_WORKER_ID:-} ]]; then
+  [[ $QUALITY_DYNAMO_WORKER_ID =~ ^[0-9]+$ ]] || { echo 'Dynamo worker ID must be decimal nonnegative' >&2; exit 2; }
+  DYNAMO_PIN_ARGS=(--dynamo-worker-id "$QUALITY_DYNAMO_WORKER_ID")
+fi
 export PYTHONUNBUFFERED=1
 export QUALITY_RETAIN_API_KEY=${QUALITY_RETAIN_API_KEY:-EMPTY}
 export QUALITY_RETRIEVAL_API_KEY
@@ -115,7 +141,7 @@ RUN_DIR=$(cd -- "$RUN_DIR" && pwd)
 if [[ $MODE == full ]]; then
   [[ $(cat "$RUN_DIR/judge-model.txt") == "$QUALITY_JUDGE_MODEL" ]] || { echo 'Judge model differs from smoke' >&2; exit 2; }
   cmp -s -- "$QUALITY_MODEL_PROVENANCE_FILE" "$RUN_DIR/deployment.json" || { echo 'Deployment recipe differs from smoke' >&2; exit 2; }
-  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* ]]; then
+  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* ]]; then
     "$PYTHON" - "$RUNNER_DIR" "$RUN_DIR" "$PROFILE" <<'PY' || exit 2
 import json, sys
 from pathlib import Path
@@ -127,12 +153,29 @@ if sys.argv[3].startswith('qwen36-35b-'):
     assert report.get('semantic_result') == 'pass', 'Qwen3.6 full requires a passed source-faithfulness smoke review'
 PY
   fi
-  "$PYTHON" - "$RUN_DIR/smoke_trace_summary.json" "$RUN_DIR/status.tsv" "$PROFILE" <<'PY' || exit 2
+  "$PYTHON" - "$RUN_DIR/smoke_trace_summary.json" "$RUN_DIR/status.tsv" "$PROFILE" "$DIAGNOSTIC_FULL" <<'PY' || exit 2
 import json, sys
+from pathlib import Path
 summary = json.load(open(sys.argv[1]))
 rows = [line.strip().split('\t') for line in open(sys.argv[2])]
-assert summary.get('error_count', len(summary['errors'])) == 0 and summary['extracted_facts'] > 0, 'Smoke trace gate did not pass'
-assert [sys.argv[3], 'smoke', 'passed'] in [row[:3] for row in rows], 'Smoke did not pass'
+if sys.argv[4] == '1':
+    # A diagnostic baseline measures the deployed pipeline's recovered failures;
+    # it does not rewrite the failed smoke status or waive full trace validation.
+    run = Path(sys.argv[1]).parent
+    smoke = json.loads((run / 'smoke-question-trace.private.json').read_text())
+    result = smoke['result']
+    assert smoke.get('complete') and result['total'] > 0, 'Diagnostic baseline needs a completed smoke'
+    assert result['generation_errors'] == 0 and result['judge_errors'] == 0, 'QA pipeline did not recover'
+    assert result['stored_fact_tokens'] > 0 and result['recalled_fact_count'] > 0, 'Retain/recall did not recover'
+    assert any(row[:2] == [sys.argv[3], 'smoke'] and row[2].startswith('trace_failed:') for row in rows), 'Preserve an actual failed trace gate'
+    (run / 'diagnostic-admission.json').write_text(json.dumps({
+        'diagnostic_full': True, 'smoke_trace_clean': False,
+        'reason': 'Explicit production-baseline comparison after completed smoke recovered extraction failure; raw failure retained',
+        'smoke_trace_errors': summary['errors'], 'full_trace_validation_unchanged': True,
+    }, indent=2) + '\n')
+else:
+    assert summary.get('error_count', len(summary['errors'])) == 0 and summary['extracted_facts'] > 0, 'Smoke trace gate did not pass'
+    assert [sys.argv[3], 'smoke', 'passed'] in [row[:3] for row in rows], 'Smoke did not pass'
 assert not any(row[1] == 'full' for row in rows[1:]), 'Full phase already started; use a new run'
 PY
 else
@@ -140,6 +183,23 @@ else
   printf '%s\n' "$QUALITY_JUDGE_MODEL" >"$RUN_DIR/judge-model.txt"
 fi
 "$PYTHON" -m json.tool "$RUN_DIR/deployment.json" >/dev/null || exit 2
+if [[ -n ${QUALITY_DYNAMO_WORKER_ID:-} ]]; then
+  "$PYTHON" - "$RUN_DIR/deployment.json" "$QUALITY_DYNAMO_WORKER_ID" <<'PY' || exit 2
+import json, sys
+deployment = json.load(open(sys.argv[1]))
+assert deployment.get('dynamo_worker_id') == int(sys.argv[2]), 'Dynamo pin differs from selected worker provenance'
+PY
+fi
+if [[ $PROFILE == qwen35-4b-*-w8a8 ]]; then
+  "$PYTHON" - "$RUN_DIR/deployment.json" "$MODEL" <<'PY' || exit 2
+import json, sys
+deployment = json.load(open(sys.argv[1]))
+assert deployment.get('served_model_name') == sys.argv[2], 'W8A8 served model differs from selected deployment'
+assert deployment.get('kv_dtype') == 'fp8_e4m3', 'W8A8 smoke selects the measured FP8 KV recipe'
+assert deployment.get('linear_activation_dtype') == 'int8', 'Record actual native INT8 linear kernels'
+assert deployment.get('runtime_kv_tokens', 0) > 0 and deployment.get('server_max_num_seqs') == 8, 'Record selected eight-slot capacity before smoke'
+PY
+fi
 if [[ $PROFILE == qwen36-35b-gsq-* ]]; then
   "$PYTHON" - "$RUN_DIR/deployment.json" "$PROFILE" <<'PY' || exit 2
 import json, sys
@@ -170,6 +230,8 @@ if os.environ.get('QUALITY_JUDGE_MODEL', 'gpt-6-sol') != 'gpt-5.6-luna':
     profile['judge_model'] = profile['answer_generator_model']
 if os.environ.get('QUALITY_RETAIN_UPSTREAM_URL'):
     profile['upstream_root'] = os.environ['QUALITY_RETAIN_UPSTREAM_URL'].rstrip('/')
+if os.environ.get('QUALITY_DYNAMO_WORKER_ID'):
+    profile['dynamo_worker_id'] = int(os.environ['QUALITY_DYNAMO_WORKER_ID'])
 if sys.argv[2] == 'full':
     if path.exists():
         assert json.loads(path.read_text()) == profile, 'Quality matrix arm differs from smoke'
@@ -203,6 +265,10 @@ COMMON_ARGS=(
   --extra-body-profile "$EXTRA_BODY_PROFILE" --retrieval-profile bge-minilm
   --retain-concurrency 8 --retain-max-completion-tokens 16384 --strict-retain-schema
 )
+if [[ $DIAGNOSTIC_FULL == 1 ]]; then
+  record admission diagnostic_recovered_smoke
+  COMMON_ARGS+=(--label "$LABEL [diagnostic baseline: recovered smoke extraction failure]")
+fi
 run_phase() {
   local phase=$1
   shift
@@ -210,7 +276,7 @@ run_phase() {
   local capture_port
   capture_port=$("$PYTHON" -c 'import socket; s=socket.socket(); s.bind(("0.0.0.0",0)); print(s.getsockname()[1]); s.close()')
   "$PYTHON" "$RUNNER_DIR/capture_openai_proxy.py" \
-    --listen-port "$capture_port" --upstream "$UPSTREAM" --output "$trace" >"$RUN_DIR/proxy-$phase.log" 2>&1 &
+    --listen-port "$capture_port" --upstream "$UPSTREAM" --output "$trace" "${DYNAMO_PIN_ARGS[@]}" >"$RUN_DIR/proxy-$phase.log" 2>&1 &
   proxy_pid=$!
   sleep 1
   if ! kill -0 "$proxy_pid" 2>/dev/null; then record "$phase" capture_proxy_failed; return 1; fi
