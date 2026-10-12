@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 RUNNER = Path(__file__).resolve().parent
-PROFILES = ("qwen35-9b", "mellum21-12b", "mellum2-instruct")
+PROFILES = ("qwen35-9b", "mellum21-12b", "mellum21-12b-no-thinking", "mellum2-instruct")
 
 
 def digest(path):
@@ -162,7 +162,8 @@ def handoff(args):
                 argv = ["tmux", "new-session", "-d", "-s", args.full_session]
                 env = dict(os.environ, QUALITY_MODEL_PROVENANCE_FILE=str(run / "deployment.json"))
                 for name in ("CODEX_LB_TOKEN", "QUALITY_MODEL_PROVENANCE_FILE", "QUALITY_RETAIN_API_KEY",
-                             "QUALITY_RETRIEVAL_API_KEY", "QUALITY_JUDGE_MODEL"):
+                             "QUALITY_RETRIEVAL_API_KEY", "QUALITY_JUDGE_MODEL",
+                             "QUALITY_LINEAR_ACTIVATIONS", "QUALITY_KV_DTYPE"):
                     if name in env:
                         argv.extend(["-e", name + "=" + env[name]])
                 argv.append(command)

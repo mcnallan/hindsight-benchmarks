@@ -1,0 +1,235 @@
+{
+  "model_id": "qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-bf16kv-bge-minilm-whitespace-guard-qa-gpt-6-sol",
+  "provider_id": "local",
+  "quality": {
+    "accuracy": 35.0,
+    "correct": 28,
+    "total": 80,
+    "dataset": "beam_128k_subset",
+    "answer_generator_model": "gpt-6-sol",
+    "judge_model": "gpt-6-sol",
+    "judge_base_url": "http://127.0.0.1:2455/v1",
+    "judge_reasoning_effort": "medium",
+    "context_mode": "facts_only",
+    "hindsight_version": "0.9.2",
+    "stored_fact_tokens": 88871,
+    "stored_fact_tokens_by_conversation": {
+      "beam-100k-1": 15724,
+      "beam-100k-13": 21186,
+      "beam-100k-16": 24065,
+      "beam-100k-18": 27896
+    },
+    "token_counter": "cl100k_base",
+    "per_ability": {
+      "abstention": {
+        "correct": 2,
+        "total": 8
+      },
+      "contradiction_resolution": {
+        "correct": 0,
+        "total": 8
+      },
+      "event_ordering": {
+        "correct": 0,
+        "total": 8
+      },
+      "information_extraction": {
+        "correct": 4,
+        "total": 8
+      },
+      "instruction_following": {
+        "correct": 6,
+        "total": 8
+      },
+      "knowledge_update": {
+        "correct": 4,
+        "total": 8
+      },
+      "multi_session_reasoning": {
+        "correct": 2,
+        "total": 8
+      },
+      "preference_following": {
+        "correct": 6,
+        "total": 8
+      },
+      "summarization": {
+        "correct": 0,
+        "total": 8
+      },
+      "temporal_reasoning": {
+        "correct": 4,
+        "total": 8
+      }
+    },
+    "generation_errors": 0,
+    "judge_errors": 0,
+    "recalled_fact_count": 2400,
+    "recall_empty_count": 0,
+    "partial": false,
+    "model_id": "qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-bf16kv-bge-minilm-whitespace-guard-qa-gpt-6-sol",
+    "provider_id": "local",
+    "sample_ids": [
+      "beam-100k-1",
+      "beam-100k-13",
+      "beam-100k-16",
+      "beam-100k-18"
+    ],
+    "question_abilities": [],
+    "retain_wall_clock_seconds": 1441.229,
+    "evaluation_wall_clock_seconds": 655.027,
+    "end_to_end_wall_clock_seconds": 2096.619,
+    "model_label": "Qwen3.6 35B GSQ (mixed W2A16/W8A16, BF16 KV, no thinking, BGE/MiniLM) [answers and judge: gpt-6-sol]",
+    "retain_llm_model": "qwen3.6-35b-gsq-test",
+    "retain_extra_body_profile": "no-thinking",
+    "retain_thinking_enabled": false,
+    "retain_thinking_type": null,
+    "retain_thinking_budget_tokens": null,
+    "retain_llm_base_url": "http://host.docker.internal:57341/v1",
+    "retain_llm_upstream_base_url": "http://127.0.0.1:18137/v1",
+    "retain_wire_trace": "/home/blake/Projects/hindsight-benchmarks/benchmark-runner/../results/traces/qwen36-35b-gsq-bf16kv-qwen36-gsq-bf16-guard-sol-sixq-20261009-2052/full.ndjson",
+    "retain_deployment": {
+      "served_model_name": "qwen3.6-35b-gsq-test",
+      "linear_activation_dtype": "bfloat16",
+      "kv_dtype": "bfloat16",
+      "runtime_kv_tokens": 507278,
+      "max_num_seqs": 4,
+      "max_model_len": 131072,
+      "max_num_batched_tokens": 4096,
+      "gpu_memory_utilization": 0.97,
+      "profiler_enabled": false,
+      "famp_marlin": 0,
+      "moe_backend": "humming",
+      "revision": "543019cbe7d10f6d2e78d4017606a42bd50ea7e9",
+      "image": "ghcr.io/avesed/vllm-ampere-optimized@sha256:6744eac95c9d0ee426c5c60ebaf72437da551e8a1786e8d2270e5164fb17dbfc",
+      "container_id": "74fe04cd7859c4deb79899d0e0bd5b09ca8cbdf7f64a020202a5d9813cd9b0e0",
+      "ssm_dtype": "float32",
+      "mamba_cache_mode": "align",
+      "prefix_match_unit": 16,
+      "cpu_kv_bytes": 17179869184,
+      "cpu_model_offload_gb": 0,
+      "speculative_config": null,
+      "native_chat_template": true,
+      "physical_gpu": 0,
+      "retrieval_co_resident": false,
+      "background": "Twu Hindsight full on physicalGPU1; host sharedRAM/thermals; GPU0power420W versus historicalTwu350W",
+      "quality_admission": "diagnostic authorized; arithmetic named-tool failure preserved",
+      "runtime_gpu_blocks": 507,
+      "runtime_kv_memory_bytes": 10964828160,
+      "model_revision": "543019cbe7d10f6d2e78d4017606a42bd50ea7e9",
+      "image_id": "sha256:6744eac95c9d0ee426c5c60ebaf72437da551e8a1786e8d2270e5164fb17dbfc",
+      "recurrent_state_dtype": "float32",
+      "server_max_num_seqs": 4,
+      "speculative_decoding": false,
+      "cpu_model_layers": 0,
+      "native_thinking": false,
+      "cpu_kv_lru_bytes": 17179869184,
+      "owner_handoff_file": "/home/blake/.codex/worktrees/dfc5/agents-mono/.artifacts/inference/qwen36-gsq-20261009/attempt08/quality-handoff.json",
+      "sampled_memory_summary": {
+        "gpu_blocks": 507,
+        "gpu_kv_tokens": 507278,
+        "kv_bytes": 10964828160,
+        "graphs_gib": 0.58,
+        "min_direct_free_mib": 542.0,
+        "peak_used_mib": 23583.0,
+        "samples": 919,
+        "reserved_mib": [
+          "452"
+        ],
+        "host_min_available_gib": 21.15758514404297,
+        "max_temperature_c": 85.0,
+        "max_power_w": 417.38,
+        "power_limit_w": 420,
+        "sampled_windows": [
+          {
+            "source": "matrix-runtime-telemetry.private.jsonl",
+            "start": "2026-10-09T19:48:48.630359+00:00",
+            "end": "2026-10-09T19:57:21.730167+00:00",
+            "samples": 514
+          },
+          {
+            "source": "continuation-telemetry.private.jsonl",
+            "start": "2026-10-09T20:29:41.853328+00:00",
+            "end": "2026-10-09T20:31:51.856679+00:00",
+            "samples": 131
+          },
+          {
+            "source": "runtime-telemetry.private.jsonl",
+            "start": "2026-10-09T20:31:52.205369+00:00",
+            "end": "2026-10-09T20:36:25.239283+00:00",
+            "samples": 274
+          }
+        ],
+        "unsampled_gap_no_guarantee": true,
+        "clock_ranges": {
+          "clocks.sm": [
+            1800.0,
+            1935.0
+          ],
+          "clocks.mem": [
+            9501.0,
+            9501.0
+          ]
+        },
+        "slowdown_reason_counts": {
+          "clocks_event_reasons.sw_thermal_slowdown": {
+            "Not Active": 533,
+            "Active": 386
+          },
+          "clocks_event_reasons.hw_thermal_slowdown": {
+            "Not Active": 919
+          },
+          "clocks_event_reasons.sw_power_cap": {
+            "Not Active": 546,
+            "Active": 373
+          }
+        },
+        "cold_c4_input_tokens_per_second": 5047.491089830223,
+        "warm_c4_output_tokens_per_second": 269.0800485207952,
+        "warm_outputs_each": 2048,
+        "short_external_cached_tokens": 4176,
+        "short_cpu_restore_bytes": 150896640,
+        "long_external_cached_tokens": 65584,
+        "long_cpu_restore_bytes": 1426882560,
+        "long_restore_ttft_seconds": 0.427667339972686,
+        "pressure_gpu_to_cpu_bytes": 13421445120,
+        "scope": "Sampled heterogeneousC1/C4 matrix4K/16K/38619/64K+1024; coldC4\u00d764K+2048; exactshort/longCPUrestore. StrictHindsight pending."
+      },
+      "hindsight_mem_envelope": "pending; mustsampledirectfreewhileeightqueued/fouractive",
+      "endpoint": "http://127.0.0.1:18137/v1",
+      "container_started_at": "2026-10-09T20:48:38.20406778Z",
+      "json_whitespace_guard": true,
+      "structured_outputs_config": {
+        "backend": "xgrammar",
+        "disable_any_whitespace": true
+      },
+      "server_structured_outputs_config": {
+        "backend": "xgrammar",
+        "disable_any_whitespace": true
+      },
+      "structured_outputs_config_proof": "/home/blake/.codex/worktrees/dfc5/agents-mono/.artifacts/inference/qwen36-gsq-20261009/attempt08/startup.private.log",
+      "installed_guard_source_proof": "/home/blake/.codex/worktrees/dfc5/agents-mono/.artifacts/inference/qwen36-gsq-20261009/whitespace-guard-source.private/conclusion.json",
+      "performance_measured_json_whitespace_guard": false,
+      "guarded_performance_remeasured": false,
+      "quality_state": "guardedworkerhealthy;rootexact4replaypending; nofreshsmoke/fullpassed",
+      "previous_unguarded_strict_min_free_mib": 442
+    },
+    "retain_temperature": 0.1,
+    "retrieval_profile": "bge-minilm",
+    "retain_llm_concurrency": 8,
+    "retain_batch_tokens": 50000,
+    "retain_max_completion_tokens": 16384,
+    "strict_retain_schema": true,
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_base_url": "http://host.docker.internal:4000/v1",
+    "embedding_batch_size": 8,
+    "embedding_dimensions": 384,
+    "embedding_query_prefix": "Represent this sentence for searching relevant passages: ",
+    "embedding_passage_prefix": "",
+    "reranker_provider": "cohere",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "reranker_base_url": "http://host.docker.internal:4000/v1/rerank",
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/runs/qwen36-gsq-bf16-guard-sol-sixq-20261009-2052/full-question-trace.private.json"
+  }
+}

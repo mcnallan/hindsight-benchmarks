@@ -1,0 +1,162 @@
+{
+  "model_id": "qwen3.6-35b-twu-low-latency-no-thinking-int4-bge-minilm",
+  "provider_id": "local",
+  "quality": {
+    "accuracy": 38.8,
+    "correct": 31,
+    "total": 80,
+    "dataset": "beam_128k_subset",
+    "judge_model": "gpt-5.6-luna",
+    "judge_base_url": "http://127.0.0.1:2455/v1",
+    "judge_reasoning_effort": "medium",
+    "context_mode": "facts_only",
+    "hindsight_version": "0.9.2",
+    "stored_fact_tokens": 85757,
+    "stored_fact_tokens_by_conversation": {
+      "beam-100k-1": 15953,
+      "beam-100k-13": 20246,
+      "beam-100k-16": 22880,
+      "beam-100k-18": 26678
+    },
+    "token_counter": "cl100k_base",
+    "per_ability": {
+      "abstention": {
+        "correct": 2,
+        "total": 8
+      },
+      "contradiction_resolution": {
+        "correct": 0,
+        "total": 8
+      },
+      "event_ordering": {
+        "correct": 0,
+        "total": 8
+      },
+      "information_extraction": {
+        "correct": 5,
+        "total": 8
+      },
+      "instruction_following": {
+        "correct": 7,
+        "total": 8
+      },
+      "knowledge_update": {
+        "correct": 4,
+        "total": 8
+      },
+      "multi_session_reasoning": {
+        "correct": 4,
+        "total": 8
+      },
+      "preference_following": {
+        "correct": 6,
+        "total": 8
+      },
+      "summarization": {
+        "correct": 0,
+        "total": 8
+      },
+      "temporal_reasoning": {
+        "correct": 3,
+        "total": 8
+      }
+    },
+    "generation_errors": 0,
+    "judge_errors": 0,
+    "recalled_fact_count": 2400,
+    "recall_empty_count": 0,
+    "partial": false,
+    "model_id": "qwen3.6-35b-twu-low-latency-no-thinking-int4-bge-minilm",
+    "provider_id": "local",
+    "sample_ids": [
+      "beam-100k-1",
+      "beam-100k-13",
+      "beam-100k-16",
+      "beam-100k-18"
+    ],
+    "question_abilities": [],
+    "retain_wall_clock_seconds": 1576.182,
+    "evaluation_wall_clock_seconds": 565.156,
+    "end_to_end_wall_clock_seconds": 2141.705,
+    "model_label": "Qwen3.6 35B Twu LowLatency (local INT4, no thinking, BGE/MiniLM)",
+    "retain_llm_model": "qwen3.6-35b-test",
+    "retain_extra_body_profile": "no-thinking",
+    "retain_thinking_enabled": false,
+    "retain_thinking_type": null,
+    "retain_thinking_budget_tokens": null,
+    "retain_llm_base_url": "http://host.docker.internal:53375/v1",
+    "retain_llm_upstream_base_url": "http://127.0.0.1:18136/v1",
+    "retain_wire_trace": "/home/blake/Projects/hindsight-benchmarks/benchmark-runner/../results/traces/qwen36-35b-twu-low-latency-qwen36-twu-low-latency-sixq-20261009-1850/full.ndjson",
+    "retain_deployment": {
+      "served_model_name": "qwen3.6-35b-test",
+      "model_family": "Qwen3.6 35B Twu LowLatency",
+      "linear_activation_dtype": "bfloat16",
+      "activation_override": "none",
+      "activation_scope": "Owner-validated native W4A16 BF16 path with FAMP=0; no forced INT8 activation override. No new kernel profiler run during quality.",
+      "kv_dtype": "fp8_e4m3",
+      "recurrent_state_dtype": "float32",
+      "runtime_kv_tokens": 336228,
+      "server_max_num_seqs": 4,
+      "server_max_num_batched_tokens": 4096,
+      "profiler_enabled": false,
+      "speculative_decoding": false,
+      "cpu_model_layers": 0,
+      "cpu_kv_lru_bytes": 17179869184,
+      "native_thinking": false,
+      "endpoint": "http://127.0.0.1:18136/v1",
+      "image_id": "sha256:6744eac95c9d0ee426c5c60ebaf72437da551e8a1786e8d2270e5164fb17dbfc",
+      "container_id": "f5711bea6fae5d6d18a656b98fc2a55cc487d4e5a15e1706ac6f80d04e1b863a",
+      "owner_handoff_sha256": "aca09b98fa27eac286258bbf887829d9de677a52c893bab2c1d5644aadec67ad",
+      "owner_handoff_file": "/home/blake/.codex/worktrees/dfc5/agents-mono/.artifacts/inference/qwen36-fit-20261009/attempt16-hindsight-handoff/handoff-receipt.json",
+      "owner_handoff": {
+        "utc": "2026-10-09T18:29:30.658267+00:00",
+        "container_id": "f5711bea6fae5d6d18a656b98fc2a55cc487d4e5a15e1706ac6f80d04e1b863a",
+        "started_utc": "2026-10-09T18:26:59.755084765Z",
+        "image_id": "sha256:6744eac95c9d0ee426c5c60ebaf72437da551e8a1786e8d2270e5164fb17dbfc",
+        "healthy": true,
+        "simple_generation_pass": true,
+        "selected_nonsecret_environment": {
+          "MODEL_ID": "Twu31/Qwen3.6-35B-A3B-GPTQ-INT4-W4A16-LowLatency",
+          "USE_PREFIX_STABLE_CHAT_TEMPLATE": "0",
+          "MODEL_REVISION": "9c988527b18d3fc66e57ffab8043abd33d706c15",
+          "MAMBA_SSM_CACHE_DTYPE": "float32",
+          "MAX_MODEL_LEN": "131072",
+          "CPU_KV_CACHE_BYTES": "17179869184",
+          "GPU_MEMORY_UTILIZATION": "0.97",
+          "ATTENTION_BACKEND": "FLASHINFER",
+          "HF_OVERRIDES": "",
+          "VLLM_MARLIN_INPUT_DTYPE": "none",
+          "KV_CACHE_DTYPE": "fp8_e4m3",
+          "MAX_NUM_SEQS": "4",
+          "FAMP_MARLIN": "0",
+          "VLLM_PROFILER_CONFIG": "",
+          "KV_CACHE_BYTES": "3798958080"
+        },
+        "actual_gpu_kv_capacity_tokens": 336228,
+        "kv_log_line": "2026-10-09T18:28:24.908170575Z (EngineCore pid=214) INFO 10-09 18:28:24 [kv_cache_utils.py:2032] GPU KV cache size: 336,228 tokens, Maximum concurrency for 131,072 tokens per request: 2.57x",
+        "model_allocation_log": "2026-10-09T18:28:20.192815919Z (EngineCore pid=214) INFO 10-09 18:28:20 [gpu_model_runner.py:5500] Model loading took 17.75 GiB memory and 40.144362 seconds",
+        "graph_capture_log": "2026-10-09T18:28:34.266007758Z (EngineCore pid=214) INFO 10-09 18:28:34 [gpu_model_runner.py:7030] Graph capturing finished in 2 secs, took 0.58 GiB",
+        "remote_loopback_endpoint": "http://127.0.0.1:8136/v1",
+        "local_tunnel_endpoint": "http://127.0.0.1:18136/v1",
+        "hindsight_quality_released": true
+      }
+    },
+    "retain_temperature": 0.1,
+    "retrieval_profile": "bge-minilm",
+    "retain_llm_concurrency": 8,
+    "retain_batch_tokens": 50000,
+    "retain_max_completion_tokens": 16384,
+    "strict_retain_schema": true,
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_base_url": "http://host.docker.internal:4000/v1",
+    "embedding_batch_size": 8,
+    "embedding_dimensions": 384,
+    "embedding_query_prefix": "Represent this sentence for searching relevant passages: ",
+    "embedding_passage_prefix": "",
+    "reranker_provider": "cohere",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "reranker_base_url": "http://host.docker.internal:4000/v1/rerank",
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/runs/qwen36-twu-low-latency-sixq-20261009-1850/full-question-trace.private.json"
+  }
+}

@@ -395,6 +395,82 @@
       "provider_name": "Local (self-hosted)",
       "provider_icon": "",
       "pricing_type": "local",
+      "model_id": "mellum2.1-12b-no-thinking-int4-int8linear-fp8kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, no thinking, eligible INT8 linear, FP8 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Use run_gpu1_quality.sh after deployment performance/sanity validation. Thinking disabled; strict retain schema; concurrency 8; 16,384 retain completion cap; BGE-small/MiniLM through local LiteLLM; verified GPT-5.6 Luna generator/judge. Sanitized selected deployment recipe is stored with results.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-no-thinking-int4-int8linear-bf16kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, no thinking, eligible INT8 linear, BF16 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Use run_gpu1_quality.sh after deployment performance/sanity validation. Thinking disabled; strict retain schema; concurrency 8; 16,384 retain completion cap; BGE-small/MiniLM through local LiteLLM; verified GPT-5.6 Luna generator/judge. Sanitized selected deployment recipe is stored with results.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-no-thinking-int4-bf16linear-fp8kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, no thinking, BF16 linear, FP8 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Use run_gpu1_quality.sh after deployment performance/sanity validation. Thinking disabled; strict retain schema; concurrency 8; 16,384 retain completion cap; BGE-small/MiniLM through local LiteLLM; verified GPT-5.6 Luna generator/judge. Sanitized selected deployment recipe is stored with results.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-no-thinking-int4-bf16linear-bf16kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, no thinking, BF16 linear, BF16 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Use run_gpu1_quality.sh after deployment performance/sanity validation. Thinking disabled; strict retain schema; concurrency 8; 16,384 retain completion cap; BGE-small/MiniLM through local LiteLLM; verified GPT-5.6 Luna generator/judge. Sanitized selected deployment recipe is stored with results.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
       "model_id": "mellum2.1-12b-thinking-int4-bge-minilm",
       "model_name": "Mellum 2.1 12B (local INT4, thinking, BGE/MiniLM)",
       "api_model": "mellum2.1-12b-test",
@@ -414,6 +490,82 @@
       "provider_name": "Local (self-hosted)",
       "provider_icon": "",
       "pricing_type": "local",
+      "model_id": "mellum2.1-12b-thinking-int4-int8linear-fp8kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, thinking, eligible INT8 linear, FP8 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU0 endpoint, explicit enable_thinking=true on all retain requests. Strict schema, concurrency eight, completion cap 16,384, separated reasoning checked in both reasoning fields. BGE-small 384 dimensions/MiniLM through local LiteLLM; GPT-5.6 Luna answering/judging. Exact frozen activation/KV/cache recipe is saved in deployment provenance.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-thinking-int4-int8linear-bf16kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, thinking, eligible INT8 linear, BF16 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU0 endpoint, explicit enable_thinking=true on all retain requests. Strict schema, concurrency eight, completion cap 16,384, separated reasoning checked in both reasoning fields. BGE-small 384 dimensions/MiniLM through local LiteLLM; GPT-5.6 Luna answering/judging. Exact frozen activation/KV/cache recipe is saved in deployment provenance.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-thinking-int4-bf16linear-fp8kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, thinking, BF16 linear, FP8 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU0 endpoint, explicit enable_thinking=true on all retain requests. Strict schema, concurrency eight, completion cap 16,384, separated reasoning checked in both reasoning fields. BGE-small 384 dimensions/MiniLM through local LiteLLM; GPT-5.6 Luna answering/judging. Exact frozen activation/KV/cache recipe is saved in deployment provenance.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2.1-12b-thinking-int4-bf16linear-bf16kv-bge-minilm",
+      "model_name": "Mellum 2.1 12B (local INT4, thinking, BF16 linear, BF16 KV, BGE/MiniLM)",
+      "api_model": "mellum2.1-12b-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8121/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "low",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU0 endpoint, explicit enable_thinking=true on all retain requests. Strict schema, concurrency eight, completion cap 16,384, separated reasoning checked in both reasoning fields. BGE-small 384 dimensions/MiniLM through local LiteLLM; GPT-5.6 Luna answering/judging. Exact frozen activation/KV/cache recipe is saved in deployment provenance.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
       "model_id": "mellum2-12b-instruct-int4-bge-minilm",
       "model_name": "Mellum 2 12B Instruct (local INT4, native nonreasoning, BGE/MiniLM)",
       "api_model": "mellum2-instruct-test",
@@ -423,6 +575,82 @@
       "output_price_per_1m": 0,
       "reasoning_effort": "none",
       "notes": "Independent GPU1 endpoint with native Instruct template and no thinking override. cyankiwi/Mellum2-12B-A2.5B-Instruct-AWQ-INT4; activation path recorded from validated selected deployment. Strict schema, concurrency eight, completion cap 16,384; BGE-small/MiniLM through local LiteLLM, GPT-5.6 Luna answering/judging.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2-12b-instruct-int4-int8linear-fp8kv-bge-minilm",
+      "model_name": "Mellum 2 12B Instruct (local INT4, native nonreasoning, eligible INT8 linear, FP8 KV, BGE/MiniLM)",
+      "api_model": "mellum2-instruct-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8122/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU1 endpoint with native Instruct template and no thinking override. cyankiwi/Mellum2-12B-A2.5B-Instruct-AWQ-INT4; activation path recorded from validated selected deployment. Strict schema, concurrency eight, completion cap 16,384; BGE-small/MiniLM through local LiteLLM, GPT-5.6 Luna answering/judging.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2-12b-instruct-int4-int8linear-bf16kv-bge-minilm",
+      "model_name": "Mellum 2 12B Instruct (local INT4, native nonreasoning, eligible INT8 linear, BF16 KV, BGE/MiniLM)",
+      "api_model": "mellum2-instruct-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8122/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU1 endpoint with native Instruct template and no thinking override. cyankiwi/Mellum2-12B-A2.5B-Instruct-AWQ-INT4; activation path recorded from validated selected deployment. Strict schema, concurrency eight, completion cap 16,384; BGE-small/MiniLM through local LiteLLM, GPT-5.6 Luna answering/judging.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2-12b-instruct-int4-bf16linear-fp8kv-bge-minilm",
+      "model_name": "Mellum 2 12B Instruct (local INT4, native nonreasoning, BF16 linear, FP8 KV, BGE/MiniLM)",
+      "api_model": "mellum2-instruct-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8122/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU1 endpoint with native Instruct template and no thinking override. cyankiwi/Mellum2-12B-A2.5B-Instruct-AWQ-INT4; activation path recorded from validated selected deployment. Strict schema, concurrency eight, completion cap 16,384; BGE-small/MiniLM through local LiteLLM, GPT-5.6 Luna answering/judging.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "mellum2-12b-instruct-int4-bf16linear-bf16kv-bge-minilm",
+      "model_name": "Mellum 2 12B Instruct (local INT4, native nonreasoning, BF16 linear, BF16 KV, BGE/MiniLM)",
+      "api_model": "mellum2-instruct-test",
+      "method": "url",
+      "url": "http://192.168.39.244:8122/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate matched activation/KV arm; run_gpu1_quality.sh requires explicit QUALITY_LINEAR_ACTIVATIONS and QUALITY_KV_DTYPE matching observed deployment provenance and actual measured KV capacity. Smoke-and-decide requests do not authorize a full launch. Independent GPU1 endpoint with native Instruct template and no thinking override. cyankiwi/Mellum2-12B-A2.5B-Instruct-AWQ-INT4; activation path recorded from validated selected deployment. Strict schema, concurrency eight, completion cap 16,384; BGE-small/MiniLM through local LiteLLM, GPT-5.6 Luna answering/judging.",
       "benchmarks": [
         "retain",
         "quality"
@@ -1130,6 +1358,158 @@
       "output_price_per_1m": 1.0,
       "notes": "Pricing: Artificial Analysis provider median across OSS providers",
       "price_note": "Artificial Analysis provider median across OSS providers",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-twu-low-latency-no-thinking-int4-bge-minilm",
+      "model_name": "Qwen3.6 35B Twu LowLatency (local INT4, no thinking, BGE/MiniLM)",
+      "api_model": "qwen3.6-35b-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18136/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Selected validated Twu LowLatency runtime reached through the local tunnel; text-only BF16 activations with FAMP=0, FP8 FlashInfer KV, FP32 recurrent state, no speculation or CPU model layers; 16GiB CPU KV LRU, four server slots and batch4096. Strict Hindsight retains use client concurrency8 (queueing expected) and completion cap16384, explicit thinkingOFF; BGE-small384/MiniLM-L6 through local LiteLLM, GPT5.6Luna answer/judge. Frozen BEAM dataset/prompts/recall/scoring. Full requires clean technical trace and passed bounded source-faithfulness smoke review. Sanitized actual deployment provenance is saved with each run.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-bf16kv-bge-minilm",
+      "model_name": "Qwen3.6 35B GSQ (mixed W2A16/W8A16, BF16 KV, no thinking, BGE/MiniLM)",
+      "api_model": "qwen3.6-35b-gsq-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18137/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Prepared quality profile, awaiting owner-selected runtime handoff; no completed score implied. Pinned GSQ routed W2A16 plus dense W8A16 through Humming with native BF16 activations, BF16 KV, FP32 recurrent state, no speculation or CPU model layers, CPU16GiB KV LRU, four server slots. Strict Hindsight client8/cap16384/thinkingOFF; BGE-small384/MiniLM-L6 and shared GPT5.6Luna. Six original questions chosen by abilities before outputs; unchanged full80 only after current technical/source gate. Historical named-tool 40-versus-42 arithmetic failure remains separate from corrected factual copy/reference diagnostics.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-fp8kv-bge-minilm",
+      "model_name": "Qwen3.6 35B GSQ (mixed W2A16/W8A16, FP8 KV, no thinking, BGE/MiniLM)",
+      "api_model": "qwen3.6-35b-gsq-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18137/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Prepared quality profile, awaiting owner-selected runtime handoff; no completed score implied. Pinned GSQ routed W2A16 plus dense W8A16 through Humming with native BF16 activations, FP8 KV, FP32 recurrent state, no speculation or CPU model layers, CPU16GiB KV LRU, four server slots. Strict Hindsight client8/cap16384/thinkingOFF; BGE-small384/MiniLM-L6 and shared GPT5.6Luna. Six original questions chosen by abilities before outputs; unchanged full80 only after current technical/source gate. Historical named-tool 40-versus-42 arithmetic failure remains separate from corrected factual copy/reference diagnostics.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-twu-low-latency-no-thinking-int4-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Qwen3.6 35B Twu LowLatency (local INT4, no thinking, BGE/MiniLM) [GPT-6 Sol answers/judge]",
+      "api_model": "qwen3.6-35b-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18136/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Future local quality pipeline uses GPT-6 Sol for BOTH answer generation and judge, medium effort; no completed score implied. Selected validated Twu LowLatency runtime reached through the local tunnel; text-only BF16 activations with FAMP=0, FP8 FlashInfer KV, FP32 recurrent state, no speculation or CPU model layers; 16GiB CPU KV LRU, four server slots and batch4096. Strict Hindsight retains use client concurrency8 (queueing expected) and completion cap16384, explicit thinkingOFF; BGE-small384/MiniLM-L6 through local LiteLLM, GPT5.6Luna answer/judge. Frozen BEAM dataset/prompts/recall/scoring. Full requires clean technical trace and passed bounded source-faithfulness smoke review. Sanitized actual deployment provenance is saved with each run.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-bf16kv-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Qwen3.6 35B GSQ (mixed W2A16/W8A16, BF16 KV, no thinking, BGE/MiniLM) [GPT-6 Sol answers/judge]",
+      "api_model": "qwen3.6-35b-gsq-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18137/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Future local quality pipeline uses GPT-6 Sol for BOTH answer generation and judge, medium effort; no completed score implied. Prepared quality profile, awaiting owner-selected runtime handoff; no completed score implied. Pinned GSQ routed W2A16 plus dense W8A16 through Humming with native BF16 activations, BF16 KV, FP32 recurrent state, no speculation or CPU model layers, CPU16GiB KV LRU, four server slots. Strict Hindsight client8/cap16384/thinkingOFF; BGE-small384/MiniLM-L6 and GPT-6 Sol. Six original questions chosen by abilities before outputs; unchanged full80 only after current technical/source gate. Historical named-tool 40-versus-42 arithmetic failure remains separate from corrected factual copy/reference diagnostics.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-fp8kv-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Qwen3.6 35B GSQ (mixed W2A16/W8A16, FP8 KV, no thinking, BGE/MiniLM) [GPT-6 Sol answers/judge]",
+      "api_model": "qwen3.6-35b-gsq-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18137/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Future local quality pipeline uses GPT-6 Sol for BOTH answer generation and judge, medium effort; no completed score implied. Prepared quality profile, awaiting owner-selected runtime handoff; no completed score implied. Pinned GSQ routed W2A16 plus dense W8A16 through Humming with native BF16 activations, FP8 KV, FP32 recurrent state, no speculation or CPU model layers, CPU16GiB KV LRU, four server slots. Strict Hindsight client8/cap16384/thinkingOFF; BGE-small384/MiniLM-L6 and GPT-6 Sol. Six original questions chosen by abilities before outputs; unchanged full80 only after current technical/source gate. Historical named-tool 40-versus-42 arithmetic failure remains separate from corrected factual copy/reference diagnostics.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-twu-low-latency-no-thinking-int4-bge-minilm-frozen-recall-replay-qa-gpt-6-sol",
+      "model_name": "Qwen3.6 35B Twu LowLatency (local INT4, no thinking, BGE/MiniLM) [frozen recall replay, GPT-6 Sol answers/judge]",
+      "api_model": "qwen3.6-35b-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18136/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Separate QA pipeline replay of the original Twu retained facts and EXACT captured recall contexts/question dates, with GPT-6 Sol answers+judge. No new retains, recall or GPU calls; historical Luna scores preserved. This is not a fresh end-to-end runtime or latency measurement. Score artifact stays separate pending review.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-bf16kv-bge-minilm-whitespace-guard-qa-gpt-6-sol",
+      "model_name": "Qwen3.6 35B GSQ (mixed W2A16/W8A16, BF16 KV, no thinking, XGrammar whitespace guard, BGE/MiniLM) [GPT-6 Sol answers/judge]",
+      "api_model": "qwen3.6-35b-gsq-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18137/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "reasoning_effort": "none",
+      "notes": "Prepared independent serving-control result: supported global XGrammar disable_any_whitespace=true, preserving original dataset/questions/golds/prompts/schema/recall/scoring and max16384. Same pinned GSQ Humming routedW2A16/denseW8A16, BF16 activations/KV, FP32 recurrent state, CPU16GiB KV LRU, four server slots/client8/nativeOFF. GPT-6 Sol BOTH answer generation and judge, medium effort. Original unguarded smoke had four completed whitespace-cap/invalid-JSON failures among64 responses and no QA score; retained separately. Exact four-input C4 replay and new six-question technical/source gate required before full all4conv80. This prepared row implies no completed score or factual-quality fix.",
       "benchmarks": [
         "retain",
         "quality"

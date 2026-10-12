@@ -14,14 +14,15 @@ from pathlib import Path
 
 import requests
 
-from hindsight_benchmark.quality import QualityBenchmark, _count_stored_fact_tokens, _retain_with_polling
+from hindsight_benchmark.quality import QualityBenchmark, _count_stored_fact_tokens, _retain_with_polling, select_question_pairs
 from run_all_quality import BASE_CONFIG
 
 RUNNER_DIR = Path(__file__).resolve().parent
 COMPOSE_FILE = RUNNER_DIR / "compose.local-quality.yml"
 TRACE_LOG_DIR = RUNNER_DIR.parent / "results" / "traces" / "hindsight"
 JUDGE_BASE_URL = "http://127.0.0.1:2455/v1"
-JUDGE_MODEL = os.environ.get("QUALITY_JUDGE_MODEL", "gpt-5.6-luna")
+# This existing selector controls both answer generation and judging.
+JUDGE_MODEL = os.environ.get("QUALITY_JUDGE_MODEL", "gpt-6-sol")
 JUDGE_REASONING_EFFORT = "medium"
 HINDSIGHT_VERSION = "0.9.2"
 
@@ -338,9 +339,9 @@ def _save_hindsight_logs(
     print(f"Hindsight logs saved to {path}")
 
 
-def _validate_smoke_result(result: dict) -> None:
+def _validate_smoke_result(result: dict, expected_questions: int = 2) -> None:
     checks = {
-        "two questions evaluated": result.get("total") == 2,
+        f"{expected_questions} questions evaluated": result.get("total") == expected_questions,
         "stored_fact_tokens > 0": (result.get("stored_fact_tokens") or 0) > 0,
         "recall returned facts": (result.get("recalled_fact_count") or 0) > 0,
         "no generation errors": result.get("generation_errors") == 0,
@@ -375,6 +376,8 @@ def main() -> None:
     parser.add_argument("--retain-deployment-metadata", type=Path, help="Sanitized deployment recipe JSON for result provenance; never pass credentials")
     parser.add_argument("--max-conversations", type=int)
     parser.add_argument("--max-questions", type=int)
+    parser.add_argument("--question-abilities", help="Comma-separated existing BEAM abilities; filter before applying --max-questions")
+    parser.add_argument("--question-trace-path", type=Path, help="Private full question/recall/answer/judge trace, also saved with --no-save")
     parser.add_argument("--retain-concurrency", type=int, choices=range(1, 9))
     parser.add_argument("--retain-max-completion-tokens", type=int)
     parser.add_argument("--strict-retain-schema", action="store_true")
@@ -383,6 +386,17 @@ def main() -> None:
     parser.add_argument("--diagnostic-sample-id", help="Retain one original BEAM session without scoring")
     parser.add_argument("--diagnostic-session-index", type=int, default=1)
     args = parser.parse_args()
+    abilities = [value.strip() for value in (args.question_abilities or "").split(",") if value.strip()]
+    if args.question_abilities is not None and not abilities:
+        parser.error("--question-abilities must name at least one ability")
+    with open(QualityBenchmark.DATASET_PATH) as dataset_file:
+        selected_dataset = json.load(dataset_file)
+    if args.max_conversations:
+        selected_dataset = selected_dataset[:args.max_conversations]
+    try:
+        selected_questions = select_question_pairs(selected_dataset, abilities, args.max_questions)
+    except ValueError as error:
+        parser.error(str(error))
     deployment_metadata = {}
     if args.retain_deployment_metadata:
         deployment_metadata = json.loads(args.retain_deployment_metadata.read_text())
@@ -474,6 +488,8 @@ def main() -> None:
             max_questions_per_conversation=args.max_questions,
             max_conversations=args.max_conversations,
             save=not args.no_save,
+            question_abilities=abilities,
+            question_trace_path=args.question_trace_path,
             run_metadata={
                 "model_label": args.label,
                 "retain_llm_model": args.retain_model,
@@ -517,8 +533,8 @@ def main() -> None:
         )
         print("Result JSON:")
         print(json.dumps(result, indent=2))
-        if args.max_conversations == 1 and args.max_questions == 2:
-            _validate_smoke_result(result)
+        if args.max_conversations == 1 and (args.max_questions or abilities):
+            _validate_smoke_result(result, sum(len(pairs) for pairs in selected_questions.values()))
     finally:
         _save_hindsight_logs(
             project,

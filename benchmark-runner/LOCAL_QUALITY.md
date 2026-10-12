@@ -6,7 +6,7 @@ reranking. It launches an isolated Hindsight 0.9.2 container and an ephemeral
 PostgreSQL database for every invocation. The database is removed when the run
 ends; full benchmark result JSON remains under `../results/leaderboard/llm/`.
 
-The answer generator and judge are both `gpt-5.6-luna` through codex-lb, at
+The answer generator and judge default to `gpt-6-sol` through codex-lb, at
 medium reasoning effort. The benchmark's dataset, prompts, facts-only context,
 recall parameters, timestamps, token counter, rubrics, and scoring are not
 changed.
@@ -66,7 +66,8 @@ with the BGE query instruction and MiniLM-L6 reranking through local LiteLLM.
 `QUALITY_RETRIEVAL_API_KEY` can be supplied explicitly; otherwise it reads the
 existing credential from the local production Hindsight `.env` without logging it.
 `CODEX_LB_TOKEN` stays in the process environment. `QUALITY_JUDGE_MODEL` defaults
-to `gpt-5.6-luna`; set it to `gpt-6-luna` only after verifying the fallback endpoint.
+to `gpt-6-sol` for both roles. Preserve explicit historical model overrides;
+verify the actual selected route before launching a new run.
 
 Every extraction request and response is captured under ignored `results/traces/`
 without authorization headers. After the two-question smoke, the launcher checks
@@ -82,7 +83,26 @@ watch -n 5 'bash benchmark-runner/monitor_brilliance_quality.sh /absolute/path/t
 ```
 
 For the standalone GPU1-host endpoints, use
-`run_gpu1_quality.sh qwen35-9b|mellum21-12b|mellum2-instruct RUN_DIR [smoke|full|auto]`.
+`run_gpu1_quality.sh PROFILE RUN_DIR [smoke|full|auto]`.
+
+When the same reviewed model recipe is staged on a different endpoint, set
+`QUALITY_RETAIN_UPSTREAM_URL` to its HTTP(S) root URL without `/v1` or embedded
+credentials. The override applies to preflight, capture forwarding and Hindsight
+upstream metadata together. Keep the selected deployment provenance aligned with
+that endpoint. `QUALITY_RESULT_ID_SUFFIX` can add a distinct run label to the
+model result ID; supply the same suffix and endpoint for a later explicit `full`
+phase. These overrides do not change dataset, prompt, retrieval or scoring settings.
+
+`qwen36-35b-twu-low-latency` selects Twu LowLatency as `qwen3.6-35b-test`, with
+explicit thinking OFF and a distinct dashboard result ID. Set the upstream
+override when reaching its port 8136 endpoint through a local tunnel. Keep the
+validated server at four slots and batch size 4,096; client concurrency remains
+eight, so queued requests are expected. Run an explicit `smoke` first. The later
+explicit `full` phase requires both the strict trace gate and a deployment/trace-bound
+manual source review whose JSON report records `semantic_result: "pass"`.
+A failed review leaves full unstarted. Dataset, prompts, recall and scoring stay
+unchanged.
+
 First complete deployment quantization, performance, and sanity validation.
 Record the selected model revision/weights, physical GPU, scheduler capacity,
 quantization, KV precision, attention backend, CPU cache/offload, and speculative
@@ -91,7 +111,7 @@ to that file. The runner copies it into the run directory and result provenance.
 Install wrapper dependencies using `cd benchmark-runner && uv sync` when needed.
 
 All profiles use retain temperature 0.1, strict facts schema, concurrency eight,
-and a 16,384 retain completion cap, with BGE/MiniLM retrieval and verified Luna
+and a 16,384 retain completion cap, with BGE/MiniLM retrieval and verified GPT-6 Sol
 answering/judging. `qwen35-9b` targets `qwen3.5-9b-test` on port 8129 with
 `enable_thinking=false`. `mellum21-12b` targets `mellum2.1-12b-test` on port 8121
 on physical GPU0 and explicitly sends `enable_thinking=true` on every retain
@@ -100,6 +120,125 @@ GPU1, using its native Instruct template without a thinking override. Do not
 apply Qwen thinking sampling defaults to either Mellum profile.
 The `native-instruct` runner profile also removes inherited reasoning-effort
 settings; the native template has no thinking control or reasoning parser.
+
+`mellum21-12b-no-thinking` uses the same Thinking checkpoint on port 8121 but
+explicitly sends `enable_thinking=false`; its result ID is separate from thinking
+ON. For a matched activation/cache comparison, explicitly set both
+`QUALITY_LINEAR_ACTIVATIONS=bfloat16|int8` and
+`QUALITY_KV_DTYPE=bfloat16|fp8_e4m3`. Use `mellum21-12b-no-thinking` for the
+Thinking checkpoint with thinking OFF, `mellum2-instruct` for native Instruct,
+and `mellum21-12b` only for a separate thinking ON control. The selected arm is
+saved in `quality-profile.json`; a later full phase must select the same arm.
+
+| Linear activations | KV dtype | Result ID suffix before `-bge-minilm` |
+| --- | --- | --- |
+| BF16 | BF16 | `-bf16linear-bf16kv` |
+| BF16 | FP8 E4M3 | `-bf16linear-fp8kv` |
+| Eligible INT8 | BF16 | `-int8linear-bf16kv` |
+| Eligible INT8 | FP8 E4M3 | `-int8linear-fp8kv` |
+
+Matrix arms require sanitized metadata with matching observed
+`linear_activation_dtype`, `kv_dtype`, and positive actual `runtime_kv_tokens`.
+The INT8 designation covers eligible linear activation kernels; record the
+actual dense/MoE coverage rather than assuming every activation is quantized.
+Keep weights, scheduler geometry, CPU cache/offload, speculation, prompt/schema,
+concurrency, completion cap and retrieval/scoring settings fixed across arms.
+The runtime owner must measure capacity and release each exact deployment first.
+Historical runs retain their original IDs and deployment provenance.
+
+Start with the BF16-linear/BF16-KV arm on both models. If it catastrophically
+fails strict extraction, preserve its actual failing request IDs and replay a
+bounded frozen selection across all four arms with `probe_retain_capacity.py`
+using the same `--trace` and `--request-id` (or identical hashed fixtures).
+Include the failing substantive source, a dense dated plan/ownership source, and
+a clean control when available. Use `--thinking off` for Mellum 2.1 or
+`--thinking native` for Instruct; retain its unchanged strict schema and 16,384
+cap. Keep each arm's provenance beside its probe output. This compares actual
+retain behavior and eight-way admission; it does not produce a BEAM score or
+replace a clean full representative smoke. If baseline passes, continue the
+matched one-conversation/two-question smokes for the other arms before deciding
+whether to launch any full evaluation.
+
+For a requested smoke-and-decide comparison, launch only the explicit `smoke`
+phase in a fresh tmux session with `CODEX_LB_TOKEN` and
+`QUALITY_MODEL_PROVENANCE_FILE` explicitly supplied as above, plus both matrix
+environment variables when selecting an arm. Do not arm
+`handoff_gpu1_quality.py wait` or start `full` until the user decides after reviewing
+the smoke. This runs one conversation and two questions with `--no-save`.
+
+For a smoke selected by existing BEAM abilities, set
+`QUALITY_SMOKE_QUESTION_ABILITIES=information_extraction,knowledge_update,multi_session_reasoning`
+and `QUALITY_SMOKE_MAX_QUESTIONS=6`. The runner accepts the equivalent
+`--question-abilities` comma-separated list, filters in original dataset order,
+then applies `--max-questions`. Unsupported abilities fail before model calls.
+The wrapper forwards these settings only to smoke; full still evaluates all
+four conversations and 80 original questions. Neither selection changes the
+questions, gold answers, rubrics, prompts, recall or scoring.
+
+Every completed question saves its full question, gold/rubric, recalled facts
+context, generated answer and judge reasoning to a private mode-0600 JSON trace,
+including with `--no-save`. That flag suppresses leaderboard saving. The wrapper
+stores `smoke-question-trace.private.json` or `full-question-trace.private.json`
+in the run directory; direct calls can choose `--question-trace-path`, otherwise
+the trace goes under `results/traces/quality/`. Interrupted runs retain completed
+question evidence with `complete: false`. These traces contain private source
+material and should be reviewed locally.
+
+GSQ Qwen3.6 uses the separate `qwen36-35b-gsq-bf16kv` and
+`qwen36-35b-gsq-fp8kv` profiles. Their result IDs explicitly name mixed
+W2A16/W8A16 weights and the selected KV type. They use native BF16 activations,
+FP32 recurrent state and thinking off, rather than Mellum activation matrix
+overrides. Match the owner-selected deployment's actual KV dtype and four-slot
+capacity before running quality. Prepared dashboard rows do not imply completed
+evaluation or admission. Both profiles reject automatic full dispatch; explicit
+full requires the current smoke's passed technical trace and a deployment-bound
+source review whose `semantic_result` is `pass`. Use the same six-ability-filtered
+smoke settings above, then leave the full 80-question run unfiltered. Preserve
+previous arithmetic/reference diagnostics separately from BEAM results.
+
+`prepare_source_review.py` prepares a read-only review bundle from captured
+smokes. It reuses the handoff helper's trace path and source-message hashing,
+joins strict request/response records by request ID, and matches exact source
+messages from an earlier reviewed run. Pass `--reference-run`, `--run-dir` and
+`--output-dir`; optional `--extra-fixture LABEL=PATH` adds an unchanged frozen
+request source such as a dense dated plan. The reference report's four source
+cases and previously reviewed empty examples become review inputs, rather than
+automatic semantic decisions for the new model.
+
+The bundle preserves complete pairs privately, binds their hashes to the trace
+prefix and deployment, and supplies a manual report template with
+`semantic_result: pending`. Coarse flags for plan/completion wording, speaker
+ownership, dates and versions are review prompts; mixed sources and legitimate
+date conversions can trigger them. It never assigns a fidelity score or passes
+a gate. Use `--verify-only --run-dir RUN --output-dir BUNDLE` to check the
+evidence before reviewing. After writing the actual manual report, bind its
+reviewed IDs with the existing `handoff_gpu1_quality.py record-review` command.
+Do not use the `wait` subcommand as part of this read-only review workflow.
+
+Future local runs default to `QUALITY_JUDGE_MODEL=gpt-6-sol`, medium effort.
+The existing variable controls **both** answer generation and judging. An
+explicit `QUALITY_JUDGE_MODEL=gpt-5.6-luna` preserves the historical combined
+Luna route and result ID. Other QA aliases receive a `-qa-MODEL` result suffix;
+the result records `answer_generator_model` and `judge_model`, and smoke/full
+must use the same QA model. Keep historical runs' original model provenance.
+Changing a future default does not change an already running process.
+
+Before a detached launch, freeze `run_gpu1_quality.sh` with
+`snapshot_quality_wrapper.snapshot_wrapper(RUNNER_DIR, RUN_DIR, PHASE)` and
+invoke the returned snapshot path with Bash. Pass its returned
+`QUALITY_RUNNER_DIR` environment so relative tools still resolve to the owning
+component. Keep the snapshot and source hash in the launch receipt. Editing the
+repository wrapper during an active Bash invocation can shift its read position
+and cause a later parser failure; immutable snapshots prevent that corruption.
+The prepared Twu and GSQ private launchers use this mechanism.
+
+A replay of captured recall contexts changes the answer/judge pipeline without
+re-running retain or recall. Label such a replay separately from a fresh
+end-to-end run, preserve question dates and exact captured contexts, and do not
+overwrite historical scores. Judges receive the question, gold/rubric and
+generated answer; they do not receive raw source or recalled context. Upgrading
+the judge therefore cannot independently establish whether a detail was invented
+or whether a gold answer accurately reflects the source.
 
 Obtain an explicit endpoint release from its performance owner before model
 advertisement, capacity probes or smoke calls. Each model can start independently
@@ -128,8 +267,8 @@ in sequence with the automated wire gate. Replace the profile and session/run
 names for Mellum. Keep `CODEX_LB_TOKEN` explicitly set in the launch environment;
 never log it. The explicit tmux environment avoids using a stale tmux-server token;
 also pass any overridden retrieval key or verified judge fallback to that session.
-Keep GPT-5.6 Luna unless its verification fails and GPT-6 Luna is
-separately verified. The launcher uses `QUALITY_RETRIEVAL_API_KEY`, or reads the
+Future runs use GPT-6 Sol for both roles; historical runs keep their recorded
+Luna selection. The launcher uses `QUALITY_RETRIEVAL_API_KEY`, or reads the
 local production Hindsight credential privately without logging it.
 
 The Mellum 2.1 gate also requires observed separated reasoning somewhere in the
@@ -147,7 +286,14 @@ JSON schema, requires nonempty facts across the trace and `finish_reason=stop`, 
 the selected thinking control, and rejects reasoning in nonreasoning profiles or
 long whitespace runs. It leaves
 bounded fact samples for source review; schema validation alone does not prove
-semantic faithfulness. Individual schema-valid `facts=[]` responses are counted
+semantic faithfulness. The summary also records bounded request IDs and JSON
+paths for possible inline thinking tags or reasoning prose inside JSON strings,
+without printing those strings. These are manual source-review signals: quoted
+source text may legitimately contain such words or tags, and unflagged strings
+still require inspection for reasoning, unsupported claims, dates, ownership and
+plans versus completed actions. A constrained JSON envelope does not prevent
+reasoning from appearing inside an allowed fact string.
+Individual schema-valid `facts=[]` responses are counted
 and their request IDs sampled for source review. A closing invitation may
 correctly yield no durable facts; an empty response to substantive source text
 needs completeness review. A trace with no facts overall still fails, and the
@@ -158,8 +304,10 @@ directory. A successful full result must contain all four conversations and 80
 questions with no generation/judge errors. Failed runs remain visible in status;
 existing runs are never automatically restarted. The distinct leaderboard IDs
 are `local-qwen3.5-9b-no-thinking-int4-bge-minilm`,
-`local-mellum2.1-12b-thinking-int4-bge-minilm`, and
-`local-mellum2-12b-instruct-int4-bge-minilm`; these match dashboard manifest
+`local-mellum2.1-12b-thinking-int4-bge-minilm`,
+`local-mellum2.1-12b-no-thinking-int4-bge-minilm`, and
+`local-mellum2-12b-instruct-int4-bge-minilm`, with separate activation/KV suffixes
+for the matrix arms above; these match dashboard manifest
 entries and do not overwrite older Qwen or cancelled Brilliance evaluations.
 
 Use separate smoke and full phases when coordinating these evaluations. Record a
