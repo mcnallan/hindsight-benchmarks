@@ -15,6 +15,7 @@ import os
 import sys
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 from openai import OpenAI
@@ -277,13 +278,37 @@ def _save_quality_result(provider_id: str, model_id: str, result: dict):
     return path
 
 
-def _save_quality_trace(provider_id: str, model_id: str, run_ts: int, trace: dict):
+def select_question_pairs(dataset, question_abilities=None, max_questions=None):
+    """Select original QA objects in dataset order, retaining their original indices."""
+    abilities = set(question_abilities or [])
+    supported = {qa.get("ability", "unknown") for item in dataset for qa in item["qa"]}
+    if abilities - supported:
+        raise ValueError("Unsupported question abilities: " + ", ".join(sorted(abilities - supported)))
+    if max_questions is not None and max_questions < 1:
+        raise ValueError("max_questions must be positive")
+    selected = {}
+    for item in dataset:
+        pairs = [(i, qa) for i, qa in enumerate(item["qa"], 1)
+                 if not abilities or qa.get("ability", "unknown") in abilities]
+        if max_questions is not None:
+            pairs = pairs[:max_questions]
+        if not pairs:
+            raise ValueError(f"No questions selected for {item['sample_id']}")
+        selected[item["sample_id"]] = pairs
+    return selected
+
+
+def _save_quality_trace(provider_id: str, model_id: str, run_ts: int, trace: dict, path=None):
     trace_dir = LEADERBOARD_DIR.parent.parent / "traces" / "quality"
     trace_dir.mkdir(parents=True, exist_ok=True)
     safe_model = model_id.replace("/", "_").replace(" ", "-").lower()
-    path = trace_dir / f"{provider_id}-{safe_model}-{run_ts}.json"
-    with open(path, "w") as f:
+    path = Path(path) if path else trace_dir / f"{provider_id}-{safe_model}-{run_ts}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with os.fdopen(os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w") as f:
         json.dump(trace, f, indent=2, default=str)
+    temporary.chmod(0o600)
+    temporary.replace(path)
     return path
 
 
@@ -397,6 +422,8 @@ class QualityBenchmark:
         save: bool = True,
         reuse_bank_ts: Optional[int] = None,
         run_metadata: Optional[dict] = None,
+        question_abilities: Optional[list[str]] = None,
+        question_trace_path: Optional[Path] = None,
     ) -> Dict[str, Any]:
         """reuse_bank_ts: re-evaluate against banks from an earlier run (its
         bank-id timestamp) instead of ingesting. The extraction under test is
@@ -412,6 +439,7 @@ class QualityBenchmark:
             dataset = json.load(f)
         if max_conversations:
             dataset = dataset[:max_conversations]
+        selected_questions = select_question_pairs(dataset, question_abilities, max_questions_per_conversation)
 
         print(f"\n=== Quality Benchmark ({DATASET_NAME}, {CONTEXT_MODE}) ===")
         print(f"Model: {provider_id}/{model_id}")
@@ -490,13 +518,11 @@ class QualityBenchmark:
                 except Exception as e:
                     stored_facts_by_conversation[sample_id] = {"error": str(e)}
 
-            qa_pairs = item["qa"]
-            if max_questions_per_conversation:
-                qa_pairs = qa_pairs[:max_questions_per_conversation]
+            qa_pairs = selected_questions[sample_id]
             print(f"  Evaluating {len(qa_pairs)} questions...")
             evaluation_t0 = time.time()
 
-            for i, qa in enumerate(qa_pairs, 1):
+            for i, qa in qa_pairs:
                 question = qa["question"]
                 ability = qa.get("ability", "unknown")
 
@@ -535,6 +561,12 @@ class QualityBenchmark:
                     "judge_reasoning": self.last_judge_reasoning,
                     "correct": is_correct,
                 })
+                # Capture each completed question independently of leaderboard saving.
+                # An interrupted smoke must keep the full recall/answer/judge evidence.
+                question_trace_path = _save_quality_trace(
+                    provider_id, model_id, run_ts,
+                    {"questions": question_traces, "complete": False}, question_trace_path,
+                )
                 print(f"  {'✓' if is_correct else '✗'} [{ability}] Q{i}: {question[:60]}...", flush=True)
                 if not is_correct:
                     expected_str = qa.get("answer") or f"rubric: {(qa.get('rubric') or [])[:2]}"
@@ -565,12 +597,13 @@ class QualityBenchmark:
             s = per_ability[ability]
             print(f"  {ability}: {s['correct']}/{s['total']}")
 
-        partial = bool(max_questions_per_conversation or max_conversations)
+        partial = bool(max_questions_per_conversation or max_conversations or question_abilities)
         result = {
             "accuracy": accuracy,
             "correct": correct,
             "total": total,
             "dataset": DATASET_NAME,
+            "answer_generator_model": self.model_name,
             "judge_model": self.model_name,
             "judge_base_url": self.judge_base_url,
             "judge_reasoning_effort": self.reasoning_effort,
@@ -590,29 +623,33 @@ class QualityBenchmark:
             "model_id": model_id,
             "provider_id": provider_id,
             "sample_ids": [c["sample_id"] for c in dataset],
+            "question_abilities": sorted(set(question_abilities or [])),
             "retain_wall_clock_seconds": round(retain_wall_s, 3),
             "evaluation_wall_clock_seconds": round(evaluation_wall_s, 3),
             "end_to_end_wall_clock_seconds": round(time.time() - benchmark_t0, 3),
         }
         if run_metadata:
             result.update(run_metadata)
+        trace_path = _save_quality_trace(
+            provider_id,
+            model_id,
+            run_ts,
+            {
+                "result": result,
+                "questions": question_traces,
+                "stored_facts_by_conversation": stored_facts_by_conversation,
+                "complete": True,
+            },
+            question_trace_path,
+        )
+        result["trace_path"] = str(trace_path)
+        print(f"Private question traces saved to {trace_path}")
         if save:
-            trace_path = _save_quality_trace(
-                provider_id,
-                model_id,
-                run_ts,
-                {
-                    "result": result,
-                    "questions": question_traces,
-                    "stored_facts_by_conversation": stored_facts_by_conversation,
-                },
-            )
-            result["trace_path"] = str(trace_path)
             path = _save_quality_result(provider_id, model_id, result)
             print(f"Results saved to {path}")
             print(f"Traces saved to {trace_path}")
         else:
-            print("Not saving results (--no-save)")
+            print("Not saving leaderboard results (--no-save)")
         return result
 
     def _generate_answer(self, question: str, recall_response, question_date: Optional[datetime] = None) -> str:

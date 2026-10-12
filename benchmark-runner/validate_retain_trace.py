@@ -9,6 +9,23 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 
+def reasoning_candidates(value, path="$", depth=0):
+    """Find review signals inside JSON strings, without claiming source leakage."""
+    if depth > 100:
+        return
+    if isinstance(value, str):
+        if re.search(r"</?(?:think|thinking|analysis|reasoning)\b|\[/?(?:THINK|ANALYSIS)\]", value, re.I):
+            yield {"path": path, "signal": "inline_reasoning_tag"}
+        if re.search(r"(?:^|\n)\s*(?:let me (?:think|analy[sz]e|reason)|let['’]s (?:think|analy[sz]e)|(?:I|we) (?:need|should|must) to (?:extract|identify|analy[sz]e|reason)|(?:analysis|reasoning)\s*:)", value, re.I):
+            yield {"path": path, "signal": "reasoning_prose"}
+    elif isinstance(value, dict):
+        for key, child in value.items():
+            yield from reasoning_candidates(child, f"{path}.{key}", depth + 1)
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            yield from reasoning_candidates(child, f"{path}[{index}]", depth + 1)
+
+
 def validate_trace(trace, model, thinking, completion_cap, require_separated_reasoning=False):
     pending, completed, ignored = {}, set(), set()
     errors, samples = [], []
@@ -18,6 +35,8 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
     empty_facts_request_ids = []
     reasoning_responses = reasoning_characters = max_reasoning_characters = 0
     reasoning_fields = {"reasoning": 0, "reasoning_content": 0}
+    candidate_responses = 0
+    candidate_samples = []
 
     def error(message):
         nonlocal error_count
@@ -114,6 +133,11 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
                 max_completion = max(max_completion, usage.get("completion_tokens", 0) or 0)
                 data = json.loads(content)
                 Draft202012Validator(schema).validate(data)
+                candidates = list(reasoning_candidates(data))
+                if candidates:
+                    candidate_responses += 1
+                    if len(candidate_samples) < 20:
+                        candidate_samples.append({"request_id": request_id, "signals": candidates[:20]})
                 if not data["facts"]:
                     empty_facts_count += 1
                     if len(empty_facts_request_ids) < 20:
@@ -147,6 +171,8 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
         "reasoning_characters": reasoning_characters,
         "max_reasoning_characters": max_reasoning_characters,
         "require_separated_reasoning": require_separated_reasoning,
+        "json_string_reasoning_candidate_responses": candidate_responses,
+        "json_string_reasoning_candidates_for_source_review": candidate_samples,
         "max_completion_tokens": max_completion,
         "fact_samples_for_source_review": samples,
         "error_count": error_count,
