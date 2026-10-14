@@ -111,6 +111,18 @@ when another production worker rejoins. A production run may overlap ordinary
 traffic and retains its CPU KV cache, so its retain time is not an isolated
 performance measurement.
 
+`lfm25-24b-thinking-bf16kv` and `lfm25-24b-closed-prefix-bf16kv` select the
+standalone AWQ G32 LFM2.5 candidate on SSH-forwarded port 18144. Initial smokes
+require BF16 linear activations and BF16 KV, positive measured KV capacity and
+eight scheduler slots. Native thinking is the control; the closed-prefix arm
+is an experimental generation-prefix request, not a native model off switch.
+Both use the same reviewed template, whose thinking-on render must match stock.
+Record `experimental_thinking_template: true` and
+`native_thinking_render_matches_stock: true` in selected deployment metadata.
+Run explicit `smoke` separately for each arm and inspect actual reasoning,
+final facts and question traces; `auto` is refused. Full is unstarted unless
+explicitly requested after clean strict traces and passed source review.
+
 For these comparisons, prefer the existing six-question ability selection
 below to supplement the default two abstention questions. Keep the complete
 full evaluation unfiltered. A technical smoke pass establishes serving and

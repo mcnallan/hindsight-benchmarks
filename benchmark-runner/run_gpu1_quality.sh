@@ -54,6 +54,21 @@ case "$PROFILE" in
     RESULT_ID=qwen3.6-35b-gsq-no-thinking-mixed-w2a16-w8a16-fp8kv-bge-minilm
     LABEL='Qwen3.6 35B GSQ (mixed W2A16/W8A16, FP8 KV, no thinking, BGE/MiniLM)'
     UPSTREAM=http://127.0.0.1:18137 ;;
+  lfm25-24b-thinking-bf16kv)
+    MODEL=lfm25-24b-awq-g32-test
+    RESULT_ID=lfm2.5-24b-a2b-awq-g32-bf16linear-bf16kv-native-thinking-bge-minilm
+    LABEL='LFM2.5 24B A2B (AWQ G32, BF16 linear/KV, native thinking, BGE/MiniLM)'
+    EXTRA_BODY_PROFILE=thinking
+    THINKING_MODE=on
+    TRACE_REASONING_ARGS=(--require-separated-reasoning)
+    UPSTREAM=http://127.0.0.1:18144 ;;
+  lfm25-24b-closed-prefix-bf16kv)
+    MODEL=lfm25-24b-awq-g32-test
+    RESULT_ID=lfm2.5-24b-a2b-awq-g32-bf16linear-bf16kv-closed-thinking-prefix-bge-minilm
+    LABEL='LFM2.5 24B A2B (AWQ G32, BF16 linear/KV, experimental closed prefix, BGE/MiniLM)'
+    EXTRA_BODY_PROFILE=no-thinking
+    THINKING_MODE=off
+    UPSTREAM=http://127.0.0.1:18144 ;;
   mellum21-12b)
     MODEL=mellum2.1-12b-test
     RESULT_ID=mellum2.1-12b-thinking-int4-bge-minilm
@@ -108,7 +123,7 @@ if [[ $QUALITY_JUDGE_MODEL != gpt-5.6-luna ]]; then
   RESULT_ID=$RESULT_ID-qa-$QUALITY_JUDGE_MODEL
   LABEL="$LABEL [answers and judge: $QUALITY_JUDGE_MODEL]"
 fi
-if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* ) && $MODE == auto ]]; then
+if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* ) && $MODE == auto ]]; then
   echo 'This profile requires smoke plus the manual source-review handoff before full' >&2
   exit 2
 fi
@@ -141,16 +156,16 @@ RUN_DIR=$(cd -- "$RUN_DIR" && pwd)
 if [[ $MODE == full ]]; then
   [[ $(cat "$RUN_DIR/judge-model.txt") == "$QUALITY_JUDGE_MODEL" ]] || { echo 'Judge model differs from smoke' >&2; exit 2; }
   cmp -s -- "$QUALITY_MODEL_PROVENANCE_FILE" "$RUN_DIR/deployment.json" || { echo 'Deployment recipe differs from smoke' >&2; exit 2; }
-  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* ]]; then
+  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* ]]; then
     "$PYTHON" - "$RUNNER_DIR" "$RUN_DIR" "$PROFILE" <<'PY' || exit 2
 import json, sys
 from pathlib import Path
 sys.path.insert(0, sys.argv[1])
 from handoff_gpu1_quality import check_review
 review = check_review(Path(sys.argv[2]))
-if sys.argv[3].startswith('qwen36-35b-'):
+if sys.argv[3].startswith(('qwen36-35b-', 'lfm25-')):
     report = json.loads(Path(review['report_path']).read_text())
-    assert report.get('semantic_result') == 'pass', 'Qwen3.6 full requires a passed source-faithfulness smoke review'
+    assert report.get('semantic_result') == 'pass', 'Candidate full requires a passed source-faithfulness smoke review'
 PY
   fi
   "$PYTHON" - "$RUN_DIR/smoke_trace_summary.json" "$RUN_DIR/status.tsv" "$PROFILE" "$DIAGNOSTIC_FULL" <<'PY' || exit 2
@@ -199,6 +214,18 @@ assert deployment.get('kv_dtype') == 'fp8_e4m3', 'W8A8 smoke selects the measure
 assert deployment.get('linear_activation_dtype') == 'int8', 'Record actual native INT8 linear kernels'
 assert deployment.get('runtime_kv_tokens', 0) > 0 and deployment.get('server_max_num_seqs') == 8, 'Record selected eight-slot capacity before smoke'
 PY
+fi
+if [[ $PROFILE == lfm25-* ]]; then
+  "$PYTHON" - "$RUN_DIR/deployment.json" "$MODEL" <<'PYLFMCHECK' || exit 2
+import json, sys
+deployment = json.load(open(sys.argv[1]))
+assert deployment.get('served_model_name') == sys.argv[2], 'LFM served model differs from selected deployment'
+assert deployment.get('kv_dtype') == 'bfloat16', 'Initial LFM smokes require BF16 KV'
+assert deployment.get('linear_activation_dtype') == 'bfloat16', 'Initial LFM quality uses BF16 activations'
+assert deployment.get('runtime_kv_tokens', 0) > 0 and deployment.get('server_max_num_seqs') == 8, 'Record actual eight-slot capacity'
+assert deployment.get('experimental_thinking_template') is True, 'Paired LFM modes require the reviewed closed-prefix template'
+assert deployment.get('native_thinking_render_matches_stock') is True, 'Thinking-on must retain the native rendered prompt'
+PYLFMCHECK
 fi
 if [[ $PROFILE == qwen36-35b-gsq-* ]]; then
   "$PYTHON" - "$RUN_DIR/deployment.json" "$PROFILE" <<'PY' || exit 2
