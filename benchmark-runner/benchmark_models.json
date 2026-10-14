@@ -1575,6 +1575,42 @@
         "reflect"
       ],
       "reflect_notes": "Local LoComo conv-43 paired reflect benchmark; shared bank retained once by GPT-6 Sol, BGE/MiniLM retrieval, GPT-6 Sol judge, native LiteLLM reflect provider, thinking off, low budget, 4096 completion cap. Separate from historical Gemini-retain/judge reflect conditions."
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "lfm2.5-24b-a2b-awq-g32-bf16linear-bf16kv-native-thinking-bge-minilm-qa-gpt-6-sol",
+      "model_name": "LFM2.5 24B A2B (AWQ G32, BF16 linear/KV, native thinking, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "lfm25-24b-awq-g32-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18144/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "notes": "Source-pinned local CUDA AWQ/MSE INT4 G32 export. Initial quality control uses BF16 activations and BF16 KV with decode CUDA graphs, no speculation or CPU model-layer offload. Native thinking is the control; closed-prefix generation is experimental, not a native thinking-off feature. run_gpu1_quality.sh preserves strict retain schema, concurrency 8 and total completion cap 16384; BGE-small/MiniLM retrieval and GPT-6 Sol answering/judging. Full requires a passed strict smoke and recorded source-faithfulness review. Smokes are no-save diagnostics; listing a profile does not indicate a completed score.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "lfm2.5-24b-a2b-awq-g32-bf16linear-bf16kv-closed-thinking-prefix-bge-minilm-qa-gpt-6-sol",
+      "model_name": "LFM2.5 24B A2B (AWQ G32, BF16 linear/KV, experimental closed prefix, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "lfm25-24b-awq-g32-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18144/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "notes": "Source-pinned local CUDA AWQ/MSE INT4 G32 export. Initial quality control uses BF16 activations and BF16 KV with decode CUDA graphs, no speculation or CPU model-layer offload. Native thinking is the control; closed-prefix generation is experimental, not a native thinking-off feature. run_gpu1_quality.sh preserves strict retain schema, concurrency 8 and total completion cap 16384; BGE-small/MiniLM retrieval and GPT-6 Sol answering/judging. Full requires a passed strict smoke and recorded source-faithfulness review. Smokes are no-save diagnostics; listing a profile does not indicate a completed score.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     }
   ]
 }
