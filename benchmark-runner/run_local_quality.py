@@ -23,7 +23,7 @@ TRACE_LOG_DIR = RUNNER_DIR.parent / "results" / "traces" / "hindsight"
 JUDGE_BASE_URL = "http://127.0.0.1:2455/v1"
 # This existing selector controls both answer generation and judging.
 JUDGE_MODEL = os.environ.get("QUALITY_JUDGE_MODEL", "gpt-6-sol")
-JUDGE_REASONING_EFFORT = "medium"
+JUDGE_REASONING_EFFORT = os.environ.get("QUALITY_JUDGE_REASONING_EFFORT", "medium")
 HINDSIGHT_VERSION = "0.9.2"
 
 PRODUCTION_LIKE_CONFIG = {
@@ -127,6 +127,14 @@ MEDIUM_THINKING_EXTRA_BODY_CONFIG = {
     f"HINDSIGHT_API_{scope}_LLM_EXTRA_BODY":
     '{"chat_template_kwargs":{"enable_thinking":true,"medium_effort":true}}'
     for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
+}
+
+INKLING_MINIMAL_EXTRA_BODY_CONFIG = {
+    "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "0.1",
+    **{
+        f"HINDSIGHT_API_{scope}_LLM_EXTRA_BODY": '{"reasoning_effort":"minimal"}'
+        for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
+    },
 }
 
 QWEN_THINKING_EXTRA_BODY_CONFIG = {
@@ -239,6 +247,8 @@ def _effective_config(
             if args.extra_body_profile == "thinking"
             else MEDIUM_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "medium-thinking"
+            else INKLING_MINIMAL_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "inkling-minimal"
             else QWEN_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "qwen-thinking"
             else QWEN_DISTILLED_NO_THINKING_EXTRA_BODY_CONFIG
@@ -271,9 +281,8 @@ def _effective_config(
     if args.strict_retain_schema:
         config["HINDSIGHT_API_LLM_STRICT_SCHEMA_RETAIN"] = "true"
     config.pop("HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL", None)
-    if args.extra_body_profile == "native-instruct":
-        # Native nonreasoning templates receive neither a thinking override nor
-        # inherited reasoning-effort options from reasoning model profiles.
+    if args.extra_body_profile in ("native-instruct", "inkling-minimal"):
+        # Remove the inherited default effort when the profile owns this field.
         for scope in ("", "RETAIN_", "REFLECT_", "CONSOLIDATION_"):
             config.pop(f"HINDSIGHT_API_{scope}LLM_REASONING_EFFORT", None)
     return config
@@ -304,9 +313,16 @@ def _write_env_file(config: dict[str, str]) -> Path:
     return path
 
 
+def _compose_command(project: str, env: dict[str, str]) -> list[str]:
+    command = ["docker", "compose", "-p", project, "-f", str(COMPOSE_FILE)]
+    if env.get("QUALITY_DOCKER_SUBNET"):
+        command.extend(("-f", str(RUNNER_DIR / "compose.local-quality-network.yml")))
+    return command
+
+
 def _compose(project: str, env: dict[str, str], *args: str, check: bool = True):
     return subprocess.run(
-        ["docker", "compose", "-p", project, "-f", str(COMPOSE_FILE), *args],
+        [*_compose_command(project, env), *args],
         cwd=RUNNER_DIR,
         env=env,
         check=check,
@@ -321,17 +337,7 @@ def _save_hindsight_logs(
     secrets: tuple[str, ...],
 ) -> None:
     completed = subprocess.run(
-        [
-            "docker",
-            "compose",
-            "-p",
-            project,
-            "-f",
-            str(COMPOSE_FILE),
-            "logs",
-            "--no-color",
-            "hindsight",
-        ],
+        [*_compose_command(project, env), "logs", "--no-color", "hindsight"],
         cwd=RUNNER_DIR,
         env=env,
         capture_output=True,
@@ -375,7 +381,7 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "no-thinking", "thinking", "medium-thinking", "native-instruct", "none"),
+        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "no-thinking", "thinking", "medium-thinking", "inkling-minimal", "native-instruct", "none"),
         default="nemotron",
     )
     parser.add_argument("--result-model-id")
@@ -503,7 +509,8 @@ def main() -> None:
                 "model_label": args.label,
                 "retain_llm_model": args.retain_model,
                 "retain_extra_body_profile": args.extra_body_profile,
-                "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking", "thinking", "medium-thinking"),
+                "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking", "thinking", "medium-thinking", "inkling-minimal"),
+                "retain_reasoning_effort": "minimal" if args.extra_body_profile == "inkling-minimal" else None,
                 "retain_thinking_type": "logic" if args.extra_body_profile == "brilliance-logic" else "medium_effort" if args.extra_body_profile == "medium-thinking" else None,
                 "retain_thinking_budget_tokens": 512 if args.extra_body_profile == "nemotron" else None,
                 "retain_llm_base_url": args.retain_base_url,

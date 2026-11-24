@@ -13,12 +13,25 @@ if [[ $DIAGNOSTIC_FULL == 1 && ( $MODE != full || $PROFILE != qwen35-4b-producti
   exit 2
 fi
 export QUALITY_JUDGE_MODEL=${QUALITY_JUDGE_MODEL:-gpt-6-sol}
+export QUALITY_JUDGE_REASONING_EFFORT=${QUALITY_JUDGE_REASONING_EFFORT:-medium}
+case "$QUALITY_JUDGE_REASONING_EFFORT" in
+  low|medium|high) ;;
+  *) echo 'QA reasoning effort must be low, medium, or high' >&2; exit 2 ;;
+esac
 case "$MODE" in auto|smoke|full) ;; *) echo 'Mode must be auto, smoke, or full' >&2; exit 2 ;; esac
 PYTHON="$RUNNER_DIR/.venv/bin/python"
 EXTRA_BODY_PROFILE=no-thinking
 THINKING_MODE=off
 TRACE_REASONING_ARGS=()
 case "$PROFILE" in
+  inkling-2-mini-minimal)
+    : "${QUALITY_RETAIN_API_KEY:?Set the Inkling bearer token in QUALITY_RETAIN_API_KEY}"
+    MODEL=inkling-2-mini
+    RESULT_ID=inkling-2-mini-minimal-bge-minilm
+    LABEL='Inkling 2 Mini (minimal reasoning, BGE/MiniLM)'
+    EXTRA_BODY_PROFILE=inkling-minimal
+    TRACE_REASONING_ARGS=(--reasoning-effort minimal)
+    UPSTREAM=http://192.168.39.245:18089 ;;
   nemotron35-bolt-llamacpp-bf16kv-off|nemotron35-bolt-llamacpp-q8kv-off)
     MODEL=nemotron35-bolt-test
     RESULT_ID="$PROFILE-bge-minilm"
@@ -131,12 +144,16 @@ if [[ -n ${QUALITY_RESULT_ID_SUFFIX:-} ]]; then
   [[ $QUALITY_RESULT_ID_SUFFIX =~ ^[a-zA-Z0-9._-]+$ ]] || { echo 'Result suffix must contain only letters, numbers, dots, underscores or hyphens' >&2; exit 2; }
   RESULT_ID=$RESULT_ID-$QUALITY_RESULT_ID_SUFFIX
 fi
-if [[ $QUALITY_JUDGE_MODEL != gpt-5.6-luna ]]; then
+if [[ $QUALITY_JUDGE_MODEL != gpt-5.6-luna || $QUALITY_JUDGE_REASONING_EFFORT != medium ]]; then
   [[ $QUALITY_JUDGE_MODEL =~ ^[a-zA-Z0-9._-]+$ ]] || { echo 'QA model alias must contain only letters, numbers, dots, underscores or hyphens' >&2; exit 2; }
   RESULT_ID=$RESULT_ID-qa-$QUALITY_JUDGE_MODEL
   LABEL="$LABEL [answers and judge: $QUALITY_JUDGE_MODEL]"
 fi
-if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* || $PROFILE == nemotron35-bolt-* ) && $MODE == auto ]]; then
+if [[ $QUALITY_JUDGE_REASONING_EFFORT != medium ]]; then
+  RESULT_ID=$RESULT_ID-$QUALITY_JUDGE_REASONING_EFFORT
+  LABEL="$LABEL [QA effort: $QUALITY_JUDGE_REASONING_EFFORT]"
+fi
+if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* || $PROFILE == nemotron35-bolt-* || $PROFILE == inkling-2-mini-minimal ) && $MODE == auto ]]; then
   echo 'This profile requires smoke plus the manual source-review handoff before full' >&2
   exit 2
 fi
@@ -169,14 +186,14 @@ RUN_DIR=$(cd -- "$RUN_DIR" && pwd)
 if [[ $MODE == full ]]; then
   [[ $(cat "$RUN_DIR/judge-model.txt") == "$QUALITY_JUDGE_MODEL" ]] || { echo 'Judge model differs from smoke' >&2; exit 2; }
   cmp -s -- "$QUALITY_MODEL_PROVENANCE_FILE" "$RUN_DIR/deployment.json" || { echo 'Deployment recipe differs from smoke' >&2; exit 2; }
-  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* || $PROFILE == nemotron35-bolt-* ]]; then
+  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* || $PROFILE == nemotron35-bolt-* || $PROFILE == inkling-2-mini-minimal ]]; then
     "$PYTHON" - "$RUNNER_DIR" "$RUN_DIR" "$PROFILE" <<'PY' || exit 2
 import json, sys
 from pathlib import Path
 sys.path.insert(0, sys.argv[1])
 from handoff_gpu1_quality import check_review
 review = check_review(Path(sys.argv[2]))
-if sys.argv[3].startswith(('qwen36-35b-', 'lfm25-', 'nemotron35-bolt-')):
+if sys.argv[3].startswith(('qwen36-35b-', 'lfm25-', 'nemotron35-bolt-', 'inkling-2-mini-')):
     report = json.loads(Path(review['report_path']).read_text())
     assert report.get('semantic_result') == 'pass', 'Candidate full requires a passed source-faithfulness smoke review'
 PY
@@ -282,6 +299,8 @@ profile = dict(result_id=sys.argv[3], linear_activation_dtype=sys.argv[4] or Non
 if os.environ.get('QUALITY_JUDGE_MODEL', 'gpt-6-sol') != 'gpt-5.6-luna':
     profile['answer_generator_model'] = os.environ.get('QUALITY_JUDGE_MODEL', 'gpt-6-sol')
     profile['judge_model'] = profile['answer_generator_model']
+if os.environ['QUALITY_JUDGE_REASONING_EFFORT'] != 'medium':
+    profile['judge_reasoning_effort'] = os.environ['QUALITY_JUDGE_REASONING_EFFORT']
 if os.environ.get('QUALITY_RETAIN_UPSTREAM_URL'):
     profile['upstream_root'] = os.environ['QUALITY_RETAIN_UPSTREAM_URL'].rstrip('/')
 if os.environ.get('QUALITY_DYNAMO_WORKER_ID'):

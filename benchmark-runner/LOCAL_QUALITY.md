@@ -85,6 +85,20 @@ watch -n 5 'bash benchmark-runner/monitor_brilliance_quality.sh /absolute/path/t
 For the standalone GPU1-host endpoints, use
 `run_gpu1_quality.sh PROFILE RUN_DIR [smoke|full|auto]`.
 
+`inkling-2-mini-minimal` targets the authenticated HyperInkling endpoint on
+GPU2 at `http://192.168.39.245:18089/v1`. Set `QUALITY_RETAIN_API_KEY` in
+the environment. The profile sends top-level `reasoning_effort: minimal` and
+validates it on each strict extraction request. The 16,384 completion tokens
+cover both reasoning and the final JSON. Set `QUALITY_JUDGE_MODEL=gpt-6.2-sol`
+and `QUALITY_JUDGE_REASONING_EFFORT=high` for the Inkling comparison.
+The answer generator and judge use the same QA settings. The result ID
+records the model and any effort other than the default medium.
+Use explicit `smoke` followed by `full` after the wire trace and source
+review pass, with the same endpoint and QA model for both phases.
+If Docker's automatically assigned subnet overlaps the retain server's LAN,
+set `QUALITY_DOCKER_SUBNET` to an unused, nonoverlapping CIDR to give the
+temporary Hindsight and database stack an explicit bridge subnet.
+
 `qwen35-4b-redhat-w8a8` and `qwen35-4b-kiln-w8a8` target the independent
 loopback SSH-forwarded ports 18142/18143. Both select native INT8 linear kernels,
 FP8 E4M3 KV with FlashInfer, FP32 recurrent state, thinking OFF, text-only loading

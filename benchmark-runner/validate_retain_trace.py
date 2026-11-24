@@ -27,7 +27,8 @@ def reasoning_candidates(value, path="$", depth=0):
 
 
 def validate_trace(trace, model, thinking, completion_cap, require_separated_reasoning=False,
-                   required_template_kwargs=None):
+                   required_template_kwargs=None, reasoning_effort=None):
+    allow_reasoning = thinking is True or reasoning_effort is not None
     pending, completed, ignored = {}, set(), set()
     errors, samples = [], []
     facts = reasoning_tokens = max_completion = error_count = request_count = 0
@@ -78,7 +79,12 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
                 if ((thinking is None and "enable_thinking" in kwargs)
                         or kwargs.get("enable_thinking") is not thinking):
                     error(f"{request_id}: wrong thinking control")
-                if thinking is None and body.get("reasoning_effort"):
+                if reasoning_effort is not None:
+                    if body.get("reasoning_effort") != reasoning_effort:
+                        error(f"{request_id}: wrong required reasoning effort")
+                    if "reasoning_effort" in kwargs:
+                        error(f"{request_id}: template reasoning effort also supplied")
+                elif thinking is None and body.get("reasoning_effort"):
                     error(f"{request_id}: reasoning effort on native nonreasoning request")
                 if response_format.get("type") != "json_schema" or wrapper.get("strict") is not True:
                     error(f"{request_id}: missing strict json_schema request")
@@ -133,7 +139,7 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
                     characters = sum(len(value) for value in separated)
                     reasoning_characters += characters
                     max_reasoning_characters = max(max_reasoning_characters, characters)
-                if not thinking and (tokens or separated):
+                if not allow_reasoning and (tokens or separated):
                     error(f"{request_id}: unexpected reasoning output")
                 max_completion = max(max_completion, usage.get("completion_tokens", 0) or 0)
                 data = json.loads(content)
@@ -177,6 +183,7 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
         "max_reasoning_characters": max_reasoning_characters,
         "require_separated_reasoning": require_separated_reasoning,
         "required_template_kwargs": required_template_kwargs or {},
+        "required_reasoning_effort": reasoning_effort,
         "json_string_reasoning_candidate_responses": candidate_responses,
         "json_string_reasoning_candidates_for_source_review": candidate_samples,
         "max_completion_tokens": max_completion,
@@ -195,14 +202,16 @@ def main():
                         help="native: no thinking override and no reasoning output")
     parser.add_argument("--require-separated-reasoning", action="store_true")
     parser.add_argument("--required-template-kwargs", type=json.loads, default={})
+    parser.add_argument("--reasoning-effort", help="Require this top-level effort without a template thinking switch")
     parser.add_argument("--completion-cap", type=int, default=16384)
     parser.add_argument("--summary", type=Path, required=True)
     args = parser.parse_args()
     if not isinstance(args.required_template_kwargs, dict):
         parser.error("required-template-kwargs must be a JSON object")
-    expected_thinking = None if args.thinking == "native" else args.thinking == "on"
+    expected_thinking = None if args.thinking == "native" or args.reasoning_effort is not None else args.thinking == "on"
     summary = validate_trace(args.trace, args.model, expected_thinking, args.completion_cap,
-                             args.require_separated_reasoning, args.required_template_kwargs)
+                             args.require_separated_reasoning, args.required_template_kwargs,
+                             args.reasoning_effort)
     args.summary.write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2), flush=True)
     if summary["error_count"]:

@@ -1,0 +1,5 @@
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${QUALITY_DOCKER_SUBNET:?Set a subnet that does not overlap existing networks}
