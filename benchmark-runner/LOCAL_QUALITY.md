@@ -106,6 +106,14 @@ and a token summary for each phase. The averages use stopped strict retain
 responses with reported usage. Final tokens are calculated as total completion
 tokens minus reasoning tokens, so the count can include protocol tokens.
 
+The November 24 Inkling smoke used eight retain clients and eight server slots
+at GPU utilization 0.97, with 494,653 reported GPU KV tokens. All 328 strict
+responses stopped and passed schema validation. Mean completion was 379
+reasoning tokens and 472 non-reasoning tokens. The largest completion was
+3,101 tokens. The end-to-end score was 2/6 with GPT-6.2 Sol high. Source review
+found proposed work recorded as completed and examples recorded as project
+state. The run did not advance to the full evaluation.
+
 `qwen35-4b-redhat-w8a8` and `qwen35-4b-kiln-w8a8` target the independent
 loopback SSH-forwarded ports 18142/18143. Both select native INT8 linear kernels,
 FP8 E4M3 KV with FlashInfer, FP32 recurrent state, thinking OFF, text-only loading

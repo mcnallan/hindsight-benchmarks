@@ -1697,7 +1697,7 @@
       "api_key_env": "QUALITY_RETAIN_API_KEY",
       "input_price_per_1m": 0,
       "output_price_per_1m": 0,
-      "notes": "HyperInkling on GPU2 with top-level reasoning_effort=minimal, eight retain clients, strict schema and 16,384 total completion tokens. The server has four active slots.",
+      "notes": "HyperInkling on GPU2 with top-level reasoning_effort=minimal, eight retain clients, strict schema and 16,384 total completion tokens. See deployment provenance for the measured server concurrency and KV capacity.",
       "benchmarks": [
         "retain",
         "quality"
