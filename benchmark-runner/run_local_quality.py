@@ -122,6 +122,13 @@ THINKING_EXTRA_BODY_CONFIG = {
     for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
 }
 
+MEDIUM_THINKING_EXTRA_BODY_CONFIG = {
+    # Native Nemotron template control; generic reasoning_effort is insufficient.
+    f"HINDSIGHT_API_{scope}_LLM_EXTRA_BODY":
+    '{"chat_template_kwargs":{"enable_thinking":true,"medium_effort":true}}'
+    for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
+}
+
 QWEN_THINKING_EXTRA_BODY_CONFIG = {
     # Qwen3.5's published thinking recipe prevents repetitive reasoning loops
     # seen at the upstream retain temperature of 0.1 on real extraction input.
@@ -230,6 +237,8 @@ def _effective_config(
             if args.extra_body_profile in ("no-thinking", "qwen-no-thinking")
             else THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "thinking"
+            else MEDIUM_THINKING_EXTRA_BODY_CONFIG
+            if args.extra_body_profile == "medium-thinking"
             else QWEN_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "qwen-thinking"
             else QWEN_DISTILLED_NO_THINKING_EXTRA_BODY_CONFIG
@@ -366,7 +375,7 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "no-thinking", "thinking", "native-instruct", "none"),
+        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "no-thinking", "thinking", "medium-thinking", "native-instruct", "none"),
         default="nemotron",
     )
     parser.add_argument("--result-model-id")
@@ -494,8 +503,8 @@ def main() -> None:
                 "model_label": args.label,
                 "retain_llm_model": args.retain_model,
                 "retain_extra_body_profile": args.extra_body_profile,
-                "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking", "thinking"),
-                "retain_thinking_type": "logic" if args.extra_body_profile == "brilliance-logic" else None,
+                "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking", "thinking", "medium-thinking"),
+                "retain_thinking_type": "logic" if args.extra_body_profile == "brilliance-logic" else "medium_effort" if args.extra_body_profile == "medium-thinking" else None,
                 "retain_thinking_budget_tokens": 512 if args.extra_body_profile == "nemotron" else None,
                 "retain_llm_base_url": args.retain_base_url,
                 "retain_llm_upstream_base_url": args.retain_upstream_base_url or args.retain_base_url,

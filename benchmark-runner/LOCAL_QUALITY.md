@@ -123,6 +123,23 @@ Run explicit `smoke` separately for each arm and inspect actual reasoning,
 final facts and question traces; `auto` is refused. Full is unstarted unless
 explicitly requested after clean strict traces and passed source review.
 
+The standalone Bolt fallback profiles are
+`nemotron35-bolt-llamacpp-{bf16kv,q8kv}-{off,medium}` on SSH-forwarded port
+18145. They use NVIDIA's pinned official IQ2 GGUF with native CUDA llama.cpp,
+all weights including the embedding table on GPU, FP32 recurrent state and no
+speculation. Native vLLM's IQ2 codec currently rejects SM86. Do not label
+llama.cpp q8_0 KV as FP8 or assert that its activation kernels are globally
+BF16/INT8. Deployment provenance must record the actual pool, slot geometry,
+cache dtype and template flags; candidate evaluation requires the requested
+262,144-token resident pool. Eight client retain calls may queue behind fewer
+resident server slots. These are separate from the earlier BF16 sanity control.
+The `medium` mode uses native `enable_thinking=true, medium_effort=true`, not
+generic `reasoning_effort=medium`. Trace validation requires that exact boolean
+control and separated reasoning; the `off` mode requires no reasoning leakage.
+Use explicit fresh `smoke` runs for each mode, preserve identical selected
+deployment metadata for a later `full`, and require strict traces plus a passed
+source review. Prepared catalog entries are not completed scores.
+
 For these comparisons, prefer the existing six-question ability selection
 below to supplement the default two abstention questions. Keep the complete
 full evaluation unfiltered. A technical smoke pass establishes serving and
@@ -227,6 +244,20 @@ retain behavior and eight-way admission; it does not produce a BEAM score or
 replace a clean full representative smoke. If baseline passes, continue the
 matched one-conversation/two-question smokes for the other arms before deciding
 whether to launch any full evaluation.
+
+For a sampling-only diagnostic, `replay_extraction_capture.py` supports
+`--thinking captured`, `--temperature`, `--repetition-penalty` and `--seed`.
+Preserve the original strict `--mode json_schema` and completion limit, use a
+fresh output file for every settings/seed arm, and include successful source
+controls alongside failures. The legacy thinking default remains `off`;
+`captured` retains the original template flags. Output includes the effective
+request, raw response, reasoning-token count and actual strict-schema validity.
+It contains private source text and is created with mode 0600. Resume matches
+request IDs only: never reuse an output file with different sampling settings,
+endpoint/model or source capture. Review source attribution, plans versus
+completed actions and factual values even when every response is valid JSON.
+These replays produce no BEAM score and cannot replace a fresh strict smoke
+plus source-faithfulness review before full evaluation.
 
 For a requested smoke-and-decide comparison, launch only the explicit `smoke`
 phase in a fresh tmux session with `CODEX_LB_TOKEN` and
@@ -461,3 +492,12 @@ running/waiting counts with independently verified effective `MAX_NUM_SEQS`.
 Metrics are process-wide, so unrelated endpoint traffic would prevent reliable
 attribution; an idle baseline is required. A direct capacity pass does not replace
 the representative quality smoke or source-faithfulness review.
+
+
+### Nemotron Bolt trial disposition (2026-10-15)
+
+The llama.cpp Bolt trial was cancelled at the operator's request for inadequate
+prefill performance. All test/evaluation launchers were stopped and production
+Qwen restored. No Bolt smoke/full evaluation started and no quality score was
+saved. Prepared off/medium profiles and result IDs are retained for a future
+explicitly authorized retry; they do not describe an active endpoint or results.

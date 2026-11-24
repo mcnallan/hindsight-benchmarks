@@ -1611,6 +1611,78 @@
         "retain",
         "quality"
       ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "nemotron35-bolt-llamacpp-bf16kv-medium-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Nemotron 3.5 Bolt 74B A9B (official IQ2 GGUF, llama.cpp, BF16 KV, medium thinking, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "nemotron35-bolt-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18145/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "notes": "Official revision-pinned NVIDIA IQ2 GGUF with native CUDA SM86 llama.cpp; text-only, all weights including embedding on GPU, FP32 recurrent state and no speculation. Internal activation kernels are llama.cpp native, not a forced vLLM INT8 dtype. q8_0 KV is distinct from FP8 E4M3. Uses explicit enable_thinking=true and medium_effort=true. Strict schema, retain concurrency 8, completion cap 16384, frozen BGE/MiniLM and GPT-6 Sol QA. A catalog entry is not a completed score; full requires completed strict smoke and passed source review.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "nemotron35-bolt-llamacpp-q8kv-medium-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Nemotron 3.5 Bolt 74B A9B (official IQ2 GGUF, llama.cpp, q8_0 KV, medium thinking, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "nemotron35-bolt-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18145/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "notes": "Official revision-pinned NVIDIA IQ2 GGUF with native CUDA SM86 llama.cpp; text-only, all weights including embedding on GPU, FP32 recurrent state and no speculation. Internal activation kernels are llama.cpp native, not a forced vLLM INT8 dtype. q8_0 KV is distinct from FP8 E4M3. Uses explicit enable_thinking=true and medium_effort=true. Strict schema, retain concurrency 8, completion cap 16384, frozen BGE/MiniLM and GPT-6 Sol QA. A catalog entry is not a completed score; full requires completed strict smoke and passed source review.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "nemotron35-bolt-llamacpp-bf16kv-off-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Nemotron 3.5 Bolt 74B A9B (official IQ2 GGUF, llama.cpp, BF16 KV, thinking off, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "nemotron35-bolt-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18145/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "notes": "Official revision-pinned NVIDIA IQ2 GGUF with native CUDA SM86 llama.cpp; text-only, all weights including embedding on GPU, FP32 recurrent state and no speculation. Internal activation kernels are llama.cpp native, not a forced vLLM INT8 dtype. q8_0 KV is distinct from FP8 E4M3. Uses explicit enable_thinking=false. Strict schema, retain concurrency 8, completion cap 16384, frozen BGE/MiniLM and GPT-6 Sol QA. A catalog entry is not a completed score; full requires completed strict smoke and passed source review.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "nemotron35-bolt-llamacpp-q8kv-off-bge-minilm-qa-gpt-6-sol",
+      "model_name": "Nemotron 3.5 Bolt 74B A9B (official IQ2 GGUF, llama.cpp, q8_0 KV, thinking off, BGE/MiniLM, GPT-6 Sol QA)",
+      "api_model": "nemotron35-bolt-test",
+      "method": "url",
+      "url": "http://127.0.0.1:18145/v1",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "notes": "Official revision-pinned NVIDIA IQ2 GGUF with native CUDA SM86 llama.cpp; text-only, all weights including embedding on GPU, FP32 recurrent state and no speculation. Internal activation kernels are llama.cpp native, not a forced vLLM INT8 dtype. q8_0 KV is distinct from FP8 E4M3. Uses explicit enable_thinking=false. Strict schema, retain concurrency 8, completion cap 16384, frozen BGE/MiniLM and GPT-6 Sol QA. A catalog entry is not a completed score; full requires completed strict smoke and passed source review.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     }
   ]
 }

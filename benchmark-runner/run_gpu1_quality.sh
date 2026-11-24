@@ -19,6 +19,19 @@ EXTRA_BODY_PROFILE=no-thinking
 THINKING_MODE=off
 TRACE_REASONING_ARGS=()
 case "$PROFILE" in
+  nemotron35-bolt-llamacpp-bf16kv-off|nemotron35-bolt-llamacpp-q8kv-off)
+    MODEL=nemotron35-bolt-test
+    RESULT_ID="$PROFILE-bge-minilm"
+    LABEL="Nemotron 3.5 Bolt official IQ2 GGUF (llama.cpp, $PROFILE, BGE/MiniLM)"
+    UPSTREAM=http://127.0.0.1:18145 ;;
+  nemotron35-bolt-llamacpp-bf16kv-medium|nemotron35-bolt-llamacpp-q8kv-medium)
+    MODEL=nemotron35-bolt-test
+    RESULT_ID="$PROFILE-bge-minilm"
+    LABEL="Nemotron 3.5 Bolt official IQ2 GGUF (llama.cpp, $PROFILE, BGE/MiniLM)"
+    EXTRA_BODY_PROFILE=medium-thinking
+    THINKING_MODE=on
+    TRACE_REASONING_ARGS=(--require-separated-reasoning --required-template-kwargs '{"medium_effort":true}')
+    UPSTREAM=http://127.0.0.1:18145 ;;
   qwen35-4b-production-w4a8)
     MODEL=qwen3.5-4b
     RESULT_ID=qwen3.5-4b-production-w4a8-fp8kv-no-thinking-bge-minilm
@@ -123,7 +136,7 @@ if [[ $QUALITY_JUDGE_MODEL != gpt-5.6-luna ]]; then
   RESULT_ID=$RESULT_ID-qa-$QUALITY_JUDGE_MODEL
   LABEL="$LABEL [answers and judge: $QUALITY_JUDGE_MODEL]"
 fi
-if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* ) && $MODE == auto ]]; then
+if [[ ( $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* || $PROFILE == nemotron35-bolt-* ) && $MODE == auto ]]; then
   echo 'This profile requires smoke plus the manual source-review handoff before full' >&2
   exit 2
 fi
@@ -156,14 +169,14 @@ RUN_DIR=$(cd -- "$RUN_DIR" && pwd)
 if [[ $MODE == full ]]; then
   [[ $(cat "$RUN_DIR/judge-model.txt") == "$QUALITY_JUDGE_MODEL" ]] || { echo 'Judge model differs from smoke' >&2; exit 2; }
   cmp -s -- "$QUALITY_MODEL_PROVENANCE_FILE" "$RUN_DIR/deployment.json" || { echo 'Deployment recipe differs from smoke' >&2; exit 2; }
-  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* ]]; then
+  if [[ $PROFILE == mellum* || $PROFILE == qwen36-35b-* || $PROFILE == qwen35-4b-* || $PROFILE == lfm25-* || $PROFILE == nemotron35-bolt-* ]]; then
     "$PYTHON" - "$RUNNER_DIR" "$RUN_DIR" "$PROFILE" <<'PY' || exit 2
 import json, sys
 from pathlib import Path
 sys.path.insert(0, sys.argv[1])
 from handoff_gpu1_quality import check_review
 review = check_review(Path(sys.argv[2]))
-if sys.argv[3].startswith(('qwen36-35b-', 'lfm25-')):
+if sys.argv[3].startswith(('qwen36-35b-', 'lfm25-', 'nemotron35-bolt-')):
     report = json.loads(Path(review['report_path']).read_text())
     assert report.get('semantic_result') == 'pass', 'Candidate full requires a passed source-faithfulness smoke review'
 PY
@@ -214,6 +227,20 @@ assert deployment.get('kv_dtype') == 'fp8_e4m3', 'W8A8 smoke selects the measure
 assert deployment.get('linear_activation_dtype') == 'int8', 'Record actual native INT8 linear kernels'
 assert deployment.get('runtime_kv_tokens', 0) > 0 and deployment.get('server_max_num_seqs') == 8, 'Record selected eight-slot capacity before smoke'
 PY
+fi
+if [[ $PROFILE == nemotron35-bolt-* ]]; then
+  "$PYTHON" - "$RUN_DIR/deployment.json" "$PROFILE" <<'PYBOLTCHECK' || exit 2
+import json, sys
+d = json.load(open(sys.argv[1]))
+assert d.get('served_model_name') == 'nemotron35-bolt-test'
+assert d.get('engine') == 'llama.cpp' and d.get('all_model_weights_gpu') is True
+assert d.get('speculative_decoding') is False and d.get('cpu_model_offload') is False
+assert d.get('runtime_kv_tokens', 0) >= 262144, 'Require the requested two-window resident pool'
+assert d.get('server_max_num_seqs', 0) >= 2
+assert d.get('kv_dtype') == ('bfloat16' if '-bf16kv-' in sys.argv[2] else 'q8_0')
+expected_kwargs = {'enable_thinking': True, 'medium_effort': True} if sys.argv[2].endswith('-medium') else {'enable_thinking': False}
+assert d.get('chat_template_kwargs') == expected_kwargs
+PYBOLTCHECK
 fi
 if [[ $PROFILE == lfm25-* ]]; then
   "$PYTHON" - "$RUN_DIR/deployment.json" "$MODEL" <<'PYLFMCHECK' || exit 2

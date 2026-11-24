@@ -26,7 +26,8 @@ def reasoning_candidates(value, path="$", depth=0):
             yield from reasoning_candidates(child, f"{path}[{index}]", depth + 1)
 
 
-def validate_trace(trace, model, thinking, completion_cap, require_separated_reasoning=False):
+def validate_trace(trace, model, thinking, completion_cap, require_separated_reasoning=False,
+                   required_template_kwargs=None):
     pending, completed, ignored = {}, set(), set()
     errors, samples = [], []
     facts = reasoning_tokens = max_completion = error_count = request_count = 0
@@ -70,6 +71,10 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
                 if body.get("model") != model:
                     error(f"{request_id}: unexpected model")
                 kwargs = body.get("chat_template_kwargs") or {}
+                for key, expected in (required_template_kwargs or {}).items():
+                    actual = kwargs.get(key)
+                    if type(actual) is not type(expected) or actual != expected:
+                        error(f"{request_id}: wrong required template control: {key}")
                 if ((thinking is None and "enable_thinking" in kwargs)
                         or kwargs.get("enable_thinking") is not thinking):
                     error(f"{request_id}: wrong thinking control")
@@ -171,6 +176,7 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
         "reasoning_characters": reasoning_characters,
         "max_reasoning_characters": max_reasoning_characters,
         "require_separated_reasoning": require_separated_reasoning,
+        "required_template_kwargs": required_template_kwargs or {},
         "json_string_reasoning_candidate_responses": candidate_responses,
         "json_string_reasoning_candidates_for_source_review": candidate_samples,
         "max_completion_tokens": max_completion,
@@ -188,12 +194,15 @@ def main():
     parser.add_argument("--thinking", choices=("on", "off", "native"), default="off",
                         help="native: no thinking override and no reasoning output")
     parser.add_argument("--require-separated-reasoning", action="store_true")
+    parser.add_argument("--required-template-kwargs", type=json.loads, default={})
     parser.add_argument("--completion-cap", type=int, default=16384)
     parser.add_argument("--summary", type=Path, required=True)
     args = parser.parse_args()
+    if not isinstance(args.required_template_kwargs, dict):
+        parser.error("required-template-kwargs must be a JSON object")
     expected_thinking = None if args.thinking == "native" else args.thinking == "on"
     summary = validate_trace(args.trace, args.model, expected_thinking, args.completion_cap,
-                             args.require_separated_reasoning)
+                             args.require_separated_reasoning, args.required_template_kwargs)
     args.summary.write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2), flush=True)
     if summary["error_count"]:

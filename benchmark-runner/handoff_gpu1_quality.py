@@ -14,7 +14,9 @@ from pathlib import Path
 
 RUNNER = Path(__file__).resolve().parent
 PROFILES = ("qwen35-9b", "mellum21-12b", "mellum21-12b-no-thinking", "mellum2-instruct",
-            "lfm25-24b-thinking-bf16kv", "lfm25-24b-closed-prefix-bf16kv")
+            "lfm25-24b-thinking-bf16kv", "lfm25-24b-closed-prefix-bf16kv",
+            "nemotron35-bolt-llamacpp-bf16kv-medium", "nemotron35-bolt-llamacpp-q8kv-medium",
+            "nemotron35-bolt-llamacpp-bf16kv-off", "nemotron35-bolt-llamacpp-q8kv-off")
 
 
 def digest(path):
