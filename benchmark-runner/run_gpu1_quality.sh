@@ -23,6 +23,9 @@ PYTHON="$RUNNER_DIR/.venv/bin/python"
 EXTRA_BODY_PROFILE=no-thinking
 THINKING_MODE=off
 TRACE_REASONING_ARGS=()
+RETAIN_CONCURRENCY=${QUALITY_RETAIN_CONCURRENCY:-8}
+[[ $RETAIN_CONCURRENCY =~ ^[1-8]$ ]] || { echo 'Retain concurrency must be 1 through 8' >&2; exit 2; }
+export QUALITY_RETAIN_CONCURRENCY=$RETAIN_CONCURRENCY
 case "$PROFILE" in
   inkling-2-mini-minimal)
     : "${QUALITY_RETAIN_API_KEY:?Set the Inkling bearer token in QUALITY_RETAIN_API_KEY}"
@@ -301,6 +304,8 @@ if os.environ.get('QUALITY_JUDGE_MODEL', 'gpt-6-sol') != 'gpt-5.6-luna':
     profile['judge_model'] = profile['answer_generator_model']
 if os.environ['QUALITY_JUDGE_REASONING_EFFORT'] != 'medium':
     profile['judge_reasoning_effort'] = os.environ['QUALITY_JUDGE_REASONING_EFFORT']
+if os.environ['QUALITY_RETAIN_CONCURRENCY'] != '8':
+    profile['retain_concurrency'] = int(os.environ['QUALITY_RETAIN_CONCURRENCY'])
 if os.environ.get('QUALITY_RETAIN_UPSTREAM_URL'):
     profile['upstream_root'] = os.environ['QUALITY_RETAIN_UPSTREAM_URL'].rstrip('/')
 if os.environ.get('QUALITY_DYNAMO_WORKER_ID'):
@@ -336,7 +341,7 @@ COMMON_ARGS=(
   --retain-preflight-url "$UPSTREAM/v1" --retain-upstream-base-url "$UPSTREAM/v1"
   --retain-deployment-metadata "$RUN_DIR/deployment.json"
   --extra-body-profile "$EXTRA_BODY_PROFILE" --retrieval-profile bge-minilm
-  --retain-concurrency 8 --retain-max-completion-tokens 16384 --strict-retain-schema
+  --retain-concurrency "$RETAIN_CONCURRENCY" --retain-max-completion-tokens 16384 --strict-retain-schema
 )
 if [[ $DIAGNOSTIC_FULL == 1 ]]; then
   record admission diagnostic_recovered_smoke
@@ -360,6 +365,10 @@ run_phase() {
   local rc=$?
   cleanup
   proxy_pid=
+  if [[ $PROFILE == inkling-2-mini-* && -s $trace ]]; then
+    "$PYTHON" "$RUNNER_DIR/report_retain_tokens.py" "$trace" --csv "$RUN_DIR/$phase-token-usage.csv" \
+      >"$RUN_DIR/$phase-token-summary.json"
+  fi
   if (( rc != 0 )); then record "$phase" "failed:$rc"; return "$rc"; fi
   "$PYTHON" "$RUNNER_DIR/validate_retain_trace.py" "$trace" --model "$MODEL" --thinking "$THINKING_MODE" "${TRACE_REASONING_ARGS[@]}" \
     --summary "$RUN_DIR/${phase}_trace_summary.json" >>"$LOG_FILE" 2>&1

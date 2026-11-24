@@ -98,6 +98,13 @@ review pass, with the same endpoint and QA model for both phases.
 If Docker's automatically assigned subnet overlaps the retain server's LAN,
 set `QUALITY_DOCKER_SUBNET` to an unused, nonoverlapping CIDR to give the
 temporary Hindsight and database stack an explicit bridge subnet.
+If the endpoint needs fewer than eight concurrent retain calls, set
+`QUALITY_RETAIN_CONCURRENCY` to the tested client limit. Use a fresh smoke to
+validate the limit and keep it fixed for that run's full phase.
+Inkling writes one CSV row per captured chat attempt
+and a token summary for each phase. The averages use stopped strict retain
+responses with reported usage. Final tokens are calculated as total completion
+tokens minus reasoning tokens, so the count can include protocol tokens.
 
 `qwen35-4b-redhat-w8a8` and `qwen35-4b-kiln-w8a8` target the independent
 loopback SSH-forwarded ports 18142/18143. Both select native INT8 linear kernels,
