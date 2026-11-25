@@ -129,13 +129,21 @@ MEDIUM_THINKING_EXTRA_BODY_CONFIG = {
     for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
 }
 
-INKLING_MINIMAL_EXTRA_BODY_CONFIG = {
-    "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "0.1",
-    **{
-        f"HINDSIGHT_API_{scope}_LLM_EXTRA_BODY": '{"reasoning_effort":"minimal"}'
-        for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
-    },
+INKLING_REASONING_CONTROLS = {
+    "inkling-minimal": {"reasoning_effort": "minimal"},
+    "inkling-off": {"reasoning_effort": "none"},
 }
+
+
+def _inkling_config(profile):
+    body = json.dumps(INKLING_REASONING_CONTROLS[profile], separators=(",", ":"))
+    return {
+        "HINDSIGHT_API_LLM_TEMPERATURE_RETAIN": "0.1",
+        **{
+            f"HINDSIGHT_API_{scope}_LLM_EXTRA_BODY": body
+            for scope in ("RETAIN", "REFLECT", "CONSOLIDATION")
+        },
+    }
 
 QWEN_THINKING_EXTRA_BODY_CONFIG = {
     # Qwen3.5's published thinking recipe prevents repetitive reasoning loops
@@ -247,8 +255,8 @@ def _effective_config(
             if args.extra_body_profile == "thinking"
             else MEDIUM_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "medium-thinking"
-            else INKLING_MINIMAL_EXTRA_BODY_CONFIG
-            if args.extra_body_profile == "inkling-minimal"
+            else _inkling_config(args.extra_body_profile)
+            if args.extra_body_profile in INKLING_REASONING_CONTROLS
             else QWEN_THINKING_EXTRA_BODY_CONFIG
             if args.extra_body_profile == "qwen-thinking"
             else QWEN_DISTILLED_NO_THINKING_EXTRA_BODY_CONFIG
@@ -281,7 +289,7 @@ def _effective_config(
     if args.strict_retain_schema:
         config["HINDSIGHT_API_LLM_STRICT_SCHEMA_RETAIN"] = "true"
     config.pop("HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL", None)
-    if args.extra_body_profile in ("native-instruct", "inkling-minimal"):
+    if args.extra_body_profile == "native-instruct" or args.extra_body_profile in INKLING_REASONING_CONTROLS:
         # Remove the inherited default effort when the profile owns this field.
         for scope in ("", "RETAIN_", "REFLECT_", "CONSOLIDATION_"):
             config.pop(f"HINDSIGHT_API_{scope}LLM_REASONING_EFFORT", None)
@@ -381,7 +389,7 @@ def main() -> None:
     parser.add_argument("--provider-id", default="local")
     parser.add_argument(
         "--extra-body-profile",
-        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "no-thinking", "thinking", "medium-thinking", "inkling-minimal", "native-instruct", "none"),
+        choices=("brilliance-logic", "nemotron", "nemotron-no-thinking", "qwen-no-thinking", "qwen-thinking", "qwen-distilled-no-thinking", "ornith-no-thinking", "ornith-thinking", "ling-no-thinking", "ling-thinking", "no-thinking", "thinking", "medium-thinking", *INKLING_REASONING_CONTROLS, "native-instruct", "none"),
         default="nemotron",
     )
     parser.add_argument("--result-model-id")
@@ -510,7 +518,8 @@ def main() -> None:
                 "retain_llm_model": args.retain_model,
                 "retain_extra_body_profile": args.extra_body_profile,
                 "retain_thinking_enabled": args.extra_body_profile in ("brilliance-logic", "nemotron", "qwen-thinking", "ornith-thinking", "ling-thinking", "thinking", "medium-thinking", "inkling-minimal"),
-                "retain_reasoning_effort": "minimal" if args.extra_body_profile == "inkling-minimal" else None,
+                "retain_reasoning_effort": INKLING_REASONING_CONTROLS.get(args.extra_body_profile, {}).get("reasoning_effort"),
+                "retain_final_text_prefill": args.extra_body_profile == "inkling-off",
                 "retain_thinking_type": "logic" if args.extra_body_profile == "brilliance-logic" else "medium_effort" if args.extra_body_profile == "medium-thinking" else None,
                 "retain_thinking_budget_tokens": 512 if args.extra_body_profile == "nemotron" else None,
                 "retain_llm_base_url": args.retain_base_url,

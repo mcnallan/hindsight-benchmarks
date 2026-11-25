@@ -27,8 +27,8 @@ def reasoning_candidates(value, path="$", depth=0):
 
 
 def validate_trace(trace, model, thinking, completion_cap, require_separated_reasoning=False,
-                   required_template_kwargs=None, reasoning_effort=None):
-    allow_reasoning = thinking is True or reasoning_effort is not None
+                   required_template_kwargs=None, reasoning_effort=None, require_final_prefill=False):
+    allow_reasoning = not require_final_prefill and (thinking is True or reasoning_effort is not None)
     pending, completed, ignored = {}, set(), set()
     errors, samples = [], []
     facts = reasoning_tokens = max_completion = error_count = request_count = 0
@@ -86,6 +86,12 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
                         error(f"{request_id}: template reasoning effort also supplied")
                 elif thinking is None and body.get("reasoning_effort"):
                     error(f"{request_id}: reasoning effort on native nonreasoning request")
+                if require_final_prefill:
+                    prefix = (body.get("messages") or [None])[-1]
+                    if (prefix != {"role": "assistant", "content": ""}
+                            or body.get("continue_final_message") is not True
+                            or body.get("add_generation_prompt") is not False):
+                        error(f"{request_id}: missing final text prefill")
                 if response_format.get("type") != "json_schema" or wrapper.get("strict") is not True:
                     error(f"{request_id}: missing strict json_schema request")
                 if body.get("max_completion_tokens", body.get("max_tokens")) != completion_cap:
@@ -184,6 +190,7 @@ def validate_trace(trace, model, thinking, completion_cap, require_separated_rea
         "require_separated_reasoning": require_separated_reasoning,
         "required_template_kwargs": required_template_kwargs or {},
         "required_reasoning_effort": reasoning_effort,
+        "require_final_prefill": require_final_prefill,
         "json_string_reasoning_candidate_responses": candidate_responses,
         "json_string_reasoning_candidates_for_source_review": candidate_samples,
         "max_completion_tokens": max_completion,
@@ -203,6 +210,8 @@ def main():
     parser.add_argument("--require-separated-reasoning", action="store_true")
     parser.add_argument("--required-template-kwargs", type=json.loads, default={})
     parser.add_argument("--reasoning-effort", help="Require this top-level effort without a template thinking switch")
+    parser.add_argument("--require-final-prefill", action="store_true",
+                        help="Require continuation of an empty assistant message and zero reasoning")
     parser.add_argument("--completion-cap", type=int, default=16384)
     parser.add_argument("--summary", type=Path, required=True)
     args = parser.parse_args()
@@ -211,7 +220,7 @@ def main():
     expected_thinking = None if args.thinking == "native" or args.reasoning_effort is not None else args.thinking == "on"
     summary = validate_trace(args.trace, args.model, expected_thinking, args.completion_cap,
                              args.require_separated_reasoning, args.required_template_kwargs,
-                             args.reasoning_effort)
+                             args.reasoning_effort, args.require_final_prefill)
     args.summary.write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2), flush=True)
     if summary["error_count"]:

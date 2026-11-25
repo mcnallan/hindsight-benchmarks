@@ -20,6 +20,7 @@ class CaptureProxy(BaseHTTPRequestHandler):
     output_path: Path
     timeout: float
     dynamo_worker_id: int | None = None
+    inkling_final_prefill = False
     write_lock = threading.Lock()
 
     def _record(self, record: dict) -> None:
@@ -50,6 +51,15 @@ class CaptureProxy(BaseHTTPRequestHandler):
                 return
             parsed_body["nvext"] = {**parsed_body.get("nvext", {}), "decode_worker_id": self.dynamo_worker_id}
             body = json.dumps(parsed_body).encode()
+
+        if (self.inkling_final_prefill and self.command == "POST"
+                and urlsplit(self.path).path == "/v1/chat/completions"
+                and isinstance(parsed_body, dict)):
+            schema = parsed_body.get("response_format", {}).get("json_schema", {}).get("schema", {})
+            if parsed_body.get("model") == "inkling-2-mini" and "facts" in schema.get("properties", {}):
+                parsed_body["messages"].append({"role": "assistant", "content": ""})
+                parsed_body.update(continue_final_message=True, add_generation_prompt=False)
+                body = json.dumps(parsed_body).encode()
 
         self._record(
             {
@@ -142,6 +152,8 @@ def main() -> None:
     parser.add_argument("--timeout", type=float, default=610)
     parser.add_argument("--dynamo-worker-id", type=int,
                         help="Pin completions with Dynamo nvext/header; captured bodies include the pin")
+    parser.add_argument("--inkling-final-prefill", action="store_true",
+                        help="Continue Inkling strict retain replies in the final text channel")
     args = parser.parse_args()
     if args.dynamo_worker_id is not None and args.dynamo_worker_id < 0:
         parser.error("--dynamo-worker-id must be nonnegative")
@@ -154,6 +166,7 @@ def main() -> None:
     CaptureProxy.output_path = args.output
     CaptureProxy.timeout = args.timeout
     CaptureProxy.dynamo_worker_id = args.dynamo_worker_id
+    CaptureProxy.inkling_final_prefill = args.inkling_final_prefill
     server = ThreadingHTTPServer((args.listen_host, args.listen_port), CaptureProxy)
     print(f"Capturing {args.listen_host}:{args.listen_port} -> {CaptureProxy.upstream}")
     print(f"Trace: {CaptureProxy.output_path}")

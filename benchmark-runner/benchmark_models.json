@@ -1702,6 +1702,25 @@
         "retain",
         "quality"
       ]
+    },
+    {
+      "provider_id": "local",
+      "provider_name": "Local (self-hosted)",
+      "provider_icon": "",
+      "pricing_type": "local",
+      "model_id": "inkling-2-mini-off-bge-minilm-qa-gpt-6.2-sol-high",
+      "model_name": "Inkling 2 Mini (thinking off via final text prefill, BGE/MiniLM, GPT-6.2 Sol high QA)",
+      "api_model": "inkling-2-mini",
+      "method": "url",
+      "url": "http://192.168.39.245:18089/v1",
+      "api_key_env": "QUALITY_RETAIN_API_KEY",
+      "input_price_per_1m": 0,
+      "output_price_per_1m": 0,
+      "notes": "The local quality launcher sends reasoning_effort=none and continues an empty final assistant text message to skip reasoning. Eight retain clients, strict schema and 16,384 total completion tokens.",
+      "benchmarks": [
+        "retain",
+        "quality"
+      ]
     }
   ]
 }

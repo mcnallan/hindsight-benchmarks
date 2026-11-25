@@ -112,7 +112,27 @@ responses stopped and passed schema validation. Mean completion was 379
 reasoning tokens and 472 non-reasoning tokens. The largest completion was
 3,101 tokens. The end-to-end score was 2/6 with GPT-6.2 Sol high. Source review
 found proposed work recorded as completed and examples recorded as project
-state. The run did not advance to the full evaluation.
+state. The operator later authorized a diagnostic full run. It scored 30/80
+with all 1,617 strict extractions passing the wire checks. Those completions
+averaged 367 reasoning tokens and 448 non-reasoning tokens.
+
+`inkling-2-mini-off` compares the same deployment with final text prefill.
+The endpoint still generates reasoning at `reasoning_effort: none` alone.
+The zero-budget switch caused grammar errors on captured retain calls. The
+capture proxy instead continues an empty assistant message in the final text
+channel, with the original source, schema, and cap intact. The validator checks
+that prefill, strict JSON, and absence of reasoning. Use `auto` for a requested
+full comparison after a passing technical smoke. It has its own leaderboard ID
+and records the per-request token split for both phases.
+
+The completed comparison used the same GPU2 deployment and GPT-6.2 Sol high
+for both runs. All 1,617 retain responses in each run passed the strict wire
+checks. The reasoning and final token columns are means per retain response.
+
+| Inkling setting | BEAM score | Reasoning tokens | Final tokens | Retain time | End-to-end time |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Minimal effort | 30/80 (37.50%) | 367.25 | 448.26 | 47m 47s | 62m 36s |
+| Final text prefill | 29/80 (36.25%) | 0 | 397.73 | 21m 46s | 37m 43s |
 
 `qwen35-4b-redhat-w8a8` and `qwen35-4b-kiln-w8a8` target the independent
 loopback SSH-forwarded ports 18142/18143. Both select native INT8 linear kernels,

@@ -23,6 +23,7 @@ PYTHON="$RUNNER_DIR/.venv/bin/python"
 EXTRA_BODY_PROFILE=no-thinking
 THINKING_MODE=off
 TRACE_REASONING_ARGS=()
+CAPTURE_ARGS=()
 RETAIN_CONCURRENCY=${QUALITY_RETAIN_CONCURRENCY:-8}
 [[ $RETAIN_CONCURRENCY =~ ^[1-8]$ ]] || { echo 'Retain concurrency must be 1 through 8' >&2; exit 2; }
 export QUALITY_RETAIN_CONCURRENCY=$RETAIN_CONCURRENCY
@@ -34,6 +35,15 @@ case "$PROFILE" in
     LABEL='Inkling 2 Mini (minimal reasoning, BGE/MiniLM)'
     EXTRA_BODY_PROFILE=inkling-minimal
     TRACE_REASONING_ARGS=(--reasoning-effort minimal)
+    UPSTREAM=http://192.168.39.245:18089 ;;
+  inkling-2-mini-off)
+    : "${QUALITY_RETAIN_API_KEY:?Set the Inkling bearer token in QUALITY_RETAIN_API_KEY}"
+    MODEL=inkling-2-mini
+    RESULT_ID=inkling-2-mini-off-bge-minilm
+    LABEL='Inkling 2 Mini (final text prefill, BGE/MiniLM)'
+    EXTRA_BODY_PROFILE=inkling-off
+    TRACE_REASONING_ARGS=(--reasoning-effort none --require-final-prefill)
+    CAPTURE_ARGS=(--inkling-final-prefill)
     UPSTREAM=http://192.168.39.245:18089 ;;
   nemotron35-bolt-llamacpp-bf16kv-off|nemotron35-bolt-llamacpp-q8kv-off)
     MODEL=nemotron35-bolt-test
@@ -354,7 +364,7 @@ run_phase() {
   local capture_port
   capture_port=$("$PYTHON" -c 'import socket; s=socket.socket(); s.bind(("0.0.0.0",0)); print(s.getsockname()[1]); s.close()')
   "$PYTHON" "$RUNNER_DIR/capture_openai_proxy.py" \
-    --listen-port "$capture_port" --upstream "$UPSTREAM" --output "$trace" "${DYNAMO_PIN_ARGS[@]}" >"$RUN_DIR/proxy-$phase.log" 2>&1 &
+    --listen-port "$capture_port" --upstream "$UPSTREAM" --output "$trace" "${DYNAMO_PIN_ARGS[@]}" "${CAPTURE_ARGS[@]}" >"$RUN_DIR/proxy-$phase.log" 2>&1 &
   proxy_pid=$!
   sleep 1
   if ! kill -0 "$proxy_pid" 2>/dev/null; then record "$phase" capture_proxy_failed; return 1; fi

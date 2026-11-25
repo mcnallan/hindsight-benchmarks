@@ -1,0 +1,127 @@
+{
+  "model_id": "inkling-2-mini-off-bge-minilm-qa-gpt-6.2-sol-high",
+  "provider_id": "local",
+  "quality": {
+    "accuracy": 36.2,
+    "correct": 29,
+    "total": 80,
+    "dataset": "beam_128k_subset",
+    "answer_generator_model": "gpt-6.2-sol",
+    "judge_model": "gpt-6.2-sol",
+    "judge_base_url": "http://127.0.0.1:2455/v1",
+    "judge_reasoning_effort": "high",
+    "context_mode": "facts_only",
+    "hindsight_version": "0.9.2",
+    "stored_fact_tokens": 216344,
+    "stored_fact_tokens_by_conversation": {
+      "beam-100k-1": 40964,
+      "beam-100k-13": 51218,
+      "beam-100k-16": 56271,
+      "beam-100k-18": 67891
+    },
+    "token_counter": "cl100k_base",
+    "per_ability": {
+      "abstention": {
+        "correct": 2,
+        "total": 8
+      },
+      "contradiction_resolution": {
+        "correct": 0,
+        "total": 8
+      },
+      "event_ordering": {
+        "correct": 0,
+        "total": 8
+      },
+      "information_extraction": {
+        "correct": 5,
+        "total": 8
+      },
+      "instruction_following": {
+        "correct": 5,
+        "total": 8
+      },
+      "knowledge_update": {
+        "correct": 4,
+        "total": 8
+      },
+      "multi_session_reasoning": {
+        "correct": 2,
+        "total": 8
+      },
+      "preference_following": {
+        "correct": 7,
+        "total": 8
+      },
+      "summarization": {
+        "correct": 0,
+        "total": 8
+      },
+      "temporal_reasoning": {
+        "correct": 4,
+        "total": 8
+      }
+    },
+    "generation_errors": 0,
+    "judge_errors": 0,
+    "recalled_fact_count": 2400,
+    "recall_empty_count": 0,
+    "partial": false,
+    "model_id": "inkling-2-mini-off-bge-minilm-qa-gpt-6.2-sol-high",
+    "provider_id": "local",
+    "sample_ids": [
+      "beam-100k-1",
+      "beam-100k-13",
+      "beam-100k-16",
+      "beam-100k-18"
+    ],
+    "question_abilities": [],
+    "retain_wall_clock_seconds": 1306.079,
+    "evaluation_wall_clock_seconds": 955.991,
+    "end_to_end_wall_clock_seconds": 2262.864,
+    "model_label": "Inkling 2 Mini (final text prefill, BGE/MiniLM) [answers and judge: gpt-6.2-sol] [QA effort: high]",
+    "retain_llm_model": "inkling-2-mini",
+    "retain_extra_body_profile": "inkling-off",
+    "retain_thinking_enabled": false,
+    "retain_reasoning_effort": "none",
+    "retain_final_text_prefill": true,
+    "retain_thinking_type": null,
+    "retain_thinking_budget_tokens": null,
+    "retain_llm_base_url": "http://host.docker.internal:37745/v1",
+    "retain_llm_upstream_base_url": "http://192.168.39.245:18089/v1",
+    "retain_wire_trace": "/home/blake/Projects/hindsight-benchmarks/benchmark-runner/../results/traces/inkling-2-mini-off-inkling-prefill-sol62-high-u097-s8-20261124-ETqMjU/full.ndjson",
+    "retain_deployment": {
+      "served_model_name": "inkling-2-mini",
+      "endpoint": "http://192.168.39.245:18089/v1",
+      "retain_reasoning_effort": "none",
+      "engine": "HyperInkling v0.1.4",
+      "gpu": "GPU2 RTX 3090",
+      "checkpoint": "Pentium95/Inkling-2-Mini-W4A16-g128-gptq",
+      "model_revision": "c1cb46c758646dc807c387dea30c9db80631a70b",
+      "kv_dtype": "fp8_e4m3",
+      "runtime_kv_tokens": 494653,
+      "server_max_num_seqs": 8,
+      "deployment_provenance": "agents-mono/platform/inference/vllm/inkling-3090/HYPERINKLING-REPORT.md",
+      "gpu_memory_utilization": 0.97,
+      "live_container_started_at": "2026-11-24T22:59:36.139562775Z",
+      "retain_final_text_prefill": true
+    },
+    "retain_temperature": 0.1,
+    "retrieval_profile": "bge-minilm",
+    "retain_llm_concurrency": 8,
+    "retain_batch_tokens": 50000,
+    "retain_max_completion_tokens": 16384,
+    "strict_retain_schema": true,
+    "embedding_provider": "openai",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_base_url": "http://host.docker.internal:4000/v1",
+    "embedding_batch_size": 8,
+    "embedding_dimensions": 384,
+    "embedding_query_prefix": "Represent this sentence for searching relevant passages: ",
+    "embedding_passage_prefix": "",
+    "reranker_provider": "cohere",
+    "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "reranker_base_url": "http://host.docker.internal:4000/v1/rerank",
+    "trace_path": "/home/blake/Projects/hindsight-benchmarks/results/runs/inkling-prefill-sol62-high-u097-s8-20261124-ETqMjU/full-question-trace.private.json"
+  }
+}
