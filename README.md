@@ -17,6 +17,10 @@ visualizer/         the site (Next.js, static export)
 
 ## Run the evals for a model
 
+For the workstation's Qwen and Inkling profiles, see
+[Local Hindsight system evals](benchmark-runner/LOCAL_SYSTEM_EVALS.md) for
+model controls, detached queues, selected cases, and resuming failed stages.
+
 The runner pins a Hindsight commit in `benchmark-runner/evals.json`, checks it out, and runs its `hindsight-system-evals` one operation at a time.
 
 ```bash
@@ -36,10 +40,11 @@ uv run hindsight-evals --model qwen/qwen3.8-flash --decision internal:hs-decide-
 
 ```bash
 cd benchmark-runner
+amb_checkout=/absolute/path/to/agent-memory-benchmark
 uv run hindsight-evals --export-site ../visualizer/lib/results.json            # model leaderboards
 uv run hindsight-evals --export-structure ../visualizer/lib/eval-structure.json  # categories and cases
-python pull_amb_coding.py <agent-memory-benchmark clone>                        # coding agents, conversations
-python pull_amb_benchmarks.py <agent-memory-benchmark clone> [ref]              # every card on the Benchmarks page
+python pull_amb_coding.py "$amb_checkout"                                        # coding agents, conversations
+python pull_amb_benchmarks.py "$amb_checkout"                                    # every card on the Benchmarks page
 python pull_hf_cards.py                                                         # Hindsight Models, from the model cards
 ```
 
@@ -51,6 +56,6 @@ npm install
 npm run dev     # http://localhost:9998
 ```
 
-The fork's earlier facts-only BEAM results remain at `/leaderboard/retain`.
-The upstream operation suite uses `/leaderboards/retain` and a different
-protocol. See [local evaluation notes](benchmark-runner/LOCAL_QUALITY.md).
+The operation results appear under `/leaderboards`, with a local comparison
+at `/leaderboards/local`. Historical facts-only BEAM results are at
+`/leaderboard/retain`. See the [historical BEAM guide](benchmark-runner/LOCAL_QUALITY.md).

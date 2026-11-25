@@ -1,92 +1,9 @@
-# Local retain-quality comparison
+# Historical BEAM retain-quality comparison
 
-## Which suite to run
-
-The new [operation leaderboards](https://benchmarks.hindsight.vectorize.io/leaderboards)
-use `hindsight-evals` and the Hindsight 1.2.0 system suite pinned in
-[`evals.json`](evals.json). The [Benchmarks page](https://benchmarks.hindsight.vectorize.io/benchmarks)
-imports results from the separate
-[Agent Memory Benchmark](https://github.com/vectorize-io/agent-memory-benchmark).
-Our historical four-conversation BEAM results use the runner below and appear
-at `/leaderboard/retain`. Keep the scores from these protocols separate.
-
-1. Run the 42 retain cases against production Qwen3.5-4B and both Inkling
-   settings. Start with a single repeat of attribution, fidelity, and
-   no-invention cases, then use the configured repeats for all 42.
-   These grade stored facts directly and help isolate the failure modes
-   observed in the Inkling comparison.
-2. Run the 17 reflect and 25 consolidation cases for the profiles we would
-   actually use for those operations. Test the 20 page refresh cases when
-   evaluating a knowledge-page deployment. Keep the decision model disabled
-   for the first comparison, then test it separately.
-3. Use AMB PrecisionMemBench for retrieval precision, then LoCoMo or BEAM 100K
-   to check the end-to-end pipeline. Record AMB's resolved commit and dataset
-   split. Run LongMemEval S for cross-session workloads that need broader
-   coverage. Reserve larger BEAM tiers and knowledge-bank benchmarks for
-   capacity or document-search questions.
-
-For the operation suites, the existing `internal` provider takes
-`INTERNAL_BASE_URL` (without `/v1`) and `INTERNAL_API_KEY`. The published
-protocol uses the configured Gemini judge and two repeats. Use
-`GEMINI_API_KEY` for that judge and confirm a real grading call in the
-pilot. A Codex-LB judge would be a separate comparison. Verify the actual
-request controls and use distinct result IDs for the two Inkling settings
-before scoring. The existing Inkling final text prefill is scoped to strict
-facts extraction. Validate tool behavior separately before using any such
-prefill for reflect or other operations. The upstream site exporter uses a
-model allowlist. The fork's visualizer reads local system results directly.
-
-For the exact commands, fixtures and isolation behavior, see the
-[pinned Hindsight system eval guide](https://github.com/vectorize-io/hindsight/blob/7b46a07c82f997903230f0fb33deafe9dfd2e22b/hindsight-system-evals/README.md).
-
-## Local model queues
-
-`run_local_system_evals.sh RUN_DIR qwen` runs production Qwen3.5-4B with
-thinking disabled. `run_local_system_evals.sh RUN_DIR inkling` runs Inkling 2
-Mini with thinking disabled and then with minimal reasoning. Use
-`run_local_system_evals.sh RUN_DIR inkling-minimal` to resume the minimal
-profile by itself. The two queues can run in parallel. They each use the
-pinned Hindsight 1.2.0 source, isolated
-databases, BGE-small and MiniLM-L6 through local LiteLLM, and GPT-6.2 Sol high
-through codex-lb for grading. The results allow comparison between these local
-profiles under one judge and retrieval configuration.
-
-Each profile starts with three retain cases and one reflect case. The launcher
-checks that the cases executed and that trace token usage agrees with the
-selected reasoning mode. The full run uses two passes each of retain, reflect,
-consolidation, and refresh pages. Each operation saves its results as it
-finishes, with request traces kept per pass. Recall against a frozen bank
-exercises retrieval and its model-independent cases belong in a retrieval run.
-
-Inkling's `none` setting still generates reasoning on this server. Its local
-thinking-off profile also strongly suppresses the tokenizer's thinking channel
-token (`200008`) with logit bias so the native tool channels stay available.
-Both the JSON generation probe and the four-case smoke recorded zero reasoning
-tokens for this profile. The old BEAM extraction-only runner below uses its own
-validated final-text prefill.
-
-The queues then run AMB at `01bd83f3fa5245d6be3986cfab81fdd828f26acd`. Install
-that checkout with `uv sync --locked` under `benchmark-runner/.hindsight/amb`
-and install the runner with `uv sync --locked` in `benchmark-runner`.
-The ordered memory splits are PrecisionMemBench single-turn, LoCoMo Fixed in
-native reflect mode, standard LoCoMo, BEAM 100K, PersonaMem 32K, LifeBench EN,
-and LongMemEval S. The RAG splits use GPT-6.2 Sol high for the fixed answerer
-and judge. Raw answers, summaries and logs are written under each profile's
-`amb` directory. The longer BEAM tiers are scale tests, and the coding-agent
-and knowledge-bank suites exercise additional components.
-
-Set `CODEX_LB_TOKEN` in the process environment. `EVAL_RETRIEVAL_KEY` and
-`INKLING_API_KEY` can be provided explicitly or loaded from the existing local
-Hindsight and GPU2 Inkling deployments. Completed system scores appear on the
-Retain, Consolidation, Reflect, and Refresh pages leaderboards with their judge.
-The combined view at `/leaderboards/local` also shows AMB scores. To watch the
-active run from the repo root, use the queue monitor.
-
-```bash
-watch -n 15 bash benchmark-runner/monitor_local_system_evals.sh
-```
-
-## Historical BEAM runner
+This guide covers the four-conversation, facts-only BEAM runner. Its results
+appear at `/leaderboard/retain`. For the Hindsight 1.2.0 operation suites,
+the current model profiles, and the AMB queues, see
+[Local Hindsight system evals](LOCAL_SYSTEM_EVALS.md).
 
 `run_local_quality.py` runs the repository's current frozen BEAM quality
 benchmark with production-like OpenAI embeddings and Cohere-compatible
