@@ -251,7 +251,7 @@ const winCell = (ours: boolean) =>
   ours ? 'bg-[hsl(var(--primary)/0.14)] shadow-[inset_0_0_0_1.5px_hsl(var(--primary))]' : 'bg-foreground/[0.07] shadow-[inset_0_0_0_1.5px_hsl(var(--foreground)/0.35)]'
 
 function CategoryBreakdown({ board, row }: { board: Board; row: Row }) {
-  const failed = board.categories.flatMap((c) => (row.categories[c.id]?.failed ?? []).map((id) => ({ cat: c.label, id })))
+  const failed = board.categories.flatMap(({ id }) => (row.categories[id]?.failed ?? []).map((caseId) => `${id}/${caseId}`))
   return (
     <div className="space-y-5">
       {row.split && <WorkSplit row={row} split={row.split} />}
@@ -278,9 +278,9 @@ function CategoryBreakdown({ board, row }: { board: Board; row: Row }) {
         <div>
           <div className="text-xs text-muted-foreground mb-2">Failed cases</div>
           <div className="flex flex-wrap gap-1.5">
-            {failed.map((f) => (
-              <span key={`${f.cat}/${f.id}`} className="font-mono text-[11px] px-2 py-0.5 rounded bg-[hsl(var(--bad))]/10 text-[hsl(var(--bad))]">
-                {f.cat.toLowerCase().replace(/ /g, '_')}/{f.id}
+            {failed.map((id) => (
+              <span key={id} className="font-mono text-[11px] px-2 py-0.5 rounded bg-[hsl(var(--bad))]/10 text-[hsl(var(--bad))]">
+                {id}
               </span>
             ))}
           </div>
@@ -703,22 +703,26 @@ function SourceDetails({ row, source }: { row: Row; source: Source }) {
     <div className="text-sm">
       <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Source</div>
       <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
-        {source.openrouter_id && <div>
+        <div>
           <span className="text-muted-foreground">Price list:</span>{' '}
-          <a href={`https://openrouter.ai/${source.openrouter_id}`} className="font-mono text-[13px] text-[hsl(var(--primary))] hover:underline">
-            openrouter.ai/{source.openrouter_id}
-          </a>
-        </div>}
-        {p && <div>
-          <span className="text-muted-foreground">{row.model} per 1M tokens:</span>{' '}
+          {source.openrouter_id ? (
+            <a href={`https://openrouter.ai/${source.openrouter_id}`} className="font-mono text-[13px] text-[hsl(var(--primary))] hover:underline">
+              openrouter.ai/{source.openrouter_id}
+            </a>
+          ) : <span className="font-mono text-[13px]">Unavailable</span>}
+        </div>
+        <div>
+          <span className="text-muted-foreground">Price per 1M tokens:</span>{' '}
           <span className="font-mono text-[13px]">
-            {usd(p.input)} in{p.cached_input !== p.input && ` (${usd(p.cached_input)} cached)`}, {usd(p.output)} out
+            {p ? <>{usd(p.input)} in{p.cached_input !== p.input && ` (${usd(p.cached_input)} cached)`}, {usd(p.output)} out</> : 'Unmeasured'}
           </span>
-        </div>}
-        {row.tag !== 'local' && <div>
-          <span className="text-muted-foreground">{row.model} size:</span>{' '}
-          <span className="font-mono text-[13px]">{source.params ?? `not published by ${row.provider}`}</span>
-        </div>}
+        </div>
+        <div>
+          <span className="text-muted-foreground">Model size:</span>{' '}
+          {source.model_card ? (
+            <a href={source.model_card} className="font-mono text-[13px] text-[hsl(var(--primary))] hover:underline">{source.params}</a>
+          ) : <span className="font-mono text-[13px]">{source.params ?? 'Unreported'}</span>}
+        </div>
         {row.split && source.decision_params && (
           <div>
             <span className="text-muted-foreground">{row.split.decisionModel} size:</span>{' '}
@@ -734,7 +738,7 @@ function SourceDetails({ row, source }: { row: Row; source: Source }) {
         <div>
           <span className="text-muted-foreground">Ran:</span>{' '}
           <span className="font-mono text-[13px]">
-            {source.ran}, {source.repeats} passes, judged by {fmtJudge(source.judge)}
+            {source.ran}, {source.repeats} {source.repeats === 1 ? 'pass' : 'passes'}, judged by {fmtJudge(source.judge)}
           </span>
         </div>
       </div>

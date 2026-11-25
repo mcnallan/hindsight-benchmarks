@@ -3,10 +3,15 @@ import path from 'node:path'
 import type { Board, CategoryResult, Row } from './data'
 import STRUCTURE from './eval-structure.json'
 
+const inklingSource = {
+  params: '26.4B total, 3.4B active (5.4B effective with loops)',
+  model_card: 'https://thinkingmachines.ai/model-card/inkling-2-mini/',
+}
+
 export const localProfiles = [
-  { id: 'qwen35-4b-off', label: 'Qwen3.5 4B · Thinking off', icon: '/logos/qwen.webp' },
-  { id: 'inkling-2-mini-off', label: 'Inkling 2 Mini · Thinking off' },
-  { id: 'inkling-2-mini-minimal', label: 'Inkling 2 Mini · Minimal effort' },
+  { id: 'qwen35-4b-off', label: 'Qwen3.5 4B · Thinking off', icon: '/logos/qwen.webp', source: { params: '4B' } },
+  { id: 'inkling-2-mini-off', label: 'Inkling 2 Mini · Thinking off', source: inklingSource },
+  { id: 'inkling-2-mini-minimal', label: 'Inkling 2 Mini · Minimal effort', source: inklingSource },
 ]
 
 type Operation = {
@@ -72,7 +77,12 @@ export function withLocalResults(board: Board): Board {
       cost: null,
       callsPerTask: calls / result.total,
       tokensPerTask: { input: perCase(input_tokens), output: perCase(output_tokens + thoughts_tokens) },
-      source: { ran: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8)}`, judge: run.judge, repeats: run.repeats },
+      source: {
+        ...profile.source,
+        ran: `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6, 8)}`,
+        judge: run.judge,
+        repeats: run.repeats,
+      },
     }]
   })
   if (localRows.length === 0) return board

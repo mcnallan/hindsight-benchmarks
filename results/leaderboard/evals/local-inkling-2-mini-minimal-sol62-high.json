@@ -1,0 +1,102 @@
+{
+  "model": "inkling-2-mini",
+  "provider": "local-eval",
+  "decision_model": null,
+  "embedder": "retrieval:BAAI/bge-small-en-v1.5",
+  "reranker": "retrieval:cross-encoder/ms-marco-MiniLM-L6-v2",
+  "hindsight_commit": "7b46a07c82f997903230f0fb33deafe9dfd2e22b",
+  "judge": "codex-lb/gpt-6.2-sol:high",
+  "full": true,
+  "repeats": 2,
+  "timestamp": "20261125T151144Z",
+  "pricing_per_token": {},
+  "score": 97.6,
+  "cost_usd": null,
+  "operations": {
+    "retain": {
+      "passed": 82,
+      "failed": 2,
+      "errors": 0,
+      "tokens": {
+        "calls": 128,
+        "input_tokens": 479058,
+        "cached_tokens": 445376,
+        "output_tokens": 48874,
+        "thoughts_tokens": 37200,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 84,
+      "score": 97.6,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-inkling-2-mini-minimal-sol62-high-20261125T151144Z",
+      "timestamp": "20261125T151144Z",
+      "categories": {
+        "selectivity": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "completeness": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "attribution": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "temporal": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "language": {
+          "passed": 13,
+          "total": 14,
+          "failed": [
+            "spanish-conversation"
+          ]
+        },
+        "fidelity": {
+          "passed": 10,
+          "total": 10,
+          "failed": []
+        },
+        "mission": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "mode": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "entities": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "entity_labels": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "inputs": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "no_invention": {
+          "passed": 5,
+          "total": 6,
+          "failed": [
+            "date-borrowed-from-nearby-subject"
+          ]
+        }
+      }
+    }
+  }
+}

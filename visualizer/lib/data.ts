@@ -57,6 +57,7 @@ export type Source = {
   price_per_1m?: { input: number; output: number; cached_input: number }
   decision_price_per_1m_input?: number | null
   params?: string | null // size from the model card; none for closed models
+  model_card?: string
   decision_params?: string | null
   ran: string
   judge: string
