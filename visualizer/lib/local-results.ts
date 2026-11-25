@@ -11,10 +11,10 @@ const inklingSource = {
 
 type ProfileSource = Pick<Source, 'params' | 'model_card' | 'price_per_1m'>
 
-export const localProfiles: { id: string; label: string; icon?: string; source: ProfileSource }[] = [
-  { id: 'qwen35-4b-off', label: 'Qwen3.5 4B · Thinking off', icon: '/logos/qwen.webp', source: { params: '4B · 4-bit quant' } },
-  { id: 'inkling-2-mini-off', label: 'Inkling 2 Mini · Thinking off', source: inklingSource },
-  { id: 'inkling-2-mini-minimal', label: 'Inkling 2 Mini · Minimal effort', source: inklingSource },
+export const localProfiles: { id: string; model: string; reasoningMode: string; icon?: string; source: ProfileSource }[] = [
+  { id: 'qwen35-4b-off', model: 'Qwen3.5 4B', reasoningMode: 'Thinking disabled', icon: '/logos/qwen.webp', source: { params: '4B · 4-bit quant' } },
+  { id: 'inkling-2-mini-off', model: 'Inkling 2 Mini', reasoningMode: 'Thinking disabled', source: inklingSource },
+  { id: 'inkling-2-mini-minimal', model: 'Inkling 2 Mini', reasoningMode: 'Minimal effort', source: inklingSource },
 ]
 
 type Operation = {
@@ -104,8 +104,10 @@ export function withLocalResults(board: Board): Board {
     const day = (board.group === 'summary' ? run.timestamp : first.timestamp).slice(0, 8)
     return [{
       id: `local-${profile.id}`,
-      model: profile.label,
+      model: profile.model,
+      label: `${profile.model} · ${profile.reasoningMode}`,
       provider: 'Local',
+      reasoningMode: profile.reasoningMode,
       icon: profile.icon,
       tag: 'local',
       ...stats,

@@ -357,23 +357,25 @@ function Heatmap({ board, rows }: { board: Board; rows: Row[] }) {
           {rows.map((r) => (
             <tr key={r.id} className="border-b border-border last:border-0">
               <td className="px-3 py-1.5 font-mono whitespace-nowrap sticky left-0 bg-background">
-                <span className="inline-flex items-center gap-2">
-                  {(r.icon ?? PROVIDER_ICON[r.provider]) ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={r.icon ?? PROVIDER_ICON[r.provider]} alt="" className="w-4 h-4 object-contain shrink-0" />
-                  ) : (
-                    <span className="w-4 h-4 shrink-0 rounded-sm bg-secondary text-[9px] font-bold flex items-center justify-center text-muted-foreground">{r.provider[0]}</span>
-                  )}
-                  {r.split ? r.model : (r.label ?? r.model)}
-                  {r.split && (
-                    <span className="inline-flex items-center gap-1 text-muted-foreground">
-                      +
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/favicon.png" alt="" className="w-3.5 h-3.5" />
-                      <span className="text-[hsl(var(--primary))]">{r.split.decisionModel}</span>
-                    </span>
-                  )}
-                </span>
+                {r.tag === 'local' ? <ModelCell row={r} /> : (
+                  <span className="inline-flex items-center gap-2">
+                    {(r.icon ?? PROVIDER_ICON[r.provider]) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={r.icon ?? PROVIDER_ICON[r.provider]} alt="" className="w-4 h-4 object-contain shrink-0" />
+                    ) : (
+                      <span className="w-4 h-4 shrink-0 rounded-sm bg-secondary text-[9px] font-bold flex items-center justify-center text-muted-foreground">{r.provider[0]}</span>
+                    )}
+                    {r.split ? r.model : (r.label ?? r.model)}
+                    {r.split && (
+                      <span className="inline-flex items-center gap-1 text-muted-foreground">
+                        +
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/favicon.png" alt="" className="w-3.5 h-3.5" />
+                        <span className="text-[hsl(var(--primary))]">{r.split.decisionModel}</span>
+                      </span>
+                    )}
+                  </span>
+                )}
               </td>
               {board.categories.map((c) => {
                 const v = r.categories[c.id]
@@ -567,7 +569,7 @@ export function ModelScatter({ rows, task, bare, text, maxH = 520 }: { rows: Row
               )
             })}
           {plain.map((p) => (
-            <g key={p.id} onMouseEnter={() => setHover(p.id)} onMouseLeave={() => setHover(null)}>
+            <g key={p.id} aria-label={p.label ?? p.model} onMouseEnter={() => setHover(p.id)} onMouseLeave={() => setHover(null)}>
               <circle cx={sx(p.cost)} cy={sy(p.quality)} r={12} fill="transparent" />
               <rect x={sx(p.cost) - L} y={sy(p.quality) - L} width={2 * L} height={2 * L} rx={3} fill="hsl(var(--background))" stroke="hsl(var(--border))" />
               {icon(p) ? (
@@ -614,6 +616,7 @@ export function ModelScatter({ rows, task, bare, text, maxH = 520 }: { rows: Row
                   <div className="font-mono font-semibold text-foreground truncate">{hp.model}</div>
                   <div className="text-muted-foreground truncate">
                     {hp.provider}
+                    {hp.reasoningMode && ` · ${hp.reasoningMode}`}
                     {hp.split && <span className="text-[hsl(var(--primary))]"> + {hp.split.decisionModel}</span>}
                   </div>
                 </div>

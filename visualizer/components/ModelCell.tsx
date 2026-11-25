@@ -29,7 +29,7 @@ export const PROVIDER_ICON: Record<string, string> = {
   ZeroEntropy: '/zeroentropy.png',
 }
 
-export function ModelCell({ row }: { row: Pick<Row, 'model' | 'provider' | 'icon' | 'openWeights' | 'tag'> & Partial<Pick<Row, 'split' | 'source'>> & { size?: string } }) {
+export function ModelCell({ row }: { row: Pick<Row, 'model' | 'provider' | 'icon' | 'openWeights' | 'tag' | 'reasoningMode' | 'split'> & { size?: string } }) {
   return (
     <div className="flex items-center gap-2.5 min-w-0">
       {(row.icon ?? PROVIDER_ICON[row.provider]) ? (
@@ -55,7 +55,7 @@ export function ModelCell({ row }: { row: Pick<Row, 'model' | 'provider' | 'icon
         )}
         <div className="text-xs text-muted-foreground truncate">
           {row.provider}
-          {row.tag === 'local' && row.source && ` · ${fmtJudge(row.source.judge)}`}
+          {row.reasoningMode && ` · ${row.reasoningMode}`}
           {row.size && ` · ${row.size}`}
           {row.openWeights && ' · open weights'}
         </div>

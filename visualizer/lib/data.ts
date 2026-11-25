@@ -35,6 +35,7 @@ export type Row = {
   model: string
   label?: string // shown instead of model where two rows share it
   provider: string
+  reasoningMode?: string
   icon?: string
   openWeights?: boolean
   tag?: 'reference' | 'baseline' | 'hindsight' | 'published' | 'local'

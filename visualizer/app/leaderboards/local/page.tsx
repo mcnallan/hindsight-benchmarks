@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { ModelCell } from '@/components/ModelCell'
 import { BoardNav, PageHero } from '@/components/Page'
 import { localProfiles as profiles, readLocalResult, readOptional, readResult, resultsRoot } from '@/lib/local-results'
 
@@ -64,7 +65,11 @@ function ResultTable({ title, rows }: { title: string; rows: { label: string; ce
           <thead className="bg-secondary text-left">
             <tr>
               <th className="px-4 py-3">Suite</th>
-              {profiles.map(({ id, label }) => <th key={id} className="px-4 py-3">{label}</th>)}
+              {profiles.map(({ id, model, reasoningMode, icon }) => (
+                <th key={id} className="px-4 py-3">
+                  <ModelCell row={{ model, reasoningMode, icon, provider: 'Local' }} />
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
