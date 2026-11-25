@@ -5,6 +5,7 @@ import { BoardView, CostBar, ModelScatter, QualityBar } from '@/components/Board
 import { BoardNav, PageHero, SetupStrip } from '@/components/Page'
 import { SortTable } from '@/components/SortTable'
 import { AGENT_ICON, CODING_SCATTER_TEXT, codingPoints, codingScore } from '@/lib/coding'
+import { withLocalResults } from '@/lib/local-results'
 
 export function generateStaticParams() {
   return [...BOARDS, ...USE_CASES].map((b) => ({ board: b.id }))
@@ -22,8 +23,9 @@ export default async function BoardPage({ params }: { params: Promise<{ board: s
   const id = (await params).board
   const useCase = useCaseById(id)
   if (useCase) return <UseCasePage u={useCase} />
-  const board = boardById(id)
-  if (!board) notFound()
+  const baseBoard = boardById(id)
+  if (!baseBoard) notFound()
+  const board = withLocalResults(baseBoard)
   const cases = board.categories.reduce((s, c) => s + c.cases, 0)
 
   return (

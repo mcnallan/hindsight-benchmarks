@@ -37,11 +37,12 @@ export type Row = {
   provider: string
   icon?: string
   openWeights?: boolean
-  tag?: 'reference' | 'baseline' | 'hindsight' | 'published'
+  tag?: 'reference' | 'baseline' | 'hindsight' | 'published' | 'local'
   quality: number // % of cases passed
   score?: number // combined: see SCORE
   categories: Record<string, CategoryResult>
-  cost: number // USD, all-in, in the board's costUnit
+  cases?: { passed: number; total: number }
+  cost: number | null // USD, all-in, in the board's costUnit
   callsPerTask: number // LLM calls
   decisionCallsPerTask?: number
   // Per case, for rows that also run a decision model: what each model did and cost.
@@ -52,9 +53,9 @@ export type Row = {
 }
 
 export type Source = {
-  openrouter_id: string
-  price_per_1m: { input: number; output: number; cached_input: number }
-  decision_price_per_1m_input: number | null
+  openrouter_id?: string
+  price_per_1m?: { input: number; output: number; cached_input: number }
+  decision_price_per_1m_input?: number | null
   params?: string | null // size from the model card; none for closed models
   decision_params?: string | null
   ran: string
@@ -302,10 +303,12 @@ export const SCORE = { quality: 0.7, cost: 0.3 }
 export const logScore = (best: number, v: number) => Math.max(0, Math.min(100, 100 * (1 - Math.log10(v / best) / 3)))
 
 function addScores(rows: Row[]): Row[] {
-  const cheapest = Math.min(...rows.filter((x) => x.cost > 0).map((x) => x.cost))
+  const costs = rows.flatMap(({ cost }) => cost === null ? [] : [cost])
+  const cheapest = Math.min(...costs.filter((cost) => cost > 0))
   return rows.map((r) => {
+    if (r.cost === null) return r
     // A tab where nothing costs anything is scored on quality alone.
-    if (rows.every((x) => x.cost === 0)) return { ...r, score: r.quality }
+    if (costs.every((cost) => cost === 0)) return { ...r, score: r.quality }
     const cost = r.cost === 0 ? 100 : logScore(cheapest, r.cost)
     return { ...r, score: round(SCORE.quality * r.quality + SCORE.cost * cost, 1) }
   })

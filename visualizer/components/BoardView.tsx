@@ -5,7 +5,7 @@ import { ChevronDown, ArrowDown, Info } from 'lucide-react'
 import type { Board, Row, Source, Tab } from '@/lib/data'
 import { SCORE } from '@/lib/data'
 import { cn } from '@/lib/utils'
-import { ModelCell, PROVIDER_ICON, fmtCost, fmtTokens } from './ModelCell'
+import { ModelCell, PROVIDER_ICON, fmtCost, fmtJudge, fmtTokens } from './ModelCell'
 
 export function QualityBar({ value }: { value: number }) {
   return (
@@ -90,13 +90,14 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
   const [sort, setSort] = useState<SortKey>('score')
   const [open, setOpen] = useState<string | null>(null)
   const hasDecision = tab.rows.some((r) => r.decisionCallsPerTask)
+  const costOrder = (r: Row) => r.cost ?? Infinity
 
   const rows = [...tab.rows].sort((a, b) =>
     sort === 'score'
-      ? (b.score ?? 0) - (a.score ?? 0)
+      ? (b.score ?? -Infinity) - (a.score ?? -Infinity) || b.quality - a.quality
       : sort === 'quality'
-      ? b.quality - a.quality || a.cost - b.cost
-      : a.cost - b.cost,
+      ? b.quality - a.quality || costOrder(a) - costOrder(b)
+      : costOrder(a) - costOrder(b),
   )
 
   const SortHead = ({ k, children, className, tip }: { k: SortKey; children: React.ReactNode; className?: string; tip?: string }) => (
@@ -112,7 +113,7 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
   )
   const costTip = 'Tokens each model really used in these evals, times its list price on OpenRouter. Includes decision model calls.'
 
-  const priciest = Math.max(0, ...tab.rows.map((r) => r.cost))
+  const priciest = Math.max(0, ...tab.rows.map((r) => r.cost ?? 0))
   const best = Math.max(...tab.rows.map((r) => r.score ?? -Infinity))
 
   return (
@@ -138,8 +139,8 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
           </thead>
           <tbody>
             {rows.map((r, i) => {
-              const total = Object.values(r.categories).reduce((s, c) => s + c.total, 0)
-              const passed = Object.values(r.categories).reduce((s, c) => s + c.passed, 0)
+              const total = r.cases?.total ?? Object.values(r.categories).reduce((s, c) => s + c.total, 0)
+              const passed = r.cases?.passed ?? Object.values(r.categories).reduce((s, c) => s + c.passed, 0)
               const expanded = open === r.id
               return (
                 <Fragment key={r.id}>
@@ -150,7 +151,7 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
                       r.tag === 'reference' && 'bg-[hsl(var(--teal))]/[0.05]',
                     )}
                   >
-                    <td className="px-3 py-3 font-mono text-xs text-muted-foreground">{sort !== 'cost' ? i + 1 : ''}</td>
+                    <td className="px-3 py-3 font-mono text-xs text-muted-foreground">{sort === 'quality' || (sort === 'score' && r.score != null) ? i + 1 : ''}</td>
                     <td className="px-3 py-3 max-w-[260px]">
                       <div className="flex items-center gap-2">
                         <ChevronDown className={cn('w-3.5 h-3.5 shrink-0 text-muted-foreground transition-transform', expanded && 'rotate-180')} />
@@ -164,14 +165,14 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
                             {r.score?.toFixed(1)}
                           </span>
                         ) : (
-                          r.score?.toFixed(1)
+                          r.score?.toFixed(1) ?? '—'
                         )}
                       </td>
                     <td className="px-3 py-3">
                       <QualityBar value={r.quality} />
                     </td>
                     <td className="px-3 py-3">
-                      <CostBar value={r.cost} priciest={priciest} />
+                      {r.cost === null ? <span className="text-muted-foreground" title="Run cost unavailable">—</span> : <CostBar value={r.cost} priciest={priciest} />}
                     </td>
                     <td className="px-3 py-3 font-mono text-xs text-muted-foreground tabular-nums whitespace-nowrap">
                       {passed}/{total}
@@ -198,6 +199,7 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
       <>
           <p className="-mt-7 text-xs text-muted-foreground">
             Click a row for its categories and failed cases. Hover <Info className="w-3 h-3 inline" /> for how a column is computed.
+            {tab.rows.some((r) => r.cost === null) && ' Combined scores and the cost chart require pricing. Sort by Quality to see all pass rates.'}
           </p>
 
           <ModelScatter rows={tab.rows} task={board.title} />
@@ -249,7 +251,7 @@ const winCell = (ours: boolean) =>
   ours ? 'bg-[hsl(var(--primary)/0.14)] shadow-[inset_0_0_0_1.5px_hsl(var(--primary))]' : 'bg-foreground/[0.07] shadow-[inset_0_0_0_1.5px_hsl(var(--foreground)/0.35)]'
 
 function CategoryBreakdown({ board, row }: { board: Board; row: Row }) {
-  const failed = board.categories.flatMap((c) => (row.categories[c.id].failed ?? []).map((id) => ({ cat: c.label, id })))
+  const failed = board.categories.flatMap((c) => (row.categories[c.id]?.failed ?? []).map((id) => ({ cat: c.label, id })))
   return (
     <div className="space-y-5">
       {row.split && <WorkSplit row={row} split={row.split} />}
@@ -257,6 +259,7 @@ function CategoryBreakdown({ board, row }: { board: Board; row: Row }) {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-2.5">
         {board.categories.map((c) => {
           const r = row.categories[c.id]
+          if (!r?.total) return null
           const ratio = r.passed / r.total
           return (
             <div key={c.id} className="flex items-center gap-3 text-sm" title={c.about}>
@@ -333,6 +336,10 @@ function WorkSplit({ row, split }: { row: Row; split: NonNullable<Row['split']> 
 }
 
 function Heatmap({ board, rows }: { board: Board; rows: Row[] }) {
+  const best = new Map(board.categories.map(({ id }) => [id, Math.max(...rows.flatMap((r) => {
+    const result = r.categories[id]
+    return result?.total ? [result.passed / result.total] : []
+  }))]))
   return (
     <div className="rounded-xl border border-border overflow-x-auto">
       <table className="text-xs w-full">
@@ -370,11 +377,11 @@ function Heatmap({ board, rows }: { board: Board; rows: Row[] }) {
               </td>
               {board.categories.map((c) => {
                 const v = r.categories[c.id]
-                const best = Math.max(...rows.map((x) => x.categories[c.id].passed / x.categories[c.id].total))
+                if (!v?.total) return <td key={c.id} className="px-1 py-1 text-center text-muted-foreground">—</td>
                 return (
                   <td key={c.id} className="px-1 py-1">
                     <div
-                      className={cn('rounded font-mono tabular-nums text-center py-1 min-w-[44px]', rows.length > 1 && v.passed / v.total === best && winCell(r.tag === 'hindsight'))}
+                      className={cn('rounded font-mono tabular-nums text-center py-1 min-w-[44px]', rows.length > 1 && v.passed / v.total === best.get(c.id) && winCell(r.tag === 'hindsight'))}
                       title={`${r.label ?? r.model} · ${c.label}: ${v.passed}/${v.total}`}
                     >
                       {v.passed}/{v.total}
@@ -410,9 +417,10 @@ export function ModelScatter({ rows, task, bare, text, maxH = 520 }: { rows: Row
     return () => ro.disconnect()
   }, [])
 
-  const plain = rows.filter((r) => r.cost > 0 && !r.split)
-  const pairs = rows
-    .filter((d) => d.cost > 0 && d.split)
+  const priced = rows.filter((r): r is Row & { cost: number } => r.cost !== null && r.cost > 0)
+  const plain = priced.filter((r) => !r.split)
+  const pairs = priced
+    .filter((d) => d.split)
     .flatMap((d) => {
       const base = plain.find((b) => b.model === d.model)
       return base ? [{ base, d }] : []
@@ -445,7 +453,7 @@ export function ModelScatter({ rows, task, bare, text, maxH = 520 }: { rows: Row
   const sy = (q: number) => r1(pad.t + (1 - (q - y0) / (y1 - y0)) * (H - pad.t - pad.b))
 
   // Best value among the plain models only.
-  const front: Row[] = []
+  const front: typeof plain = []
   for (const p of [...plain].sort((a, b) => a.cost - b.cost || b.quality - a.quality))
     if (!front.length || p.quality > front[front.length - 1].quality) front.push(p)
   const onFront = new Set(front.map((p) => p.id))
@@ -695,22 +703,22 @@ function SourceDetails({ row, source }: { row: Row; source: Source }) {
     <div className="text-sm">
       <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Source</div>
       <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
-        <div>
+        {source.openrouter_id && <div>
           <span className="text-muted-foreground">Price list:</span>{' '}
           <a href={`https://openrouter.ai/${source.openrouter_id}`} className="font-mono text-[13px] text-[hsl(var(--primary))] hover:underline">
             openrouter.ai/{source.openrouter_id}
           </a>
-        </div>
-        <div>
+        </div>}
+        {p && <div>
           <span className="text-muted-foreground">{row.model} per 1M tokens:</span>{' '}
           <span className="font-mono text-[13px]">
             {usd(p.input)} in{p.cached_input !== p.input && ` (${usd(p.cached_input)} cached)`}, {usd(p.output)} out
           </span>
-        </div>
-        <div>
+        </div>}
+        {row.tag !== 'local' && <div>
           <span className="text-muted-foreground">{row.model} size:</span>{' '}
           <span className="font-mono text-[13px]">{source.params ?? `not published by ${row.provider}`}</span>
-        </div>
+        </div>}
         {row.split && source.decision_params && (
           <div>
             <span className="text-muted-foreground">{row.split.decisionModel} size:</span>{' '}
@@ -726,7 +734,7 @@ function SourceDetails({ row, source }: { row: Row; source: Source }) {
         <div>
           <span className="text-muted-foreground">Ran:</span>{' '}
           <span className="font-mono text-[13px]">
-            {source.ran}, {source.repeats} passes, judged by {source.judge.split('/').pop()}
+            {source.ran}, {source.repeats} passes, judged by {fmtJudge(source.judge)}
           </span>
         </div>
       </div>

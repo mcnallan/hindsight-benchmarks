@@ -1,0 +1,298 @@
+{
+  "model": "inkling-2-mini",
+  "provider": "local-eval",
+  "decision_model": null,
+  "embedder": "retrieval:BAAI/bge-small-en-v1.5",
+  "reranker": "retrieval:cross-encoder/ms-marco-MiniLM-L6-v2",
+  "hindsight_commit": "7b46a07c82f997903230f0fb33deafe9dfd2e22b",
+  "judge": "codex-lb/gpt-6.2-sol:high",
+  "full": true,
+  "repeats": 2,
+  "timestamp": "20261125T041017Z",
+  "pricing_per_token": {},
+  "score": 90.7,
+  "cost_usd": null,
+  "operations": {
+    "retain": {
+      "passed": 78,
+      "failed": 6,
+      "errors": 0,
+      "tokens": {
+        "calls": 128,
+        "input_tokens": 478802,
+        "cached_tokens": 441792,
+        "output_tokens": 44809,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 84,
+      "score": 92.9,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-inkling-2-mini-off-sol62-high-20261125T030529Z",
+      "timestamp": "20261125T030529Z",
+      "categories": {
+        "selectivity": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "completeness": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "attribution": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "temporal": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "language": {
+          "passed": 12,
+          "total": 14,
+          "failed": [
+            "spanish-conversation"
+          ]
+        },
+        "fidelity": {
+          "passed": 10,
+          "total": 10,
+          "failed": []
+        },
+        "mission": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "mode": {
+          "passed": 6,
+          "total": 8,
+          "failed": [
+            "custom-instructions"
+          ]
+        },
+        "entities": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "entity_labels": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "inputs": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "no_invention": {
+          "passed": 4,
+          "total": 6,
+          "failed": [
+            "date-borrowed-from-nearby-subject"
+          ]
+        }
+      }
+    },
+    "reflect": {
+      "passed": 31,
+      "failed": 3,
+      "errors": 0,
+      "tokens": {
+        "calls": 149,
+        "input_tokens": 1910674,
+        "cached_tokens": 739392,
+        "output_tokens": 21352,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 34,
+      "score": 91.2,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-inkling-2-mini-off-sol62-high-20261125T032422Z",
+      "timestamp": "20261125T032422Z",
+      "categories": {
+        "precision": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "update": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "aggregation": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "no_overreach": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "source_authority": {
+          "passed": 6,
+          "total": 8,
+          "failed": [
+            "sp-approvals"
+          ]
+        },
+        "pages": {
+          "passed": 3,
+          "total": 4,
+          "failed": [
+            "hq-count-billing"
+          ]
+        },
+        "orchestration": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        }
+      }
+    },
+    "consolidation": {
+      "passed": 48,
+      "failed": 2,
+      "errors": 0,
+      "tokens": {
+        "calls": 328,
+        "input_tokens": 3183384,
+        "cached_tokens": 1814143,
+        "output_tokens": 254256,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 50,
+      "score": 96.0,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-inkling-2-mini-off-sol62-high-20261125T033957Z",
+      "timestamp": "20261125T033957Z",
+      "categories": {
+        "merge": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "update": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "recency": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "counts": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "entities": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "language": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "mission": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "scale": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "repetition": {
+          "passed": 4,
+          "total": 6,
+          "failed": [
+            "assistant-daily-chats",
+            "coding-agent-sessions"
+          ]
+        }
+      }
+    },
+    "refresh_pages": {
+      "passed": 33,
+      "failed": 7,
+      "errors": 0,
+      "tokens": {
+        "calls": 388,
+        "input_tokens": 4327698,
+        "cached_tokens": 2408256,
+        "output_tokens": 130459,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 40,
+      "score": 82.5,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-inkling-2-mini-off-sol62-high-20261125T041017Z",
+      "timestamp": "20261125T041017Z",
+      "categories": {
+        "precision": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "update": {
+          "passed": 7,
+          "total": 8,
+          "failed": [
+            "du-oncall-departed-0"
+          ]
+        },
+        "aggregation": {
+          "passed": 5,
+          "total": 8,
+          "failed": [
+            "hq-count-billing",
+            "du-incident-table-0"
+          ]
+        },
+        "no_overreach": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "stability": {
+          "passed": 4,
+          "total": 6,
+          "failed": [
+            "du-rerecorded-history-0"
+          ]
+        },
+        "consistency": {
+          "passed": 3,
+          "total": 4,
+          "failed": [
+            "pump-maintenance-zh-0"
+          ]
+        },
+        "orchestration": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        }
+      }
+    }
+  }
+}

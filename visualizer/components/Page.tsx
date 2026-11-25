@@ -29,6 +29,7 @@ export function BoardNav({ current }: { current?: string }) {
       title: u.title,
       sep: i === 0,
     })),
+    { href: '/leaderboards/local', title: 'Local runs', sep: true },
   ]
   return <SubNav items={items} current={current ? `/leaderboards/${current}` : '/leaderboards'} />
 }
@@ -62,7 +63,7 @@ export function SetupStrip({ board, bare }: { board?: Board; bare?: boolean }) {
   const fixed = board?.setup ?? [
     ...parts.map((p) => [PART_LABEL[p], REFERENCE[p].model]),
     ['Hindsight', RUN.hindsightVersion],
-    ['Judge', RUN.judge],
+    [board ? 'Reference judge' : 'Judge', RUN.judge],
   ]
   return (
     <div className={cn(!bare && 'rounded-xl border border-border p-4 sm:p-5')}>

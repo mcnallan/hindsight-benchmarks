@@ -18,6 +18,7 @@ import datetime
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -60,7 +61,7 @@ def run_pytest(hindsight: Path, files: list[str], model: str, provider: dict, cf
         HINDSIGHT_EVAL_LLM_API_KEY=key,
         HINDSIGHT_EVAL_JUDGE_MODEL=cfg["judge_model"],
         HS_BENCH_TOKENS_OUT=str(tokens),
-        HS_BENCH_TRACES_DIR=str(tokens.parent / "traces"),
+        HS_BENCH_TRACES_DIR=str(tokens.parent / junit.stem),
         PYTHONPATH=str(SRC_DIR),
         **(extra_env or {}),
     )
@@ -71,12 +72,21 @@ def run_pytest(hindsight: Path, files: list[str], model: str, provider: dict, cf
            "-k", f"not _benchmark_ and ({cases})" if cases else "not _benchmark_"]
     if cfg.get("full"):
         cmd.append("--full")
-    # A non-zero exit means some evals failed. That is the score, not an error.
-    subprocess.run(cmd, cwd=evals, env=env)
+    # A failed assertion contributes to the score. Interrupted or empty runs cannot be scored.
+    result = subprocess.run(cmd, cwd=evals, env=env)
+    if result.returncode not in (0, 1) or not junit.exists():
+        raise RuntimeError(f"pytest did not complete the selected evals (exit {result.returncode})")
+    if os.getenv("HS_BENCH_CODEX_LB_URL") and "codex-lb grading failed with HTTP" in junit.read_text():
+        raise RuntimeError(f"codex-lb grading had a provider error. See {junit}")
 
 
 # Codex says ProviderRateLimitResetError; Copilot raises a plain RuntimeError with its own wording.
 QUOTA_ERRORS = ("ProviderRateLimitResetError", "GitHub Copilot usage limit reached")
+
+
+def trace_file(junit: Path, name: str) -> Path:
+    trace_name = re.sub(r"[^\w.-]+", "_", name)
+    return junit.parent / junit.stem / f"{trace_name}.json"
 
 
 def quota_hits(junit: Path) -> tuple[datetime.datetime | None, list[str]] | None:
@@ -92,8 +102,9 @@ def quota_hits(junit: Path) -> tuple[datetime.datetime | None, list[str]] | None
     end = start + float(suite.get("time") or 0) + 600 if start else None
     for case in tree.iter("testcase"):
         text = "".join((c.get("message") or "") + (c.text or "") for c in case)
-        trace_name = re.sub(r'[^\w.-]+', '_', case.get('name'))
-        trace = junit.parent / "traces" / f"{trace_name}.json"
+        trace = trace_file(junit, case.get("name"))
+        if not trace.parent.exists():
+            trace = junit.parent / "traces" / trace.name
         if start and trace.exists() and start <= trace.stat().st_mtime <= end:
             text += trace.read_text()
         if any(e in text for e in QUOTA_ERRORS):
@@ -117,6 +128,12 @@ def splice(junit: Path, tokens: Path, retry_junit: Path, retry_tokens: Path, nam
     rows += [r for r in (retry_tokens.read_text().splitlines() if retry_tokens.exists() else [])
              if json.loads(r)["nodeid"].rsplit("::", 1)[-1] in retried]
     tokens.write_text("".join(r + "\n" for r in rows))
+    for name in retried:
+        retry_trace = trace_file(retry_junit, name)
+        if retry_trace.exists():
+            trace = trace_file(junit, name)
+            trace.parent.mkdir(exist_ok=True)
+            shutil.copyfile(retry_trace, trace)
     retry_junit.unlink()
     retry_tokens.unlink(missing_ok=True)
 
@@ -276,7 +293,7 @@ def export_site(out: Path, operations: dict[str, list[str]], commit: str) -> Non
                 # What the decision model cost: the total less the LLM's share.
                 "decision_cost_usd": round(o["cost_usd"] - (cost_usd(t, r["pricing_per_token"]) or 0), 4)
                 if o["cost_usd"] is not None else None,
-                "categories": case_results(RUNNER_DIR / o["run_dir"], op, by_stem),
+                "categories": o.get("categories") or case_results(RUNNER_DIR / o["run_dir"], op, by_stem),
             }
         # Where the price came from, for the site to show: the OpenRouter list entry every route is priced at.
         prov = providers.get(r["provider"], {})
@@ -370,7 +387,9 @@ def summarize(ops: dict) -> dict:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--config", type=Path, default=CONFIG, help="benchmark configuration JSON (default: evals.json)")
     p.add_argument("--model", help="model id at the provider, e.g. qwen/qwen3.6-35b-a3b")
+    p.add_argument("--result-id", help="distinct result filename stem for variants of the same model")
     p.add_argument("--export-structure", metavar="PATH",
                    help="write every operation, category and case at the pinned commit as JSON (for the UI), then exit")
     p.add_argument("--provider", default="openrouter", help="a provider from evals.json (default: openrouter)")
@@ -399,7 +418,7 @@ def main() -> None:
         pass
 
     # Base URLs may name env vars (${INTERNAL_BASE_URL}), so they stay out of the repo.
-    cfg = json.loads(os.path.expandvars(CONFIG.read_text()))
+    cfg = json.loads(os.path.expandvars(args.config.read_text()))
     provider = cfg["providers"][args.provider]
     operations = cfg["operations"]
     if args.operations:
@@ -451,6 +470,10 @@ def main() -> None:
     slug = (f"{args.provider}-{args.model}" + (f"+{args.decision}" if args.decision else "")
             + (f"+embed-{args.embedder}" if args.embedder else "") + (f"+rerank-{args.reranker}" if args.reranker else ""))
     slug = slug.replace("/", "-").replace(":", "-")
+    if args.result_id:
+        if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_.-]*", args.result_id):
+            p.error("--result-id must be a filename stem with no path components")
+        slug = args.result_id
     if args.resume:
         run_dir = Path(args.resume).resolve()
         stamp = run_dir.name.rsplit("-", 1)[1]
@@ -520,6 +543,12 @@ def main() -> None:
     prev = json.loads(out.read_text()) if out.exists() else {}
     if prev.get("hindsight_commit") == commit:
         ops = {**prev.get("operations", {}), **ops}
+    by_stem = {Path(f).stem: op for op, files in cfg["operations"].items() for f in files}
+    for op, o in ops.items():
+        if "categories" not in o:
+            categories = case_results(RUNNER_DIR / o["run_dir"], op, by_stem)
+            if categories:
+                o["categories"] = categories
     result = summarize(ops)
     result = {
         "model": args.model,
@@ -528,8 +557,7 @@ def main() -> None:
         "embedder": args.embedder,
         "reranker": args.reranker,
         "hindsight_commit": commit,
-        # A GPT judge runs through codex (evals_plugin.py); any other is the evals' own Gemini judge.
-        "judge": f"{'codex' if cfg['judge_model'].startswith('gpt-') else 'gemini'}/{cfg['judge_model']}",
+        "judge": judge_label(cfg["judge_model"]),
         "full": bool(cfg.get("full")),
         "repeats": repeats,
         "timestamp": stamp,
@@ -537,11 +565,21 @@ def main() -> None:
         **result,
         "operations": ops,
     }
-    out.write_text(json.dumps(result, indent=2) + "\n")
+    pending = out.with_suffix(".json.tmp")
+    pending.write_text(json.dumps(result, indent=2) + "\n")
+    pending.replace(out)
     print(json.dumps({k: result[k] for k in ("model", "score", "cost_usd")}))
     for op, o in ops.items():
         print(f"  {op:14} {o['passed']}/{o['total']}  score={o['score']}  cost=${o['cost_usd']}  errors={o['errors']}")
     print(f"wrote {out}")
+
+
+def judge_label(model: str) -> str:
+    if not model.startswith("gpt-"):
+        return f"gemini/{model}"
+    if os.getenv("HS_BENCH_CODEX_LB_URL"):
+        return f"codex-lb/{model}:{os.getenv('HS_BENCH_JUDGE_REASONING_EFFORT', 'high')}"
+    return f"codex/{model}"
 
 
 if __name__ == "__main__":

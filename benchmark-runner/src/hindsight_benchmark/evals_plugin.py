@@ -24,6 +24,8 @@ from pathlib import Path
 import pytest
 from hindsight_system_evals import judge
 
+from .codex_lb_judge import generate_json
+
 _SCHEMA = {
     "type": "object",
     "properties": {"meets_criteria": {"type": "boolean"}, "reasoning": {"type": "string"}},
@@ -61,6 +63,9 @@ async def _judge_once(response: str, criteria: str, context: str | None, tempera
         + (f"## Context\n{context}\n\n" if context else "")
         + f"## Criterion\n{criteria}\n\n## Answer to grade\n{response}"
     )
+    if os.getenv("HS_BENCH_CODEX_LB_URL"):
+        parsed = await asyncio.to_thread(generate_json, judge.judge_model(), prompt, _SCHEMA)
+        return judge.Verdict(parsed["meets_criteria"], parsed["reasoning"])
     text = await asyncio.to_thread(_codex, prompt)
     try:
         parsed = json.loads(text[text.index("{") : text.rindex("}") + 1])

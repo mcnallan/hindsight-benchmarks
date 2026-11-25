@@ -1,0 +1,346 @@
+{
+  "model": "qwen3.5-4b",
+  "provider": "local-eval",
+  "decision_model": null,
+  "embedder": "retrieval:BAAI/bge-small-en-v1.5",
+  "reranker": "retrieval:cross-encoder/ms-marco-MiniLM-L6-v2",
+  "hindsight_commit": "7b46a07c82f997903230f0fb33deafe9dfd2e22b",
+  "judge": "codex-lb/gpt-6.2-sol:high",
+  "full": true,
+  "repeats": 2,
+  "timestamp": "20261125T042541Z",
+  "pricing_per_token": {},
+  "score": 61.0,
+  "cost_usd": null,
+  "operations": {
+    "retain": {
+      "passed": 58,
+      "failed": 26,
+      "errors": 0,
+      "tokens": {
+        "calls": 128,
+        "input_tokens": 431692,
+        "cached_tokens": 378048,
+        "output_tokens": 62473,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 84,
+      "score": 69.0,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-qwen35-4b-off-sol62-high-20261125T030551Z",
+      "timestamp": "20261125T030551Z",
+      "categories": {
+        "selectivity": {
+          "passed": 4,
+          "total": 6,
+          "failed": [
+            "durable-among-noise"
+          ]
+        },
+        "completeness": {
+          "passed": 2,
+          "total": 4,
+          "failed": [
+            "sensory-and-emotional"
+          ]
+        },
+        "attribution": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "temporal": {
+          "passed": 4,
+          "total": 8,
+          "failed": [
+            "relative-dates-resolved",
+            "no-event-date"
+          ]
+        },
+        "language": {
+          "passed": 11,
+          "total": 14,
+          "failed": [
+            "ja-personal-note",
+            "spanish-conversation"
+          ]
+        },
+        "fidelity": {
+          "passed": 5,
+          "total": 10,
+          "failed": [
+            "hedges-stay-hedged",
+            "in-text-correction",
+            "instructions-in-content"
+          ]
+        },
+        "mission": {
+          "passed": 2,
+          "total": 4,
+          "failed": [
+            "mission-filters"
+          ]
+        },
+        "mode": {
+          "passed": 6,
+          "total": 8,
+          "failed": [
+            "custom-instructions"
+          ]
+        },
+        "entities": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "entity_labels": {
+          "passed": 4,
+          "total": 6,
+          "failed": [
+            "labels-free-text-and-map"
+          ]
+        },
+        "inputs": {
+          "passed": 2,
+          "total": 6,
+          "failed": [
+            "metadata-read",
+            "json-conversation"
+          ]
+        },
+        "no_invention": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        }
+      }
+    },
+    "reflect": {
+      "passed": 24,
+      "failed": 10,
+      "errors": 0,
+      "tokens": {
+        "calls": 156,
+        "input_tokens": 2157406,
+        "cached_tokens": 1307328,
+        "output_tokens": 71715,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 34,
+      "score": 70.6,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-qwen35-4b-off-sol62-high-20261125T032648Z",
+      "timestamp": "20261125T032648Z",
+      "categories": {
+        "precision": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "update": {
+          "passed": 2,
+          "total": 4,
+          "failed": [
+            "sp-rotation"
+          ]
+        },
+        "aggregation": {
+          "passed": 2,
+          "total": 4,
+          "failed": [
+            "hq-count-billing"
+          ]
+        },
+        "no_overreach": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "source_authority": {
+          "passed": 5,
+          "total": 8,
+          "failed": [
+            "sp-approvals",
+            "sp-datastore"
+          ]
+        },
+        "pages": {
+          "passed": 1,
+          "total": 4,
+          "failed": [
+            "hq-release-prod",
+            "hq-count-billing"
+          ]
+        },
+        "orchestration": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        }
+      }
+    },
+    "consolidation": {
+      "passed": 26,
+      "failed": 24,
+      "errors": 0,
+      "tokens": {
+        "calls": 342,
+        "input_tokens": 2855982,
+        "cached_tokens": 1369632,
+        "output_tokens": 237850,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 50,
+      "score": 52.0,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-qwen35-4b-off-sol62-high-20261125T034353Z",
+      "timestamp": "20261125T034353Z",
+      "categories": {
+        "merge": {
+          "passed": 4,
+          "total": 6,
+          "failed": [
+            "repeats-in-one-batch"
+          ]
+        },
+        "update": {
+          "passed": 6,
+          "total": 8,
+          "failed": [
+            "correction-retires-false-belief"
+          ]
+        },
+        "recency": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "counts": {
+          "passed": 0,
+          "total": 4,
+          "failed": [
+            "horse-farm",
+            "no-arithmetic"
+          ]
+        },
+        "entities": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "language": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "mission": {
+          "passed": 2,
+          "total": 8,
+          "failed": [
+            "default-drops-chatter",
+            "noise-beside-a-routine",
+            "mission-keeps-ephemeral"
+          ]
+        },
+        "scale": {
+          "passed": 2,
+          "total": 6,
+          "failed": [
+            "noisy-service-catalogue",
+            "noisy-personal-contacts",
+            "noisy-service-catalogue-mission"
+          ]
+        },
+        "repetition": {
+          "passed": 0,
+          "total": 6,
+          "failed": [
+            "coding-agent-sessions",
+            "assistant-daily-chats",
+            "repetitive-service-catalogue"
+          ]
+        }
+      }
+    },
+    "refresh_pages": {
+      "passed": 21,
+      "failed": 19,
+      "errors": 0,
+      "tokens": {
+        "calls": 395,
+        "input_tokens": 5920607,
+        "cached_tokens": 4042368,
+        "output_tokens": 230772,
+        "thoughts_tokens": 0,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 40,
+      "score": 52.5,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-qwen35-4b-off-sol62-high-20261125T042541Z",
+      "timestamp": "20261125T042541Z",
+      "categories": {
+        "precision": {
+          "passed": 5,
+          "total": 6,
+          "failed": [
+            "hq-release-prod"
+          ]
+        },
+        "update": {
+          "passed": 5,
+          "total": 8,
+          "failed": [
+            "du-oncall-departed-0",
+            "du-backup-correction-0",
+            "du-renamed-service-0"
+          ]
+        },
+        "aggregation": {
+          "passed": 2,
+          "total": 8,
+          "failed": [
+            "hq-count-billing",
+            "du-enterprise-plan-0",
+            "du-incident-table-0"
+          ]
+        },
+        "no_overreach": {
+          "passed": 2,
+          "total": 4,
+          "failed": [
+            "hq-absent-2024"
+          ]
+        },
+        "stability": {
+          "passed": 3,
+          "total": 6,
+          "failed": [
+            "du-rerecorded-history-0",
+            "page-never-collapses"
+          ]
+        },
+        "consistency": {
+          "passed": 0,
+          "total": 4,
+          "failed": [
+            "pump-maintenance-en-0",
+            "pump-maintenance-zh-0"
+          ]
+        },
+        "orchestration": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        }
+      }
+    }
+  }
+}

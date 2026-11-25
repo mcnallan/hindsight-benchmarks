@@ -2,7 +2,8 @@ import type { Row } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 // Shared by server pages and the client board, so no 'use client' here.
-export const fmtCost = (v: number) => (v === 0 ? 'free' : v < 0.01 ? '<$0.01' : `$${v < 10 ? v.toFixed(2) : v.toFixed(0)}`)
+export const fmtCost = (v: number | null) => (v === null ? '—' : v === 0 ? 'free' : v < 0.01 ? '<$0.01' : `$${v < 10 ? v.toFixed(2) : v.toFixed(0)}`)
+export const fmtJudge = (judge: string) => judge.split('/').pop()?.replace(':', ' ')
 export const fmtTokens = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : String(v))
 
 // Rows that carry no icon of their own get their provider's logo.
@@ -28,7 +29,7 @@ export const PROVIDER_ICON: Record<string, string> = {
   ZeroEntropy: '/zeroentropy.png',
 }
 
-export function ModelCell({ row }: { row: Pick<Row, 'model' | 'provider' | 'icon' | 'openWeights' | 'tag'> & Partial<Pick<Row, 'split'>> & { size?: string } }) {
+export function ModelCell({ row }: { row: Pick<Row, 'model' | 'provider' | 'icon' | 'openWeights' | 'tag'> & Partial<Pick<Row, 'split' | 'source'>> & { size?: string } }) {
   return (
     <div className="flex items-center gap-2.5 min-w-0">
       {(row.icon ?? PROVIDER_ICON[row.provider]) ? (
@@ -54,6 +55,7 @@ export function ModelCell({ row }: { row: Pick<Row, 'model' | 'provider' | 'icon
         )}
         <div className="text-xs text-muted-foreground truncate">
           {row.provider}
+          {row.tag === 'local' && row.source && ` · ${fmtJudge(row.source.judge)}`}
           {row.size && ` · ${row.size}`}
           {row.openWeights && ' · open weights'}
         </div>
