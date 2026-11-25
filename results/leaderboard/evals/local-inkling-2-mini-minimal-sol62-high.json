@@ -8,9 +8,9 @@
   "judge": "codex-lb/gpt-6.2-sol:high",
   "full": true,
   "repeats": 2,
-  "timestamp": "20261125T153222Z",
+  "timestamp": "20261125T162112Z",
   "pricing_per_token": {},
-  "score": 94.4,
+  "score": 92.8,
   "cost_usd": null,
   "operations": {
     "retain": {
@@ -149,6 +149,136 @@
           "total": 4,
           "failed": [
             "hq-release-prod"
+          ]
+        },
+        "orchestration": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        }
+      }
+    },
+    "consolidation": {
+      "passed": 50,
+      "failed": 0,
+      "errors": 0,
+      "tokens": {
+        "calls": 328,
+        "input_tokens": 3181182,
+        "cached_tokens": 1815360,
+        "output_tokens": 251432,
+        "thoughts_tokens": 89826,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 50,
+      "score": 100.0,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-inkling-2-mini-minimal-sol62-high-20261125T154530Z",
+      "timestamp": "20261125T154530Z",
+      "categories": {
+        "merge": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "update": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "recency": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "counts": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "entities": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "language": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "mission": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "scale": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "repetition": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        }
+      }
+    },
+    "refresh_pages": {
+      "passed": 33,
+      "failed": 7,
+      "errors": 0,
+      "tokens": {
+        "calls": 359,
+        "input_tokens": 3719144,
+        "cached_tokens": 2030528,
+        "output_tokens": 109330,
+        "thoughts_tokens": 47593,
+        "decision_calls": 0,
+        "decision_input_tokens": 0
+      },
+      "total": 40,
+      "score": 82.5,
+      "cost_usd": null,
+      "run_dir": ".hindsight/runs/local-inkling-2-mini-minimal-sol62-high-20261125T162112Z",
+      "timestamp": "20261125T162112Z",
+      "categories": {
+        "precision": {
+          "passed": 6,
+          "total": 6,
+          "failed": []
+        },
+        "update": {
+          "passed": 8,
+          "total": 8,
+          "failed": []
+        },
+        "aggregation": {
+          "passed": 5,
+          "total": 8,
+          "failed": [
+            "hq-count-billing",
+            "du-incident-table-0"
+          ]
+        },
+        "no_overreach": {
+          "passed": 4,
+          "total": 4,
+          "failed": []
+        },
+        "stability": {
+          "passed": 4,
+          "total": 6,
+          "failed": [
+            "du-rerecorded-history-0"
+          ]
+        },
+        "consistency": {
+          "passed": 2,
+          "total": 4,
+          "failed": [
+            "pump-maintenance-en-0",
+            "pump-maintenance-zh-0"
           ]
         },
         "orchestration": {
