@@ -183,3 +183,56 @@ html[data-theme='dark'] .v2 {
   background: linear-gradient(135deg, #0074d9, #009296);
   background-clip: padding-box;
 }
+
+/* ── Paired cases: the redline and the per-repeat marks ───────────────────────
+   --cf is the one colour the page adds: a highlighter amber for the changed fact. */
+.v2 { --cf: 32 95% 40%; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .v2 { --cf: 40 92% 58%; }
+}
+html[data-theme='dark'] .v2 { --cf: 40 92% 58%; }
+
+.v2 .rl-del {
+  color: hsl(var(--bad) / 0.85);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: hsl(var(--bad) / 0.7);
+}
+.v2 .rl-ins {
+  text-decoration: underline;
+  text-decoration-color: hsl(var(--primary));
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  background: hsl(var(--primary) / 0.08);
+}
+/* A highlighter swipe: brighter in the middle of the line, slightly ragged at the ends. */
+.v2 .rl-ins-cf {
+  text-decoration: none;
+  color: inherit;
+  padding: 0 0.15em;
+  margin: 0 -0.05em;
+  border-radius: 0.2em 0.35em 0.25em 0.3em;
+  background: linear-gradient(104deg, hsl(var(--cf) / 0.12) 0%, hsl(var(--cf) / 0.32) 8%, hsl(var(--cf) / 0.28) 92%, hsl(var(--cf) / 0.1) 100%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+/* "Clean copy": hide what stock said and drop the marks, to read the arm as the model sees it. */
+.v2 .clean-copy .rl-del { display: none; }
+.v2 .clean-copy .rl-ins,
+.v2 .clean-copy .rl-ins-cf { background: none; text-decoration: none; padding: 0; margin: 0; }
+
+.v2 .arm-dot-stock { background: hsl(var(--muted-foreground) / 0.6); }
+.v2 .arm-dot-wording { background: hsl(var(--primary)); }
+.v2 .arm-dot-counterfactual { background: hsl(var(--cf)); }
+
+.v2 .mark { display: inline-block; width: 0.7rem; height: 0.7rem; border: 1.5px solid transparent; }
+.v2 .mark-pass { background: linear-gradient(135deg, #0074d9, #009296); }
+.v2 .mark-fail { border-color: hsl(var(--bad)); background: hsl(var(--bad) / 0.12); }
+.v2 .mark-stale { background: repeating-linear-gradient(135deg, hsl(var(--cf) / 0.85) 0 2px, transparent 2px 4px); border-color: hsl(var(--bad)); }
+.v2 .mark-infra { background: repeating-linear-gradient(45deg, hsl(var(--muted-foreground) / 0.5) 0 2px, transparent 2px 4px); border-color: hsl(var(--muted-foreground) / 0.6); }
+.v2 .mark-pending { border: 1.5px dotted hsl(var(--muted-foreground) / 0.5); }
+/* A struck word and its replacement sit apart, so the pair reads as "this, then that". */
+.v2 .rl-del + .rl-ins,
+.v2 .rl-del + .rl-ins-cf { margin-left: 0.2em; }
+.v2 .clean-copy .rl-del + .rl-ins,
+.v2 .clean-copy .rl-del + .rl-ins-cf { margin-left: 0; }

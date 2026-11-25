@@ -1,0 +1,7639 @@
+{
+ "fixture_set": "7b46a07c-v2",
+ "fixture_revision": "7b46a07c-v2+c1323049b615",
+ "pinned_commit": "7b46a07c82f997903230f0fb33deafe9dfd2e22b",
+ "generated": "2026-11-25",
+ "cases": [
+  {
+   "id": "coreference-roles",
+   "operation": "retain",
+   "kind": "retain_capability",
+   "category": "attribution",
+   "origin": "concise prompt: COREFERENCE RESOLUTION ('my roommate' + 'Emily')",
+   "prompt": "",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "Tamsin is the user's roommate and got a job in Leeds; Ravi is the user's manager.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "My roommate is moving out next month. Her name is Tamsin, and she got a job in Leeds. My manager, Ravi, said I can work remotely while I look for a new place."
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact names Tamsin and identifies her as the user's roommate."
+        },
+        {
+         "text": "A fact records that Tamsin got a job in Leeds or is moving out."
+        },
+        {
+         "text": "A fact names Ravi and identifies him as the user's manager."
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact line mentions 'my roommate', 'she' or 'my manager' and nowhere on that whole line names the person."
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Roommate/Tamsin/Leeds/manager/Ravi renamed to flatmate/Odette/Bristol/supervisor/Anil with rephrased verbs; all relationships kept.",
+     "answer": "Odette is the user's flatmate and got a job in Bristol; Anil is the user's supervisor.",
+     "answer_diff": null,
+     "notes": "Same three relationships, same pronoun-resolution difficulty (she, my flatmate, my supervisor).",
+     "sections": [
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "My flatmate is leaving next month. Her name is Odette, and she got a job in Bristol. My supervisor, Anil, said I can work from home while I look for a new place.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "My "
+          },
+          {
+           "op": "del",
+           "text": "roommate"
+          },
+          {
+           "op": "ins",
+           "text": "flatmate"
+          },
+          {
+           "op": "eq",
+           "text": " is "
+          },
+          {
+           "op": "del",
+           "text": "moving out"
+          },
+          {
+           "op": "ins",
+           "text": "leaving"
+          },
+          {
+           "op": "eq",
+           "text": " next month. Her name is "
+          },
+          {
+           "op": "del",
+           "text": "Tamsin"
+          },
+          {
+           "op": "ins",
+           "text": "Odette"
+          },
+          {
+           "op": "eq",
+           "text": ", and she got a job in "
+          },
+          {
+           "op": "del",
+           "text": "Leeds"
+          },
+          {
+           "op": "ins",
+           "text": "Bristol"
+          },
+          {
+           "op": "eq",
+           "text": ". My "
+          },
+          {
+           "op": "del",
+           "text": "manager"
+          },
+          {
+           "op": "ins",
+           "text": "supervisor"
+          },
+          {
+           "op": "eq",
+           "text": ", "
+          },
+          {
+           "op": "del",
+           "text": "Ravi"
+          },
+          {
+           "op": "ins",
+           "text": "Anil"
+          },
+          {
+           "op": "eq",
+           "text": ", said I can work "
+          },
+          {
+           "op": "del",
+           "text": "remotely"
+          },
+          {
+           "op": "ins",
+           "text": "from home"
+          },
+          {
+           "op": "eq",
+           "text": " while I look for a new place."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact names Odette and identifies her as the user's flatmate.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact names "
+          },
+          {
+           "op": "del",
+           "text": "Tamsin"
+          },
+          {
+           "op": "ins",
+           "text": "Odette"
+          },
+          {
+           "op": "eq",
+           "text": " and identifies her as the user's "
+          },
+          {
+           "op": "del",
+           "text": "roommate"
+          },
+          {
+           "op": "ins",
+           "text": "flatmate"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        },
+        {
+         "text": "A fact records that Odette got a job in Bristol or is leaving.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that "
+          },
+          {
+           "op": "del",
+           "text": "Tamsin"
+          },
+          {
+           "op": "ins",
+           "text": "Odette"
+          },
+          {
+           "op": "eq",
+           "text": " got a job in "
+          },
+          {
+           "op": "del",
+           "text": "Leeds"
+          },
+          {
+           "op": "ins",
+           "text": "Bristol"
+          },
+          {
+           "op": "eq",
+           "text": " or is "
+          },
+          {
+           "op": "del",
+           "text": "moving out"
+          },
+          {
+           "op": "ins",
+           "text": "leaving"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        },
+        {
+         "text": "A fact names Anil and identifies him as the user's supervisor.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact names "
+          },
+          {
+           "op": "del",
+           "text": "Ravi"
+          },
+          {
+           "op": "ins",
+           "text": "Anil"
+          },
+          {
+           "op": "eq",
+           "text": " and identifies him as the user's "
+          },
+          {
+           "op": "del",
+           "text": "manager"
+          },
+          {
+           "op": "ins",
+           "text": "supervisor"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact line mentions 'my flatmate', 'she' or 'my supervisor' and nowhere on that whole line names the person.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact line mentions 'my "
+          },
+          {
+           "op": "del",
+           "text": "roommate"
+          },
+          {
+           "op": "ins",
+           "text": "flatmate"
+          },
+          {
+           "op": "eq",
+           "text": "', 'she' or 'my "
+          },
+          {
+           "op": "del",
+           "text": "manager"
+          },
+          {
+           "op": "ins",
+           "text": "supervisor"
+          },
+          {
+           "op": "eq",
+           "text": "' and nowhere on that whole line names the person."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct, names resolved",
+       "response": "- [world] Odette, the user's flatmate, is leaving next month and got a job in Bristol  {entities: Odette, user}\n- [world] Anil, the user's supervisor, said the user can work from home while looking for a new place  {entities: Anil, user}",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "wrong: unresolved 'my flatmate' / 'she'",
+       "response": "- [world] The user's flatmate is leaving next month and she got a job in Bristol  {entities: user}\n- [world] Anil, the user's supervisor, said the user can work from home while looking for a new place  {entities: Anil, user}",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "The job in Leeds now belongs to the manager, Ravi (stock: the roommate Tamsin); everything else unchanged.",
+     "answer": "Ravi (manager) got a job in Leeds; Tamsin is only moving out.",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "Tamsin"
+      },
+      {
+       "op": "ins",
+       "text": "Ravi"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "is the user's roommate and"
+      },
+      {
+       "op": "ins",
+       "text": "(manager)"
+      },
+      {
+       "op": "eq",
+       "text": " got a job in Leeds; "
+      },
+      {
+       "op": "del",
+       "text": "Ravi"
+      },
+      {
+       "op": "ins",
+       "text": "Tamsin"
+      },
+      {
+       "op": "eq",
+       "text": " is "
+      },
+      {
+       "op": "del",
+       "text": "the"
+      },
+      {
+       "op": "ins",
+       "text": "only"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "user's"
+      },
+      {
+       "op": "ins",
+       "text": "moving"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "manager"
+      },
+      {
+       "op": "ins",
+       "text": "out"
+      },
+      {
+       "op": "eq",
+       "text": "."
+      }
+     ],
+     "notes": "The 'moving out' fact stays Tamsin's; only the job moves. 'He' was added to the pronoun trap so an unresolved 'he' is also caught.",
+     "sections": [
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "My roommate is moving out next month. Her name is Tamsin. My manager, Ravi, said I can work remotely while I look for a new place. He got a job in Leeds.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "My roommate is moving out next month. Her name is Tamsin"
+          },
+          {
+           "op": "del",
+           "text": ", and she got a job in Leeds"
+          },
+          {
+           "op": "eq",
+           "text": ". My manager, Ravi, said I can work remotely while I look for a new place."
+          },
+          {
+           "op": "ins",
+           "text": " He got a job in Leeds."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact names Tamsin and identifies her as the user's roommate."
+        },
+        {
+         "text": "A fact records that Tamsin is moving out next month.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that Tamsin "
+          },
+          {
+           "op": "del",
+           "text": "got a job in Leeds or "
+          },
+          {
+           "op": "eq",
+           "text": "is moving out"
+          },
+          {
+           "op": "ins",
+           "text": " next month"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        },
+        {
+         "text": "A fact names Ravi and identifies him as the user's manager."
+        },
+        {
+         "text": "A fact records that Ravi got a job in Leeds.",
+         "diff": [
+          {
+           "op": "ins",
+           "text": "A fact records that Ravi got a job in Leeds."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact line mentions 'my roommate', 'she', 'he' or 'my manager' and nowhere on that whole line names the person.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact line mentions 'my roommate', 'she"
+          },
+          {
+           "op": "ins",
+           "text": "', 'he"
+          },
+          {
+           "op": "eq",
+           "text": "' or 'my manager' and nowhere on that whole line names the person."
+          }
+         ]
+        },
+        {
+         "text": "A fact states that Tamsin got a job in Leeds.",
+         "diff": [
+          {
+           "op": "ins",
+           "text": "A fact states that Tamsin got a job in Leeds."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "A fact states that Tamsin got a job in Leeds."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: Ravi got the Leeds job",
+       "response": "- [world] Tamsin, the user's roommate, is moving out next month  {entities: Tamsin, user}\n- [world] Ravi, the user's manager, got a job in Leeds and said the user can work remotely while looking for a new place  {entities: Ravi, Leeds, user}",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "correct: role and job stored as separate facts (qwen3.5-4b v1 pilot output)",
+       "response": "- [world] Ravi got a job in Leeds.  {entities: Ravi, Leeds}\n- [world] User's manager Ravi said the user can work remotely while looking for a new place.  {entities: user, Ravi}\n- [world] User's roommate named Tamsin is moving out next month.  {entities: user, Tamsin}",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock: Tamsin got the Leeds job",
+       "response": "- [world] Tamsin, the user's roommate, is moving out next month and got a job in Leeds  {entities: Tamsin, Leeds, user}\n- [world] Ravi, the user's manager, said the user can work remotely while looking for a new place  {entities: Ravi, user}",
+       "expect_pass": false,
+       "expect_stale": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "multi-speaker-attribution",
+   "operation": "retain",
+   "kind": "retain_capability",
+   "category": "attribution",
+   "origin": "speaker attribution in transcripts (test_fact_extraction_quality speaker cases)",
+   "prompt": "",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "Priya takes the migration; Tom handles the runbook and is off Friday.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "context: engineering stand-up"
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "Priya: I'll take the database migration, I've done three of these before.\nTom: Then I'll handle the rollback runbook. I'm off on Friday though.\nPriya: Fine, I'm allergic to on-call weekends anyway, so let's ship Thursday."
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact records that Priya will take the database migration."
+        },
+        {
+         "text": "A fact records that Tom will handle the rollback runbook."
+        },
+        {
+         "text": "A fact records that Tom is off on Friday."
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact attributes the migration to Tom, or the runbook or Friday off to Priya."
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Priya/Tom/migration/runbook renamed to Mei/Jonas/schema upgrade/failover checklist; 'off' became 'out'; same speaker structure.",
+     "answer": "Mei takes the schema upgrade; Jonas handles the failover checklist and is out Friday.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "context: platform team daily sync",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "context: "
+          },
+          {
+           "op": "del",
+           "text": "engineering"
+          },
+          {
+           "op": "ins",
+           "text": "platform"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "stand-up"
+          },
+          {
+           "op": "ins",
+           "text": "team daily sync"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "Mei: I'll take the schema upgrade, I've done three of these before.\nJonas: Then I'll handle the failover checklist. I'm out on Friday though.\nMei: Fine, I'm allergic to on-call weekends anyway, so let's ship Thursday.",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Priya"
+          },
+          {
+           "op": "ins",
+           "text": "Mei"
+          },
+          {
+           "op": "eq",
+           "text": ": I'll take the "
+          },
+          {
+           "op": "del",
+           "text": "database"
+          },
+          {
+           "op": "ins",
+           "text": "schema"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "migration"
+          },
+          {
+           "op": "ins",
+           "text": "upgrade"
+          },
+          {
+           "op": "eq",
+           "text": ", I've done three of these before.\n"
+          },
+          {
+           "op": "del",
+           "text": "Tom"
+          },
+          {
+           "op": "ins",
+           "text": "Jonas"
+          },
+          {
+           "op": "eq",
+           "text": ": Then I'll handle the "
+          },
+          {
+           "op": "del",
+           "text": "rollback"
+          },
+          {
+           "op": "ins",
+           "text": "failover"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "runbook"
+          },
+          {
+           "op": "ins",
+           "text": "checklist"
+          },
+          {
+           "op": "eq",
+           "text": ". I'm "
+          },
+          {
+           "op": "del",
+           "text": "off"
+          },
+          {
+           "op": "ins",
+           "text": "out"
+          },
+          {
+           "op": "eq",
+           "text": " on Friday though.\n"
+          },
+          {
+           "op": "del",
+           "text": "Priya"
+          },
+          {
+           "op": "ins",
+           "text": "Mei"
+          },
+          {
+           "op": "eq",
+           "text": ": Fine, I'm allergic to on-call weekends anyway, so let's ship Thursday."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact records that Mei will take the schema upgrade.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that "
+          },
+          {
+           "op": "del",
+           "text": "Priya"
+          },
+          {
+           "op": "ins",
+           "text": "Mei"
+          },
+          {
+           "op": "eq",
+           "text": " will take the "
+          },
+          {
+           "op": "del",
+           "text": "database"
+          },
+          {
+           "op": "ins",
+           "text": "schema"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "migration"
+          },
+          {
+           "op": "ins",
+           "text": "upgrade"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        },
+        {
+         "text": "A fact records that Jonas will handle the failover checklist.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that "
+          },
+          {
+           "op": "del",
+           "text": "Tom"
+          },
+          {
+           "op": "ins",
+           "text": "Jonas"
+          },
+          {
+           "op": "eq",
+           "text": " will handle the "
+          },
+          {
+           "op": "del",
+           "text": "rollback"
+          },
+          {
+           "op": "ins",
+           "text": "failover"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "runbook"
+          },
+          {
+           "op": "ins",
+           "text": "checklist"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        },
+        {
+         "text": "A fact records that Jonas is out on Friday.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that "
+          },
+          {
+           "op": "del",
+           "text": "Tom"
+          },
+          {
+           "op": "ins",
+           "text": "Jonas"
+          },
+          {
+           "op": "eq",
+           "text": " is "
+          },
+          {
+           "op": "del",
+           "text": "off"
+          },
+          {
+           "op": "ins",
+           "text": "out"
+          },
+          {
+           "op": "eq",
+           "text": " on Friday."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact attributes the upgrade to Jonas, or the checklist or Friday off to Mei.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact attributes the "
+          },
+          {
+           "op": "del",
+           "text": "migration"
+          },
+          {
+           "op": "ins",
+           "text": "upgrade"
+          },
+          {
+           "op": "eq",
+           "text": " to "
+          },
+          {
+           "op": "del",
+           "text": "Tom"
+          },
+          {
+           "op": "ins",
+           "text": "Jonas"
+          },
+          {
+           "op": "eq",
+           "text": ", or the "
+          },
+          {
+           "op": "del",
+           "text": "runbook"
+          },
+          {
+           "op": "ins",
+           "text": "checklist"
+          },
+          {
+           "op": "eq",
+           "text": " or Friday off to "
+          },
+          {
+           "op": "del",
+           "text": "Priya"
+          },
+          {
+           "op": "ins",
+           "text": "Mei"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct",
+       "response": "- [world] Mei said she will take the schema upgrade  {entities: Mei}\n- [world] Jonas will handle the failover checklist and is out on Friday  {entities: Jonas}\n- [world] The team plans to ship on Thursday  {entities: Mei}",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "wrong: Friday off and allergy swapped to Mei",
+       "response": "- [world] Mei will take the schema upgrade and is out on Friday  {entities: Mei}\n- [world] Jonas will handle the failover checklist  {entities: Jonas}",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "Priya, not Tom, is the one off on Friday (the clause moves from Tom's line to Priya's); migration and runbook owners unchanged.",
+     "answer": "Priya is off on Friday.",
+     "answer_diff": [
+      {
+       "op": "eq",
+       "text": "Priya"
+      },
+      {
+       "op": "del",
+       "text": " takes the migration; Tom handles the runbook and"
+      },
+      {
+       "op": "eq",
+       "text": " is off "
+      },
+      {
+       "op": "ins",
+       "text": "on "
+      },
+      {
+       "op": "eq",
+       "text": "Friday."
+      }
+     ],
+     "notes": "Single relationship change; allergy/Thursday distractor kept with Priya.",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "context: engineering stand-up"
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "Priya: I'll take the database migration, I've done three of these before.\nTom: Then I'll handle the rollback runbook.\nPriya: Fine, I'm off on Friday and I'm allergic to on-call weekends anyway, so let's ship Thursday.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Priya: I'll take the database migration, I've done three of these before.\nTom: Then I'll handle the rollback runbook."
+          },
+          {
+           "op": "ins",
+           "text": "\nPriya: Fine,"
+          },
+          {
+           "op": "eq",
+           "text": " I'm off on Friday "
+          },
+          {
+           "op": "del",
+           "text": "though.\nPriya: Fine,"
+          },
+          {
+           "op": "ins",
+           "text": "and"
+          },
+          {
+           "op": "eq",
+           "text": " I'm allergic to on-call weekends anyway, so let's ship Thursday."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact records that Priya will take the database migration."
+        },
+        {
+         "text": "A fact records that Tom will handle the rollback runbook."
+        },
+        {
+         "text": "A fact records that Priya is off on Friday.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that "
+          },
+          {
+           "op": "del",
+           "text": "Tom"
+          },
+          {
+           "op": "ins",
+           "text": "Priya"
+          },
+          {
+           "op": "eq",
+           "text": " is off on Friday."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact attributes the migration to Tom, the runbook to Priya, or Friday off to Tom.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact attributes the migration to Tom, "
+          },
+          {
+           "op": "del",
+           "text": "or "
+          },
+          {
+           "op": "eq",
+           "text": "the runbook"
+          },
+          {
+           "op": "ins",
+           "text": " to Priya,"
+          },
+          {
+           "op": "eq",
+           "text": " or Friday off to "
+          },
+          {
+           "op": "del",
+           "text": "Priya"
+          },
+          {
+           "op": "ins",
+           "text": "Tom"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "A fact states that Tom is off on Friday."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: Priya off Friday",
+       "response": "- [world] Priya will take the database migration  {entities: Priya}\n- [world] Tom will handle the rollback runbook  {entities: Tom}\n- [world] Priya is off on Friday and wants to ship on Thursday to avoid on-call weekends  {entities: Priya}",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock: Tom off Friday",
+       "response": "- [world] Priya will take the database migration  {entities: Priya}\n- [world] Tom will handle the rollback runbook and is off on Friday  {entities: Tom}",
+       "expect_pass": false,
+       "expect_stale": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "context-names-the-speaker",
+   "operation": "retain",
+   "kind": "retain_capability",
+   "category": "attribution",
+   "origin": "#3962 narrator removed: the caller names the speaker through context",
+   "prompt": "",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "Inês Duarte runs a bakery in Porto and needs invoices in Portuguese.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "context: transcript of a support call; the first-person speaker is the customer, Inês Duarte"
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "I've been a customer for three years. I run a bakery in Porto and I need the invoices in Portuguese from now on."
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact attributes running a bakery in Porto to Inês Duarte."
+        },
+        {
+         "text": "A fact records that Inês Duarte needs invoices in Portuguese."
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact attributes the bakery or the invoice request to the assistant or agent itself."
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Customer renamed Marta Seixas, bakery/Porto/invoices became pastry shop/Coimbra/bills; context rephrased; speaker still named only through context.",
+     "answer": "Marta Seixas runs a pastry shop in Coimbra and needs bills in Portuguese.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "context: transcript of a customer service call; the first-person speaker is the customer, Marta Seixas",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "context: transcript of a "
+          },
+          {
+           "op": "del",
+           "text": "support"
+          },
+          {
+           "op": "ins",
+           "text": "customer service"
+          },
+          {
+           "op": "eq",
+           "text": " call; the first-person speaker is the customer, "
+          },
+          {
+           "op": "del",
+           "text": "Inês"
+          },
+          {
+           "op": "ins",
+           "text": "Marta"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "Duarte"
+          },
+          {
+           "op": "ins",
+           "text": "Seixas"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "I've been a subscriber for three years. I run a pastry shop in Coimbra and I need the bills in Portuguese from now on.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "I've been a "
+          },
+          {
+           "op": "del",
+           "text": "customer"
+          },
+          {
+           "op": "ins",
+           "text": "subscriber"
+          },
+          {
+           "op": "eq",
+           "text": " for three years. I run a "
+          },
+          {
+           "op": "del",
+           "text": "bakery"
+          },
+          {
+           "op": "ins",
+           "text": "pastry shop"
+          },
+          {
+           "op": "eq",
+           "text": " in "
+          },
+          {
+           "op": "del",
+           "text": "Porto"
+          },
+          {
+           "op": "ins",
+           "text": "Coimbra"
+          },
+          {
+           "op": "eq",
+           "text": " and I need the "
+          },
+          {
+           "op": "del",
+           "text": "invoices"
+          },
+          {
+           "op": "ins",
+           "text": "bills"
+          },
+          {
+           "op": "eq",
+           "text": " in Portuguese from now on."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact attributes running a pastry shop in Coimbra to Marta Seixas.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact attributes running a "
+          },
+          {
+           "op": "del",
+           "text": "bakery"
+          },
+          {
+           "op": "ins",
+           "text": "pastry shop"
+          },
+          {
+           "op": "eq",
+           "text": " in "
+          },
+          {
+           "op": "del",
+           "text": "Porto"
+          },
+          {
+           "op": "ins",
+           "text": "Coimbra"
+          },
+          {
+           "op": "eq",
+           "text": " to "
+          },
+          {
+           "op": "del",
+           "text": "Inês"
+          },
+          {
+           "op": "ins",
+           "text": "Marta"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "Duarte"
+          },
+          {
+           "op": "ins",
+           "text": "Seixas"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        },
+        {
+         "text": "A fact records that Marta Seixas needs bills in Portuguese.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that "
+          },
+          {
+           "op": "del",
+           "text": "Inês"
+          },
+          {
+           "op": "ins",
+           "text": "Marta"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "Duarte"
+          },
+          {
+           "op": "ins",
+           "text": "Seixas"
+          },
+          {
+           "op": "eq",
+           "text": " needs "
+          },
+          {
+           "op": "del",
+           "text": "invoices"
+          },
+          {
+           "op": "ins",
+           "text": "bills"
+          },
+          {
+           "op": "eq",
+           "text": " in Portuguese."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact attributes the pastry shop or the bills request to the assistant or agent itself.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact attributes the "
+          },
+          {
+           "op": "del",
+           "text": "bakery"
+          },
+          {
+           "op": "ins",
+           "text": "pastry shop"
+          },
+          {
+           "op": "eq",
+           "text": " or the "
+          },
+          {
+           "op": "del",
+           "text": "invoice"
+          },
+          {
+           "op": "ins",
+           "text": "bills"
+          },
+          {
+           "op": "eq",
+           "text": " request to the assistant or agent itself."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct",
+       "response": "- [world] Marta Seixas has been a subscriber for three years  {entities: Marta Seixas}\n- [world] Marta Seixas runs a pastry shop in Coimbra  {entities: Marta Seixas, Coimbra}\n- [world] Marta Seixas needs her bills in Portuguese from now on  {entities: Marta Seixas}",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "wrong: attributed to the agent",
+       "response": "- [world] The assistant runs a pastry shop in Coimbra and needs the bills in Portuguese  {entities: Coimbra}",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "The context names Rui Matos (stock: Inês Duarte) as the first-person speaker; the content is unchanged.",
+     "answer": "Rui Matos runs the Porto bakery and needs Portuguese invoices.",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "Inês"
+      },
+      {
+       "op": "ins",
+       "text": "Rui"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "Duarte"
+      },
+      {
+       "op": "ins",
+       "text": "Matos"
+      },
+      {
+       "op": "eq",
+       "text": " runs "
+      },
+      {
+       "op": "del",
+       "text": "a"
+      },
+      {
+       "op": "ins",
+       "text": "the Porto"
+      },
+      {
+       "op": "eq",
+       "text": " bakery"
+      },
+      {
+       "op": "del",
+       "text": " in Porto"
+      },
+      {
+       "op": "eq",
+       "text": " and needs "
+      },
+      {
+       "op": "ins",
+       "text": "Portuguese "
+      },
+      {
+       "op": "eq",
+       "text": "invoices"
+      },
+      {
+       "op": "del",
+       "text": " in Portuguese"
+      },
+      {
+       "op": "eq",
+       "text": "."
+      }
+     ],
+     "notes": "Weak-ish: the content never names the speaker, so a stale answer needs the model to ignore the changed context (or recall the stock name from training data).",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "context: transcript of a support call; the first-person speaker is the customer, Rui Matos",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "context: transcript of a support call; the first-person speaker is the customer, "
+          },
+          {
+           "op": "del",
+           "text": "Inês"
+          },
+          {
+           "op": "ins",
+           "text": "Rui"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "Duarte"
+          },
+          {
+           "op": "ins",
+           "text": "Matos"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "I've been a customer for three years. I run a bakery in Porto and I need the invoices in Portuguese from now on."
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact attributes running a bakery in Porto to Rui Matos.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact attributes running a bakery in Porto to "
+          },
+          {
+           "op": "del",
+           "text": "Inês"
+          },
+          {
+           "op": "ins",
+           "text": "Rui"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "Duarte"
+          },
+          {
+           "op": "ins",
+           "text": "Matos"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        },
+        {
+         "text": "A fact records that Rui Matos needs invoices in Portuguese.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that "
+          },
+          {
+           "op": "del",
+           "text": "Inês"
+          },
+          {
+           "op": "ins",
+           "text": "Rui"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "Duarte"
+          },
+          {
+           "op": "ins",
+           "text": "Matos"
+          },
+          {
+           "op": "eq",
+           "text": " needs invoices in Portuguese."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact attributes the bakery or the invoice request to the assistant or agent itself."
+        },
+        {
+         "text": "A fact attributes the bakery or the invoice request to Inês Duarte.",
+         "diff": [
+          {
+           "op": "ins",
+           "text": "A fact attributes the bakery or the invoice request to Inês Duarte."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "A fact attributes the bakery or the invoice request to Inês Duarte."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: Rui Matos",
+       "response": "- [world] Rui Matos has been a customer for three years  {entities: Rui Matos}\n- [world] Rui Matos runs a bakery in Porto  {entities: Rui Matos, Porto}\n- [world] Rui Matos needs invoices in Portuguese from now on  {entities: Rui Matos}",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock: Inês Duarte",
+       "response": "- [world] Inês Duarte runs a bakery in Porto  {entities: Inês Duarte, Porto}\n- [world] Inês Duarte needs invoices in Portuguese from now on  {entities: Inês Duarte}",
+       "expect_pass": false,
+       "expect_stale": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "in-text-correction",
+   "operation": "retain",
+   "kind": "retain_capability",
+   "category": "fidelity",
+   "origin": "the corrected value is the fact; the slip is not",
+   "prompt": "",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "Wednesday 4 March 2026 (not Tuesday).",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "event date 2026-03-02"
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "The design review is on Tuesday — sorry, I mean Wednesday. It's in room 4B with the whole platform team."
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact records that the design review is on Wednesday (4 March 2026)."
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact states that the design review is on Tuesday."
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Design review/room 4B/platform team became budget review/room 7C/infrastructure team; 'sorry, I mean' became 'apologies, I meant'; same Tuesday-to-Wednesday correction and timestamp.",
+     "answer": "Wednesday 4 March 2026 (not Tuesday).",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "event date 2026-03-02"
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "The budget review is on Tuesday — apologies, I meant Wednesday. It's in room 7C with the whole infrastructure team.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "The "
+          },
+          {
+           "op": "del",
+           "text": "design"
+          },
+          {
+           "op": "ins",
+           "text": "budget"
+          },
+          {
+           "op": "eq",
+           "text": " review is on Tuesday — "
+          },
+          {
+           "op": "del",
+           "text": "sorry"
+          },
+          {
+           "op": "ins",
+           "text": "apologies"
+          },
+          {
+           "op": "eq",
+           "text": ", I "
+          },
+          {
+           "op": "del",
+           "text": "mean"
+          },
+          {
+           "op": "ins",
+           "text": "meant"
+          },
+          {
+           "op": "eq",
+           "text": " Wednesday. It's in room "
+          },
+          {
+           "op": "del",
+           "text": "4B"
+          },
+          {
+           "op": "ins",
+           "text": "7C"
+          },
+          {
+           "op": "eq",
+           "text": " with the whole "
+          },
+          {
+           "op": "del",
+           "text": "platform"
+          },
+          {
+           "op": "ins",
+           "text": "infrastructure"
+          },
+          {
+           "op": "eq",
+           "text": " team."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact records that the budget review is on Wednesday (4 March 2026).",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that the "
+          },
+          {
+           "op": "del",
+           "text": "design"
+          },
+          {
+           "op": "ins",
+           "text": "budget"
+          },
+          {
+           "op": "eq",
+           "text": " review is on Wednesday (4 March 2026)."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact states that the budget review is on Tuesday.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact states that the "
+          },
+          {
+           "op": "del",
+           "text": "design"
+          },
+          {
+           "op": "ins",
+           "text": "budget"
+          },
+          {
+           "op": "eq",
+           "text": " review is on Tuesday."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct",
+       "response": "- [world] The budget review is on Wednesday, 4 March 2026, in room 7C with the whole infrastructure team  [occurred_start=2026-03-04]  {entities: infrastructure team}",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "wrong: the slip stored",
+       "response": "- [world] The budget review is on Tuesday, 3 March 2026, in room 7C with the whole infrastructure team  [occurred_start=2026-03-03]  {entities: infrastructure team}",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "The speaker corrects Tuesday to Thursday (stock: Wednesday), so the resolved date moves from 4 March to 5 March 2026 (item timestamp 2026-03-02, a Monday).",
+     "answer": "Thursday 5 March 2026.",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "Wednesday"
+      },
+      {
+       "op": "ins",
+       "text": "Thursday"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "4"
+      },
+      {
+       "op": "ins",
+       "text": "5"
+      },
+      {
+       "op": "eq",
+       "text": " March 2026"
+      },
+      {
+       "op": "del",
+       "text": " (not Tuesday)"
+      },
+      {
+       "op": "eq",
+       "text": "."
+      }
+     ],
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained input · metadata",
+       "hint": "",
+       "items": [
+        {
+         "text": "event date 2026-03-02"
+        }
+       ]
+      },
+      {
+       "label": "Retained input",
+       "hint": "",
+       "items": [
+        {
+         "text": "The design review is on Tuesday — sorry, I mean Thursday. It's in room 4B with the whole platform team.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "The design review is on Tuesday — sorry, I mean "
+          },
+          {
+           "op": "del",
+           "text": "Wednesday"
+          },
+          {
+           "op": "ins",
+           "text": "Thursday"
+          },
+          {
+           "op": "eq",
+           "text": ". It's in room 4B with the whole platform team."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must record",
+       "hint": "Each is its own judge call on the stored facts.",
+       "items": [
+        {
+         "text": "A fact records that the design review is on Thursday (5 March 2026).",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "A fact records that the design review is on "
+          },
+          {
+           "op": "del",
+           "text": "Wednesday"
+          },
+          {
+           "op": "ins",
+           "text": "Thursday"
+          },
+          {
+           "op": "eq",
+           "text": " ("
+          },
+          {
+           "op": "del",
+           "text": "4"
+          },
+          {
+           "op": "ins",
+           "text": "5"
+          },
+          {
+           "op": "eq",
+           "text": " March 2026)."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Traps",
+       "hint": "Any one met fails the case, before the musts are read.",
+       "items": [
+        {
+         "text": "A fact states that the design review is on Tuesday."
+        },
+        {
+         "text": "A fact states that the design review is on Wednesday.",
+         "diff": [
+          {
+           "op": "ins",
+           "text": "A fact states that the design review is on Wednesday."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "A fact states that the design review is on Wednesday."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: Thursday 5 March",
+       "response": "- [world] The design review is on Thursday, 5 March 2026, in room 4B with the whole platform team  [occurred_start=2026-03-05]  {entities: platform team}",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock: Wednesday 4 March",
+       "response": "- [world] The design review is on Wednesday, 4 March 2026, in room 4B with the whole platform team  [occurred_start=2026-03-04]  {entities: platform team}",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "wrong: the slip (Tuesday) stored",
+       "response": "- [world] The design review is on Tuesday, 3 March 2026, in room 4B with the whole platform team  [occurred_start=2026-03-03]  {entities: platform team}",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "date-borrowed-from-nearby-subject",
+   "operation": "retain",
+   "kind": "retain_fidelity",
+   "category": "no_invention",
+   "origin": "",
+   "prompt": "",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "Notifications must be completed before fieldwork begins, carrying no date of their own.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained document",
+       "hint": "",
+       "items": [
+        {
+         "text": "Fieldwork planning note.\n\nThe project has a target start of September 14.\nCustomer notifications must be completed before fieldwork begins.\nThe equipment audit finished last quarter."
+        }
+       ]
+      },
+      {
+       "label": "Must extract",
+       "hint": "Judged with the document as context.",
+       "items": [
+        {
+         "text": "customer notifications have to be completed before fieldwork begins"
+        }
+       ]
+      },
+      {
+       "label": "Fact the trap reads alone",
+       "hint": "",
+       "items": [
+        {
+         "text": "the customer notifications"
+        }
+       ]
+      },
+      {
+       "label": "Trap: that fact",
+       "hint": "Judged on that one fact, without the document.",
+       "items": [
+        {
+         "text": "carries a date or deadline of its own, such as September 14"
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Customer notifications/project/September 14/equipment audit became resident notifications/programme/October 6/equipment check; same bait structure and sentence shape. (v1 review: a 'partner notices ... before the survey begins' rewording made the stock trap judge flag a correct output 4/4 against 2/4 for stock, so the sentence shape is kept.)",
+     "answer": "Resident notifications must be completed before fieldwork begins, carrying no date of their own.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained document",
+       "hint": "",
+       "items": [
+        {
+         "text": "Survey planning note.\n\nThe programme has a target start of October 6.\nResident notifications must be completed before fieldwork begins.\nThe equipment check finished last quarter.",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Fieldwork"
+          },
+          {
+           "op": "ins",
+           "text": "Survey"
+          },
+          {
+           "op": "eq",
+           "text": " planning note.\n\nThe "
+          },
+          {
+           "op": "del",
+           "text": "project"
+          },
+          {
+           "op": "ins",
+           "text": "programme"
+          },
+          {
+           "op": "eq",
+           "text": " has a target start of "
+          },
+          {
+           "op": "del",
+           "text": "September"
+          },
+          {
+           "op": "ins",
+           "text": "October"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "14"
+          },
+          {
+           "op": "ins",
+           "text": "6"
+          },
+          {
+           "op": "eq",
+           "text": ".\n"
+          },
+          {
+           "op": "del",
+           "text": "Customer"
+          },
+          {
+           "op": "ins",
+           "text": "Resident"
+          },
+          {
+           "op": "eq",
+           "text": " notifications must be completed before fieldwork begins.\nThe equipment "
+          },
+          {
+           "op": "del",
+           "text": "audit"
+          },
+          {
+           "op": "ins",
+           "text": "check"
+          },
+          {
+           "op": "eq",
+           "text": " finished last quarter."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must extract",
+       "hint": "Judged with the document as context.",
+       "items": [
+        {
+         "text": "resident notifications have to be completed before fieldwork begins",
+         "diff": [
+          {
+           "op": "del",
+           "text": "customer"
+          },
+          {
+           "op": "ins",
+           "text": "resident"
+          },
+          {
+           "op": "eq",
+           "text": " notifications have to be completed before fieldwork begins"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Fact the trap reads alone",
+       "hint": "",
+       "items": [
+        {
+         "text": "the resident notifications",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "the "
+          },
+          {
+           "op": "del",
+           "text": "customer"
+          },
+          {
+           "op": "ins",
+           "text": "resident"
+          },
+          {
+           "op": "eq",
+           "text": " notifications"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: that fact",
+       "hint": "Judged on that one fact, without the document.",
+       "items": [
+        {
+         "text": "carries a date or deadline of its own, such as October 6",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "carries a date or deadline of its own, such as "
+          },
+          {
+           "op": "del",
+           "text": "September"
+          },
+          {
+           "op": "ins",
+           "text": "October"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "14"
+          },
+          {
+           "op": "ins",
+           "text": "6"
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: no borrowed date",
+       "response": "- Resident notifications must be completed before fieldwork begins\n- The programme has a target start of October 6\n- The equipment check finished last quarter",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "wrong: project date borrowed into the notices",
+       "response": "- Resident notifications must be completed by October 6, before fieldwork begins\n- The equipment check finished last quarter",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "The notifications now carry their own explicit deadline, August 28, distinct from the project's September 14 start; the stock no-date output now fails correctness.",
+     "answer": "Notifications are due August 28, before fieldwork begins; September 14 is the project start, not their deadline.",
+     "answer_diff": [
+      {
+       "op": "eq",
+       "text": "Notifications "
+      },
+      {
+       "op": "del",
+       "text": "must"
+      },
+      {
+       "op": "ins",
+       "text": "are"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "be"
+      },
+      {
+       "op": "ins",
+       "text": "due"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "completed"
+      },
+      {
+       "op": "ins",
+       "text": "August 28,"
+      },
+      {
+       "op": "eq",
+       "text": " before fieldwork begins"
+      },
+      {
+       "op": "ins",
+       "text": "; September 14 is the project start"
+      },
+      {
+       "op": "eq",
+       "text": ", "
+      },
+      {
+       "op": "del",
+       "text": "carrying no date of"
+      },
+      {
+       "op": "ins",
+       "text": "not"
+      },
+      {
+       "op": "eq",
+       "text": " their "
+      },
+      {
+       "op": "del",
+       "text": "own"
+      },
+      {
+       "op": "ins",
+       "text": "deadline"
+      },
+      {
+       "op": "eq",
+       "text": "."
+      }
+     ],
+     "notes": "The trap targets the neighbour's date (September 14) as the notifications' date; August 28 is the legitimate value. Risk: a fact that mentions both 'by August 28' and 'fieldwork begins September 14' could be judged either way.",
+     "sections": [
+      {
+       "label": "Retained document",
+       "hint": "",
+       "items": [
+        {
+         "text": "Fieldwork planning note.\n\nThe project has a target start of September 14.\nCustomer notifications must be completed by August 28, before fieldwork begins.\nThe equipment audit finished last quarter.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Fieldwork planning note.\n\nThe project has a target start of September 14.\nCustomer notifications must be completed "
+          },
+          {
+           "op": "ins",
+           "text": "by August 28, "
+          },
+          {
+           "op": "eq",
+           "text": "before fieldwork begins.\nThe equipment audit finished last quarter."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must extract",
+       "hint": "Judged with the document as context.",
+       "items": [
+        {
+         "text": "customer notifications have to be completed by August 28, before fieldwork begins",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "customer notifications have to be completed "
+          },
+          {
+           "op": "ins",
+           "text": "by August 28, "
+          },
+          {
+           "op": "eq",
+           "text": "before fieldwork begins"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Fact the trap reads alone",
+       "hint": "",
+       "items": [
+        {
+         "text": "the customer notifications"
+        }
+       ]
+      },
+      {
+       "label": "Trap: that fact",
+       "hint": "Judged on that one fact, without the document.",
+       "items": [
+        {
+         "text": "gives September 14 as the date or deadline of the notifications",
+         "diff": [
+          {
+           "op": "del",
+           "text": "carries"
+          },
+          {
+           "op": "ins",
+           "text": "gives"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "a"
+          },
+          {
+           "op": "ins",
+           "text": "September 14 as the"
+          },
+          {
+           "op": "eq",
+           "text": " date or deadline of "
+          },
+          {
+           "op": "del",
+           "text": "its"
+          },
+          {
+           "op": "ins",
+           "text": "the"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "own, such as September 14"
+          },
+          {
+           "op": "ins",
+           "text": "notifications"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The customer notifications have no deadline of their own, only that they come before fieldwork begins."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: own deadline August 28",
+       "response": "- Customer notifications must be completed by August 28, before fieldwork begins\n- The project has a target start of September 14\n- The equipment audit finished last quarter",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock: no deadline stored",
+       "response": "- Customer notifications must be completed before fieldwork begins\n- The project has a target start of September 14\n- The equipment audit finished last quarter",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "wrong: project start date borrowed as the deadline",
+       "response": "- Customer notifications must be completed by September 14, before fieldwork begins\n- The equipment audit finished last quarter",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "owner-borrowed-from-nearby-subject",
+   "operation": "retain",
+   "kind": "retain_fidelity",
+   "category": "no_invention",
+   "origin": "",
+   "prompt": "",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "The pool limit still needs raising before launch, with no owner named.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained document",
+       "hint": "",
+       "items": [
+        {
+         "text": "Migration status.\n\nPriya owns the schema migration and signed off on the rollback plan.\nThe connection-pool limit still needs to be raised before launch.\nBoth items are tracked in the launch checklist."
+        }
+       ]
+      },
+      {
+       "label": "Must extract",
+       "hint": "Judged with the document as context.",
+       "items": [
+        {
+         "text": "the connection-pool limit still needs to be raised before launch"
+        }
+       ]
+      },
+      {
+       "label": "Fact the trap reads alone",
+       "hint": "",
+       "items": [
+        {
+         "text": "raising the connection-pool limit"
+        }
+       ]
+      },
+      {
+       "label": "Trap: that fact",
+       "hint": "Judged on that one fact, without the document.",
+       "items": [
+        {
+         "text": "names a person as its owner, assignee, or the one responsible, such as Priya"
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Priya/schema migration/connection-pool limit/launch became Amara/index rebuild/worker-thread cap/go-live; same bait structure.",
+     "answer": "The worker-thread cap still needs raising before go-live, with no owner named.",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained document",
+       "hint": "",
+       "items": [
+        {
+         "text": "Release status.\n\nAmara owns the index rebuild and signed off on the cutover plan.\nThe worker-thread cap still needs to be raised before go-live.\nBoth items are tracked in the release checklist.",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Migration"
+          },
+          {
+           "op": "ins",
+           "text": "Release"
+          },
+          {
+           "op": "eq",
+           "text": " status.\n\n"
+          },
+          {
+           "op": "del",
+           "text": "Priya"
+          },
+          {
+           "op": "ins",
+           "text": "Amara"
+          },
+          {
+           "op": "eq",
+           "text": " owns the "
+          },
+          {
+           "op": "del",
+           "text": "schema"
+          },
+          {
+           "op": "ins",
+           "text": "index"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "migration"
+          },
+          {
+           "op": "ins",
+           "text": "rebuild"
+          },
+          {
+           "op": "eq",
+           "text": " and signed off on the "
+          },
+          {
+           "op": "del",
+           "text": "rollback"
+          },
+          {
+           "op": "ins",
+           "text": "cutover"
+          },
+          {
+           "op": "eq",
+           "text": " plan.\nThe "
+          },
+          {
+           "op": "del",
+           "text": "connection"
+          },
+          {
+           "op": "ins",
+           "text": "worker"
+          },
+          {
+           "op": "eq",
+           "text": "-"
+          },
+          {
+           "op": "del",
+           "text": "pool"
+          },
+          {
+           "op": "ins",
+           "text": "thread"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "limit"
+          },
+          {
+           "op": "ins",
+           "text": "cap"
+          },
+          {
+           "op": "eq",
+           "text": " still needs to be raised before "
+          },
+          {
+           "op": "del",
+           "text": "launch"
+          },
+          {
+           "op": "ins",
+           "text": "go-live"
+          },
+          {
+           "op": "eq",
+           "text": ".\nBoth items are tracked in the "
+          },
+          {
+           "op": "del",
+           "text": "launch"
+          },
+          {
+           "op": "ins",
+           "text": "release"
+          },
+          {
+           "op": "eq",
+           "text": " checklist."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must extract",
+       "hint": "Judged with the document as context.",
+       "items": [
+        {
+         "text": "the worker-thread cap still needs to be raised before go-live",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "the "
+          },
+          {
+           "op": "del",
+           "text": "connection"
+          },
+          {
+           "op": "ins",
+           "text": "worker"
+          },
+          {
+           "op": "eq",
+           "text": "-"
+          },
+          {
+           "op": "del",
+           "text": "pool"
+          },
+          {
+           "op": "ins",
+           "text": "thread"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "limit"
+          },
+          {
+           "op": "ins",
+           "text": "cap"
+          },
+          {
+           "op": "eq",
+           "text": " still needs to be raised before "
+          },
+          {
+           "op": "del",
+           "text": "launch"
+          },
+          {
+           "op": "ins",
+           "text": "go-live"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Fact the trap reads alone",
+       "hint": "",
+       "items": [
+        {
+         "text": "raising the worker-thread cap",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "raising the "
+          },
+          {
+           "op": "del",
+           "text": "connection"
+          },
+          {
+           "op": "ins",
+           "text": "worker"
+          },
+          {
+           "op": "eq",
+           "text": "-"
+          },
+          {
+           "op": "del",
+           "text": "pool"
+          },
+          {
+           "op": "ins",
+           "text": "thread"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "limit"
+          },
+          {
+           "op": "ins",
+           "text": "cap"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: that fact",
+       "hint": "Judged on that one fact, without the document.",
+       "items": [
+        {
+         "text": "names a person as its owner, assignee, or the one responsible, such as Amara",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "names a person as its owner, assignee, or the one responsible, such as "
+          },
+          {
+           "op": "del",
+           "text": "Priya"
+          },
+          {
+           "op": "ins",
+           "text": "Amara"
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: no borrowed owner",
+       "response": "- Amara owns the index rebuild and signed off on the cutover plan\n- The worker-thread cap still needs to be raised before go-live\n- Both items are tracked in the release checklist",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "wrong: Amara made the owner of the cap",
+       "response": "- Amara is responsible for raising the worker-thread cap before go-live\n- Amara signed off on the cutover plan",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "The pool-limit item now names its own owner, Dmitri (stock: no owner), distinct from Priya who owns the schema migration.",
+     "answer": "Dmitri owns raising the connection-pool limit before launch; Priya owns the migration only.",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "The"
+      },
+      {
+       "op": "ins",
+       "text": "Dmitri"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "ins",
+       "text": "owns raising the connection-"
+      },
+      {
+       "op": "eq",
+       "text": "pool limit "
+      },
+      {
+       "op": "del",
+       "text": "still needs raising "
+      },
+      {
+       "op": "eq",
+       "text": "before launch"
+      },
+      {
+       "op": "del",
+       "text": ","
+      },
+      {
+       "op": "ins",
+       "text": ";"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "with"
+      },
+      {
+       "op": "ins",
+       "text": "Priya"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "no"
+      },
+      {
+       "op": "ins",
+       "text": "owns"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "owner"
+      },
+      {
+       "op": "ins",
+       "text": "the"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "named"
+      },
+      {
+       "op": "ins",
+       "text": "migration only"
+      },
+      {
+       "op": "eq",
+       "text": "."
+      }
+     ],
+     "notes": "",
+     "sections": [
+      {
+       "label": "Retained document",
+       "hint": "",
+       "items": [
+        {
+         "text": "Migration status.\n\nPriya owns the schema migration and signed off on the rollback plan.\nDmitri owns raising the connection-pool limit, which still needs to happen before launch.\nBoth items are tracked in the launch checklist.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Migration status.\n\nPriya owns the schema migration and signed off on the rollback plan.\n"
+          },
+          {
+           "op": "del",
+           "text": "The"
+          },
+          {
+           "op": "ins",
+           "text": "Dmitri owns raising the"
+          },
+          {
+           "op": "eq",
+           "text": " connection-pool limit"
+          },
+          {
+           "op": "ins",
+           "text": ", which"
+          },
+          {
+           "op": "eq",
+           "text": " still needs to "
+          },
+          {
+           "op": "del",
+           "text": "be raised"
+          },
+          {
+           "op": "ins",
+           "text": "happen"
+          },
+          {
+           "op": "eq",
+           "text": " before launch.\nBoth items are tracked in the launch checklist."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Must extract",
+       "hint": "Judged with the document as context.",
+       "items": [
+        {
+         "text": "Dmitri owns raising the connection-pool limit, which still needs to happen before launch",
+         "diff": [
+          {
+           "op": "ins",
+           "text": "Dmitri owns raising "
+          },
+          {
+           "op": "eq",
+           "text": "the connection-pool limit"
+          },
+          {
+           "op": "ins",
+           "text": ", which"
+          },
+          {
+           "op": "eq",
+           "text": " still needs to "
+          },
+          {
+           "op": "del",
+           "text": "be raised"
+          },
+          {
+           "op": "ins",
+           "text": "happen"
+          },
+          {
+           "op": "eq",
+           "text": " before launch"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Fact the trap reads alone",
+       "hint": "",
+       "items": [
+        {
+         "text": "raising the connection-pool limit"
+        }
+       ]
+      },
+      {
+       "label": "Trap: that fact",
+       "hint": "Judged on that one fact, without the document.",
+       "items": [
+        {
+         "text": "names Priya as its owner, assignee, or the one responsible",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "names "
+          },
+          {
+           "op": "del",
+           "text": "a person"
+          },
+          {
+           "op": "ins",
+           "text": "Priya"
+          },
+          {
+           "op": "eq",
+           "text": " as its owner, assignee, or the one responsible"
+          },
+          {
+           "op": "del",
+           "text": ", such as Priya"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The connection-pool limit has no named owner."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct: Dmitri owns the pool limit",
+       "response": "- Priya owns the schema migration and signed off on the rollback plan\n- Dmitri owns raising the connection-pool limit, which still needs to happen before launch\n- Both items are tracked in the launch checklist",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock: pool limit with no owner",
+       "response": "- Priya owns the schema migration and signed off on the rollback plan\n- The connection-pool limit still needs to be raised before launch\n- Both items are tracked in the launch checklist",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "wrong: Priya made the owner of the pool limit",
+       "response": "- Priya owns the schema migration and signed off on the rollback plan\n- Priya is responsible for raising the connection-pool limit before launch",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hq-owner-latest",
+   "operation": "reflect",
+   "kind": "reflect_corpus",
+   "category": "update",
+   "origin": "",
+   "prompt": "Which team owns the ranking service now?",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "the core infra team",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Which team owns the ranking service now?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that the core infra team currently owns the ranking service. Mentioning the earlier owners as history is fine; naming any of them as the current owner is not."
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "the platform team, the retrieval team or the search guild currently owns the ranking service"
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: the gold rows.",
+       "items": [
+        {
+         "text": "Ownership of the ranking service passed to the platform team in March 2023.",
+         "tag": "own-001 · gold"
+        },
+        {
+         "text": "Ownership of the ranking service passed to the retrieval team in September 2023.",
+         "tag": "own-002 · gold"
+        },
+        {
+         "text": "Ownership of the ranking service passed to the search guild in April 2024.",
+         "tag": "own-003 · gold"
+        },
+        {
+         "text": "Ownership of the ranking service passed to the core infra team in November 2024.",
+         "tag": "own-004 · gold"
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Renamed \"the ranking service\" to \"the scoring service\" in the four handover facts, the question, ideal_query, criteria and trap; same four owners, same dates, filler untouched.",
+     "answer": "the core infra team",
+     "answer_diff": null,
+     "notes": "Filler facts never name the ranking service, so only the four own-00N facts change. Team names are shared with the filler and were left alone.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Which team owns the scoring service at the moment?",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Which team owns the "
+          },
+          {
+           "op": "del",
+           "text": "ranking"
+          },
+          {
+           "op": "ins",
+           "text": "scoring"
+          },
+          {
+           "op": "eq",
+           "text": " service "
+          },
+          {
+           "op": "del",
+           "text": "now"
+          },
+          {
+           "op": "ins",
+           "text": "at the moment"
+          },
+          {
+           "op": "eq",
+           "text": "?"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that the core infra team currently owns the scoring service. Mentioning the earlier owners as history is fine; naming any of them as the current owner is not.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "States that the core infra team currently owns the "
+          },
+          {
+           "op": "del",
+           "text": "ranking"
+          },
+          {
+           "op": "ins",
+           "text": "scoring"
+          },
+          {
+           "op": "eq",
+           "text": " service. Mentioning the earlier owners as history is fine; naming any of them as the current owner is not."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "the platform team, the retrieval team or the search guild currently owns the scoring service",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "the platform team, the retrieval team or the search guild currently owns the "
+          },
+          {
+           "op": "del",
+           "text": "ranking"
+          },
+          {
+           "op": "ins",
+           "text": "scoring"
+          },
+          {
+           "op": "eq",
+           "text": " service"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Ownership of the scoring service passed to the platform team in March 2023.",
+         "tag": "own-001 · gold",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Ownership of the "
+          },
+          {
+           "op": "del",
+           "text": "ranking"
+          },
+          {
+           "op": "ins",
+           "text": "scoring"
+          },
+          {
+           "op": "eq",
+           "text": " service passed to the platform team in March 2023."
+          }
+         ]
+        },
+        {
+         "text": "Ownership of the scoring service passed to the retrieval team in September 2023.",
+         "tag": "own-002 · gold",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Ownership of the "
+          },
+          {
+           "op": "del",
+           "text": "ranking"
+          },
+          {
+           "op": "ins",
+           "text": "scoring"
+          },
+          {
+           "op": "eq",
+           "text": " service passed to the retrieval team in September 2023."
+          }
+         ]
+        },
+        {
+         "text": "Ownership of the scoring service passed to the search guild in April 2024.",
+         "tag": "own-003 · gold",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Ownership of the "
+          },
+          {
+           "op": "del",
+           "text": "ranking"
+          },
+          {
+           "op": "ins",
+           "text": "scoring"
+          },
+          {
+           "op": "eq",
+           "text": " service passed to the search guild in April 2024."
+          }
+         ]
+        },
+        {
+         "text": "Ownership of the scoring service passed to the core infra team in November 2024.",
+         "tag": "own-004 · gold",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Ownership of the "
+          },
+          {
+           "op": "del",
+           "text": "ranking"
+          },
+          {
+           "op": "ins",
+           "text": "scoring"
+          },
+          {
+           "op": "eq",
+           "text": " service passed to the core infra team in November 2024."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct",
+       "response": "The core infra team owns the scoring service now. Ownership passed to it in November 2024; before that it sat with the search guild (from April 2024), the retrieval team (from September 2023) and originally the platform team (March 2023).",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "stock-style wrong (earlier owner as current)",
+       "response": "The scoring service is currently owned by the search guild, which took it over in April 2024.",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "The final dated handover (November 2024) goes to the relevance engineering team instead of the core infra team; the other three handovers and all filler are unchanged.",
+     "answer": "the relevance engineering team",
+     "answer_diff": [
+      {
+       "op": "eq",
+       "text": "the "
+      },
+      {
+       "op": "del",
+       "text": "core"
+      },
+      {
+       "op": "ins",
+       "text": "relevance"
+      },
+      {
+       "op": "eq",
+       "text": " "
+      },
+      {
+       "op": "del",
+       "text": "infra"
+      },
+      {
+       "op": "ins",
+       "text": "engineering"
+      },
+      {
+       "op": "eq",
+       "text": " team"
+      }
+     ],
+     "notes": "New owner appears nowhere else in the corpus, so (system, owner) subjects stay unique. The core infra team still owns other systems in the filler, which is the bait for the stale answer.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Which team owns the ranking service now?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that the relevance engineering team currently owns the ranking service. Mentioning the earlier owners as history is fine; naming any of them as the current owner is not.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "States that the "
+          },
+          {
+           "op": "del",
+           "text": "core"
+          },
+          {
+           "op": "ins",
+           "text": "relevance"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "infra"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " team currently owns the ranking service. Mentioning the earlier owners as history is fine; naming any of them as the current owner is not."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "the core infra team, the platform team, the retrieval team or the search guild currently owns the ranking service",
+         "diff": [
+          {
+           "op": "ins",
+           "text": "the core infra team, "
+          },
+          {
+           "op": "eq",
+           "text": "the platform team, the retrieval team or the search guild currently owns the ranking service"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Ownership of the ranking service passed to the platform team in March 2023.",
+         "tag": "own-001 · gold"
+        },
+        {
+         "text": "Ownership of the ranking service passed to the retrieval team in September 2023.",
+         "tag": "own-002 · gold"
+        },
+        {
+         "text": "Ownership of the ranking service passed to the search guild in April 2024.",
+         "tag": "own-003 · gold"
+        },
+        {
+         "text": "Ownership of the ranking service passed to the relevance engineering team in November 2024.",
+         "tag": "own-004 · gold",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Ownership of the ranking service passed to the "
+          },
+          {
+           "op": "del",
+           "text": "core"
+          },
+          {
+           "op": "ins",
+           "text": "relevance"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "infra"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " team in November 2024."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The answer asserts, as currently true, that the core infra team currently owns the ranking service."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (new final owner)",
+       "response": "The relevance engineering team owns the ranking service now; it took over in November 2024. Before that the search guild had it (April 2024), the retrieval team (September 2023) and the platform team (March 2023).",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock answer (stale)",
+       "response": "The core infra team owns the ranking service. Ownership passed to it in November 2024, after the search guild held it from April 2024.",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "earlier owner as current",
+       "response": "The ranking service is currently owned by the search guild, which took over in April 2024.",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hq-absent-2024",
+   "operation": "reflect",
+   "kind": "reflect_corpus",
+   "category": "no_overreach",
+   "origin": "",
+   "prompt": "What was the engineering headcount at the end of 2024?",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "the memory holds no 2024 headcount figure",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "What was the engineering headcount at the end of 2024?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Says the memory holds no headcount figure for 2024, rather than giving or estimating one. Citing 2025/2026 figures as context is fine only if it does not present one as the 2024 number."
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "a specific engineering headcount figure for 2024"
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: the gold rows.",
+       "items": []
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Reworded all 14 headcount facts (\"The engineering team numbered N people at the end of ...\") and the question (\"How large was the engineering team at the end of 2024?\"); numbers, months and years identical, still no 2024 row.",
+     "answer": "the memory holds no 2024 team-size figure",
+     "answer_diff": null,
+     "notes": "All headcount-cluster rows renamed together so the bait keeps the question's vocabulary. The stock corpus's two January 2025 rows (40 and 124) are preserved exactly.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "How large was the engineering team at the end of 2024?",
+         "diff": [
+          {
+           "op": "del",
+           "text": "What"
+          },
+          {
+           "op": "ins",
+           "text": "How large"
+          },
+          {
+           "op": "eq",
+           "text": " was the engineering "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "team"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of 2024?"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Says the memory holds no engineering team size for 2024, rather than giving or estimating one. Citing 2025/2026 figures as context is fine only if it does not present one as the 2024 number.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Says the memory holds no "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "figure"
+          },
+          {
+           "op": "ins",
+           "text": "team size"
+          },
+          {
+           "op": "eq",
+           "text": " for 2024, rather than giving or estimating one. Citing 2025/2026 figures as context is fine only if it does not present one as the 2024 number."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "a specific engineering team size for 2024",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "a specific engineering "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "team"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "figure"
+          },
+          {
+           "op": "ins",
+           "text": "size"
+          },
+          {
+           "op": "eq",
+           "text": " for 2024"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "The engineering team numbered 40 people at the end of January 2025.",
+         "tag": "abs-000",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 40"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of January 2025."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 47 people at the end of February 2026.",
+         "tag": "abs-001",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 47"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of February 2026."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 54 people at the end of March 2025.",
+         "tag": "abs-002",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 54"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of March 2025."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 61 people at the end of April 2026.",
+         "tag": "abs-003",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 61"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of April 2026."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 68 people at the end of May 2025.",
+         "tag": "abs-004",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 68"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of May 2025."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 75 people at the end of June 2026.",
+         "tag": "abs-005",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 75"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of June 2026."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 82 people at the end of July 2025.",
+         "tag": "abs-006",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 82"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of July 2025."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 89 people at the end of August 2026.",
+         "tag": "abs-007",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 89"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of August 2026."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 96 people at the end of September 2025.",
+         "tag": "abs-008",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 96"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of September 2025."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 103 people at the end of October 2026.",
+         "tag": "abs-009",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 103"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of October 2026."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 110 people at the end of November 2025.",
+         "tag": "abs-010",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 110"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of November 2025."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 117 people at the end of December 2026.",
+         "tag": "abs-011",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 117"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of December 2026."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 124 people at the end of January 2025.",
+         "tag": "abs-012",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 124"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of January 2025."
+          }
+         ]
+        },
+        {
+         "text": "The engineering team numbered 131 people at the end of February 2026.",
+         "tag": "abs-013",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Engineering"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "headcount"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "reached"
+          },
+          {
+           "op": "ins",
+           "text": "team numbered"
+          },
+          {
+           "op": "eq",
+           "text": " 131"
+          },
+          {
+           "op": "ins",
+           "text": " people"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of February 2026."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (absence)",
+       "response": "I don't have a team-size figure for the end of 2024. The engineering team records I can see cover 2025 and 2026 only, so I can't say how many people there were at the end of 2024.",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "invented figure",
+       "response": "The engineering team numbered about 35 people at the end of 2024, extrapolating back from the growth seen through 2025.",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "abs-000 changes from \"reached 40 at the end of January 2025\" to \"reached 38 at the end of December 2024\", so the bank now holds an end-of-2024 headcount.",
+     "answer": "38",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "the memory holds no 2024 headcount figure"
+      },
+      {
+       "op": "ins",
+       "text": "38"
+      }
+     ],
+     "notes": "One fact changed. 38 is not used elsewhere in the corpus; December 2024 is not used by any other headcount row. The criterion mirrors the stock context allowance for 2025/2026 figures. Gold changes from [] to [abs-000].",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "What was the engineering headcount at the end of 2024?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that the engineering headcount at the end of 2024 was 38. Citing 2025/2026 figures as context is fine only if it does not present one as the 2024 number.",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Says"
+          },
+          {
+           "op": "ins",
+           "text": "States that"
+          },
+          {
+           "op": "eq",
+           "text": " the "
+          },
+          {
+           "op": "del",
+           "text": "memory holds no"
+          },
+          {
+           "op": "ins",
+           "text": "engineering"
+          },
+          {
+           "op": "eq",
+           "text": " headcount "
+          },
+          {
+           "op": "del",
+           "text": "figure"
+          },
+          {
+           "op": "ins",
+           "text": "at"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "for"
+          },
+          {
+           "op": "ins",
+           "text": "the end of"
+          },
+          {
+           "op": "eq",
+           "text": " 2024"
+          },
+          {
+           "op": "del",
+           "text": ","
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "rather"
+          },
+          {
+           "op": "ins",
+           "text": "was"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "than giving or estimating one"
+          },
+          {
+           "op": "ins",
+           "text": "38"
+          },
+          {
+           "op": "eq",
+           "text": ". Citing 2025/2026 figures as context is fine only if it does not present one as the 2024 number."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "the memory holds no engineering headcount figure for 2024",
+         "diff": [
+          {
+           "op": "del",
+           "text": "a"
+          },
+          {
+           "op": "ins",
+           "text": "the"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "specific"
+          },
+          {
+           "op": "ins",
+           "text": "memory holds no"
+          },
+          {
+           "op": "eq",
+           "text": " engineering headcount figure for 2024"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Engineering headcount reached 38 at the end of December 2024.",
+         "tag": "abs-000 · gold",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Engineering headcount reached "
+          },
+          {
+           "op": "del",
+           "text": "40"
+          },
+          {
+           "op": "ins",
+           "text": "38"
+          },
+          {
+           "op": "eq",
+           "text": " at the end of "
+          },
+          {
+           "op": "del",
+           "text": "January"
+          },
+          {
+           "op": "ins",
+           "text": "December"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "2025"
+          },
+          {
+           "op": "ins",
+           "text": "2024"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The answer asserts, as currently true, that the memory holds no engineering headcount figure for 2024."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (38)",
+       "response": "Engineering headcount was 38 at the end of 2024 (December 2024). The 2025 and 2026 rows show it growing from there.",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock answer (absence)",
+       "response": "The memory holds no engineering headcount figure for the end of 2024; the records only cover 2025 and 2026.",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "wrong number",
+       "response": "Engineering headcount at the end of 2024 was 40.",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hq-scoped-2fa",
+   "operation": "reflect",
+   "kind": "reflect_corpus",
+   "category": "no_overreach",
+   "origin": "",
+   "prompt": "Is two-factor authentication mandatory for our accounts?",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "mandatory for EU, optional for US (UK mandatory from 2026)",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Is two-factor authentication mandatory for our accounts?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Answers with the regional qualification rather than a flat yes or no: mandatory for EU accounts and optional for US accounts. Any accurate treatment of the UK is acceptable — the memory says UK accounts are mandatory FROM 2026, so stating it either as mandatory or as mandatory starting in 2026 is correct, and so is omitting the UK entirely."
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "two-factor authentication is mandatory everywhere, with no regional distinction"
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: the gold rows.",
+       "items": [
+        {
+         "text": "Two-factor authentication is mandatory for all EU accounts.",
+         "tag": "scp-001 · gold"
+        },
+        {
+         "text": "Two-factor authentication remains optional for US accounts.",
+         "tag": "scp-002 · gold"
+        },
+        {
+         "text": "Two-factor authentication is mandatory for UK accounts from 2026.",
+         "tag": "scp-003 · gold"
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "\"Two-factor authentication\" renamed \"Multi-factor authentication\" in the three regional facts, the question, ideal_query, criteria and trap; regions and mandatory/optional values unchanged (SSO and password-rotation near-misses untouched).",
+     "answer": "mandatory for EU, optional for US (UK mandatory from 2026)",
+     "answer_diff": null,
+     "notes": "The near-misses (SSO, password rotation) do not share the entity name, so they stay as stock.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Is multi-factor authentication mandatory for our accounts?",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Is "
+          },
+          {
+           "op": "del",
+           "text": "two"
+          },
+          {
+           "op": "ins",
+           "text": "multi"
+          },
+          {
+           "op": "eq",
+           "text": "-factor authentication mandatory for our accounts?"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Answers with the regional qualification rather than a flat yes or no: mandatory for EU accounts and optional for US accounts. Any accurate treatment of the UK is acceptable — the memory says UK accounts are mandatory FROM 2026, so stating it either as mandatory or as mandatory starting in 2026 is correct, and so is omitting the UK entirely."
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "multi-factor authentication is mandatory everywhere, with no regional distinction",
+         "diff": [
+          {
+           "op": "del",
+           "text": "two"
+          },
+          {
+           "op": "ins",
+           "text": "multi"
+          },
+          {
+           "op": "eq",
+           "text": "-factor authentication is mandatory everywhere, with no regional distinction"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Multi-factor authentication is mandatory for all EU accounts.",
+         "tag": "scp-001 · gold",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Two"
+          },
+          {
+           "op": "ins",
+           "text": "Multi"
+          },
+          {
+           "op": "eq",
+           "text": "-factor authentication is mandatory for all EU accounts."
+          }
+         ]
+        },
+        {
+         "text": "Multi-factor authentication remains optional for US accounts.",
+         "tag": "scp-002 · gold",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Two"
+          },
+          {
+           "op": "ins",
+           "text": "Multi"
+          },
+          {
+           "op": "eq",
+           "text": "-factor authentication remains optional for US accounts."
+          }
+         ]
+        },
+        {
+         "text": "Multi-factor authentication is mandatory for UK accounts from 2026.",
+         "tag": "scp-003 · gold",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Two"
+          },
+          {
+           "op": "ins",
+           "text": "Multi"
+          },
+          {
+           "op": "eq",
+           "text": "-factor authentication is mandatory for UK accounts from 2026."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (regional split)",
+       "response": "It depends on the region. Multi-factor authentication is mandatory for EU accounts and, from 2026, for UK accounts, but it remains optional for US accounts.",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "flat yes (the trap)",
+       "response": "Yes, multi-factor authentication is mandatory for all of our accounts.",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "scp-001 changes from \"mandatory for all EU accounts\" to \"remains optional for EU accounts\", so the UK is the only mandatory region.",
+     "answer": "optional for EU and US, mandatory only for the UK (from 2026)",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "mandatory"
+      },
+      {
+       "op": "ins",
+       "text": "optional"
+      },
+      {
+       "op": "eq",
+       "text": " for EU"
+      },
+      {
+       "op": "ins",
+       "text": " and US"
+      },
+      {
+       "op": "eq",
+       "text": ", "
+      },
+      {
+       "op": "del",
+       "text": "optional"
+      },
+      {
+       "op": "ins",
+       "text": "mandatory only"
+      },
+      {
+       "op": "eq",
+       "text": " for "
+      },
+      {
+       "op": "del",
+       "text": "US"
+      },
+      {
+       "op": "ins",
+       "text": "the UK"
+      },
+      {
+       "op": "eq",
+       "text": " ("
+      },
+      {
+       "op": "del",
+       "text": "UK mandatory "
+      },
+      {
+       "op": "eq",
+       "text": "from 2026)"
+      }
+     ],
+     "notes": "One fact changed. The stock criterion tolerated omitting the UK; here the UK is the only mandatory region so the answer must state it. scp-001 and scp-002 stay distinct texts.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Is two-factor authentication mandatory for our accounts?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Answers with the regional qualification rather than a flat yes or no: optional for EU accounts and optional for US accounts, with mandatory applying only to UK accounts. The memory says UK accounts are mandatory FROM 2026, so stating the UK either as mandatory or as mandatory starting in 2026 is correct.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Answers with the regional qualification rather than a flat yes or no: "
+          },
+          {
+           "op": "del",
+           "text": "mandatory"
+          },
+          {
+           "op": "ins",
+           "text": "optional"
+          },
+          {
+           "op": "eq",
+           "text": " for EU accounts and optional for US accounts"
+          },
+          {
+           "op": "del",
+           "text": "."
+          },
+          {
+           "op": "ins",
+           "text": ","
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "Any"
+          },
+          {
+           "op": "ins",
+           "text": "with"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "accurate"
+          },
+          {
+           "op": "ins",
+           "text": "mandatory"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "treatment"
+          },
+          {
+           "op": "ins",
+           "text": "applying"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "of"
+          },
+          {
+           "op": "ins",
+           "text": "only"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "the"
+          },
+          {
+           "op": "ins",
+           "text": "to"
+          },
+          {
+           "op": "eq",
+           "text": " UK "
+          },
+          {
+           "op": "del",
+           "text": "is"
+          },
+          {
+           "op": "ins",
+           "text": "accounts."
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "acceptable — the"
+          },
+          {
+           "op": "ins",
+           "text": "The"
+          },
+          {
+           "op": "eq",
+           "text": " memory says UK accounts are mandatory FROM 2026, so stating "
+          },
+          {
+           "op": "del",
+           "text": "it"
+          },
+          {
+           "op": "ins",
+           "text": "the UK"
+          },
+          {
+           "op": "eq",
+           "text": " either as mandatory or as mandatory starting in 2026 is correct"
+          },
+          {
+           "op": "del",
+           "text": ", and so is omitting the UK entirely"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "two-factor authentication is mandatory for EU accounts",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "two-factor authentication is mandatory "
+          },
+          {
+           "op": "del",
+           "text": "everywhere,"
+          },
+          {
+           "op": "ins",
+           "text": "for"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "with"
+          },
+          {
+           "op": "ins",
+           "text": "EU"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "no regional distinction"
+          },
+          {
+           "op": "ins",
+           "text": "accounts"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "151 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Two-factor authentication remains optional for EU accounts.",
+         "tag": "scp-001 · gold",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Two-factor authentication "
+          },
+          {
+           "op": "del",
+           "text": "is"
+          },
+          {
+           "op": "ins",
+           "text": "remains"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "mandatory"
+          },
+          {
+           "op": "ins",
+           "text": "optional"
+          },
+          {
+           "op": "eq",
+           "text": " for"
+          },
+          {
+           "op": "del",
+           "text": " all"
+          },
+          {
+           "op": "eq",
+           "text": " EU accounts."
+          }
+         ]
+        },
+        {
+         "text": "Two-factor authentication remains optional for US accounts.",
+         "tag": "scp-002 · gold"
+        },
+        {
+         "text": "Two-factor authentication is mandatory for UK accounts from 2026.",
+         "tag": "scp-003 · gold"
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The answer asserts, as currently true, that two-factor authentication is mandatory for EU accounts."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (new split)",
+       "response": "Not across the board. Two-factor authentication is optional for EU and US accounts; the only region where it is mandatory is the UK, from 2026.",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock split (stale)",
+       "response": "It depends on the region: two-factor authentication is mandatory for EU accounts, optional for US accounts, and mandatory for UK accounts from 2026.",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "flat yes",
+       "response": "Yes, two-factor authentication is mandatory for all of our accounts.",
+       "expect_pass": false,
+       "expect_stale": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sp-rotation",
+   "operation": "reflect",
+   "kind": "reflect_sources",
+   "category": "update",
+   "origin": "",
+   "prompt": "How often are production service credentials rotated?",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "30 days",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "How often are production service credentials rotated?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that production credentials are now rotated every 30 days, following the decision taken at the 9 March 2026 security review. Noting that the handbook still says 90 days, or that staging stays at 90 days, is correct; presenting 90 days as the current production interval is not."
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "production service credentials are currently rotated every 90 days"
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: the gold rows.",
+       "items": [
+        {
+         "text": "Production service credentials are rotated every 90 days.",
+         "tag": "g-rotation · gold · source=guide"
+        },
+        {
+         "text": "At the security review on 9 March 2026 the security lead decided that credential rotation for production services moves from 90 days to 30 days, effective immediately; the handbook has not been updated yet.",
+         "tag": "c-rotation-decision · gold · source=conversation"
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Reworded the three rotation facts (handbook, dated decision, staging note), changed the decision from \"9 March 2026 security review/security lead\" to \"12 February 2026 security audit/head of security\", and reworded the question; the 90 to 30 day values are unchanged.",
+     "answer": "30 days",
+     "answer_diff": null,
+     "notes": "\"credential\"/\"rotation\" vocabulary is kept in the facts because the chatter rows share it (renaming only the gold would make retrieval easier). The security-audit date is within the past and does not coincide with any chatter-specific claim.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "What is the current rotation interval for production service credentials?",
+         "diff": [
+          {
+           "op": "del",
+           "text": "How"
+          },
+          {
+           "op": "ins",
+           "text": "What"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "often"
+          },
+          {
+           "op": "ins",
+           "text": "is"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "are"
+          },
+          {
+           "op": "ins",
+           "text": "the current rotation interval for"
+          },
+          {
+           "op": "eq",
+           "text": " production service credentials"
+          },
+          {
+           "op": "del",
+           "text": " rotated"
+          },
+          {
+           "op": "eq",
+           "text": "?"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that production credentials are now rotated every 30 days, following the decision taken at the 12 February 2026 security audit. Noting that the handbook still says 90 days, or that staging stays at 90 days, is correct; presenting 90 days as the current production interval is not.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "States that production credentials are now rotated every 30 days, following the decision taken at the "
+          },
+          {
+           "op": "del",
+           "text": "9"
+          },
+          {
+           "op": "ins",
+           "text": "12"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "March"
+          },
+          {
+           "op": "ins",
+           "text": "February"
+          },
+          {
+           "op": "eq",
+           "text": " 2026 security "
+          },
+          {
+           "op": "del",
+           "text": "review"
+          },
+          {
+           "op": "ins",
+           "text": "audit"
+          },
+          {
+           "op": "eq",
+           "text": ". Noting that the handbook still says 90 days, or that staging stays at 90 days, is correct; presenting 90 days as the current production interval is not."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "production service credentials are currently rotated every 90 days"
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Rotation of production service credentials happens every 90 days.",
+         "tag": "g-rotation · gold · source=guide",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Production"
+          },
+          {
+           "op": "ins",
+           "text": "Rotation of production"
+          },
+          {
+           "op": "eq",
+           "text": " service credentials "
+          },
+          {
+           "op": "del",
+           "text": "are rotated"
+          },
+          {
+           "op": "ins",
+           "text": "happens"
+          },
+          {
+           "op": "eq",
+           "text": " every 90 days."
+          }
+         ]
+        },
+        {
+         "text": "At the security audit on 12 February 2026 the head of security decided that rotation of production service credentials moves from every 90 days to every 30 days, effective immediately; the handbook has not been updated yet.",
+         "tag": "c-rotation-decision · gold · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "At the security "
+          },
+          {
+           "op": "del",
+           "text": "review"
+          },
+          {
+           "op": "ins",
+           "text": "audit"
+          },
+          {
+           "op": "eq",
+           "text": " on "
+          },
+          {
+           "op": "del",
+           "text": "9"
+          },
+          {
+           "op": "ins",
+           "text": "12"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "March"
+          },
+          {
+           "op": "ins",
+           "text": "February"
+          },
+          {
+           "op": "eq",
+           "text": " 2026 the "
+          },
+          {
+           "op": "ins",
+           "text": "head of "
+          },
+          {
+           "op": "eq",
+           "text": "security"
+          },
+          {
+           "op": "del",
+           "text": " lead"
+          },
+          {
+           "op": "eq",
+           "text": " decided that "
+          },
+          {
+           "op": "del",
+           "text": "credential "
+          },
+          {
+           "op": "eq",
+           "text": "rotation "
+          },
+          {
+           "op": "del",
+           "text": "for"
+          },
+          {
+           "op": "ins",
+           "text": "of"
+          },
+          {
+           "op": "eq",
+           "text": " production "
+          },
+          {
+           "op": "del",
+           "text": "services"
+          },
+          {
+           "op": "ins",
+           "text": "service credentials"
+          },
+          {
+           "op": "eq",
+           "text": " moves from"
+          },
+          {
+           "op": "ins",
+           "text": " every"
+          },
+          {
+           "op": "eq",
+           "text": " 90 days to"
+          },
+          {
+           "op": "ins",
+           "text": " every"
+          },
+          {
+           "op": "eq",
+           "text": " 30 days, effective immediately; the handbook has not been updated yet."
+          }
+         ]
+        },
+        {
+         "text": "Staging credentials remain on a 90-day rotation cycle.",
+         "tag": "c-rotation-scope · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Staging credentials "
+          },
+          {
+           "op": "del",
+           "text": "stay"
+          },
+          {
+           "op": "ins",
+           "text": "remain"
+          },
+          {
+           "op": "eq",
+           "text": " on "
+          },
+          {
+           "op": "del",
+           "text": "the"
+          },
+          {
+           "op": "ins",
+           "text": "a"
+          },
+          {
+           "op": "eq",
+           "text": " 90-day rotation"
+          },
+          {
+           "op": "ins",
+           "text": " cycle"
+          },
+          {
+           "op": "eq",
+           "text": "."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (30 days)",
+       "response": "Production service credentials are now rotated every 30 days. The handbook still says 90 days, but the head of security decided at the 12 February 2026 security audit to move to 30. Staging credentials remain on 90 days.",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "handbook-only (the trap)",
+       "response": "Production service credentials are rotated every 90 days, according to the handbook.",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "The dated decision in c-rotation-decision now moves rotation \"from 90 days to 14 days\" (was 30); the handbook (90), the staging note (90), the date and the speaker are unchanged.",
+     "answer": "14 days",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "30"
+      },
+      {
+       "op": "ins",
+       "text": "14"
+      },
+      {
+       "op": "eq",
+       "text": " days"
+      }
+     ],
+     "notes": "Only c-rotation-decision states the new interval, so one fact changes. The trap names both 30 and 90 days because both are wrong now; the stale_claim is the stock answer only.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "How often are production service credentials rotated?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that production credentials are now rotated every 14 days, following the decision taken at the 9 March 2026 security review. Noting that the handbook still says 90 days, or that staging stays at 90 days, is correct; presenting 90 days as the current production interval is not.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "States that production credentials are now rotated every "
+          },
+          {
+           "op": "del",
+           "text": "30"
+          },
+          {
+           "op": "ins",
+           "text": "14"
+          },
+          {
+           "op": "eq",
+           "text": " days, following the decision taken at the 9 March 2026 security review. Noting that the handbook still says 90 days, or that staging stays at 90 days, is correct; presenting 90 days as the current production interval is not."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "production service credentials are currently rotated every 30 days or every 90 days",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "production service credentials are currently rotated every "
+          },
+          {
+           "op": "ins",
+           "text": "30 days or every "
+          },
+          {
+           "op": "eq",
+           "text": "90 days"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Production service credentials are rotated every 90 days.",
+         "tag": "g-rotation · gold · source=guide"
+        },
+        {
+         "text": "At the security review on 9 March 2026 the security lead decided that credential rotation for production services moves from 90 days to 14 days, effective immediately; the handbook has not been updated yet.",
+         "tag": "c-rotation-decision · gold · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "At the security review on 9 March 2026 the security lead decided that credential rotation for production services moves from 90 days to "
+          },
+          {
+           "op": "del",
+           "text": "30"
+          },
+          {
+           "op": "ins",
+           "text": "14"
+          },
+          {
+           "op": "eq",
+           "text": " days, effective immediately; the handbook has not been updated yet."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The answer asserts, as currently true, that production service credentials are currently rotated every 30 days."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (14 days)",
+       "response": "Production service credentials are now rotated every 14 days, following the security lead's decision at the 9 March 2026 security review. The handbook still says 90 days and has not been updated, and staging stays on 90 days.",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock answer (30 days, stale)",
+       "response": "Production service credentials are rotated every 30 days, per the decision at the 9 March 2026 security review; the handbook still says 90.",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "handbook-only (90 days)",
+       "response": "Production service credentials are rotated every 90 days, per the handbook.",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sp-upgrade-owner",
+   "operation": "reflect",
+   "kind": "reflect_sources",
+   "category": "source_authority",
+   "origin": "",
+   "prompt": "Who volunteered to run the PostgreSQL 16 upgrade for the payments database?",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "Farid",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Who volunteered to run the PostgreSQL 16 upgrade for the payments database?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Names Farid as the person who volunteered to run the upgrade."
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "someone other than Farid volunteered to run the PostgreSQL 16 upgrade, or that the memory does not say who volunteered"
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: the gold rows.",
+       "items": [
+        {
+         "text": "Farid volunteered to run the PostgreSQL 16 upgrade for the payments database.",
+         "tag": "c-upgrade-owner · gold · source=conversation"
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "Farid renamed Idris in c-upgrade-owner, c-upgrade-decline and every chatter row drawn from the name pool; \"run\" became \"lead\" in the volunteering fact, question, ideal_query, criteria and trap.",
+     "answer": "Idris",
+     "answer_diff": null,
+     "notes": "The chatter pool is renamed too so Idris stays one person across the bank (Farid would otherwise survive as chatter-only). Texts stay unique because Idris is not in the stock pool.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Who volunteered to lead the PostgreSQL 16 upgrade for the payments database?",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Who volunteered to "
+          },
+          {
+           "op": "del",
+           "text": "run"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " the PostgreSQL 16 upgrade for the payments database?"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Names Idris as the person who volunteered to lead the upgrade.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Names "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " as the person who volunteered to "
+          },
+          {
+           "op": "del",
+           "text": "run"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " the upgrade."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "someone other than Idris volunteered to lead the PostgreSQL 16 upgrade, or that the memory does not say who volunteered",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "someone other than "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " volunteered to "
+          },
+          {
+           "op": "del",
+           "text": "run"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " the PostgreSQL 16 upgrade, or that the memory does not say who volunteered"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Idris volunteered to lead the PostgreSQL 16 upgrade for the payments database.",
+         "tag": "c-upgrade-owner · gold · source=conversation",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " volunteered to "
+          },
+          {
+           "op": "del",
+           "text": "run"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " the PostgreSQL 16 upgrade for the payments database."
+          }
+         ]
+        },
+        {
+         "text": "Idris could not take on the search reindex.",
+         "tag": "c-upgrade-decline · source=conversation",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " could not take on the search reindex."
+          }
+         ]
+        },
+        {
+         "text": "On 11 January 2026 Idris asked where the datastore guidance for new services is written down.",
+         "tag": "n-ds-0-5 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 11 January 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked where the datastore guidance for new services is written down."
+          }
+         ]
+        },
+        {
+         "text": "On 19 January 2026 Idris asked where postmortems are stored.",
+         "tag": "n-in-0-13 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 19 January 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked where postmortems are stored."
+          }
+         ]
+        },
+        {
+         "text": "On 27 January 2026 Idris asked whether credential rotation is automated or manual.",
+         "tag": "n-se-0-21 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 27 January 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether credential rotation is automated or manual."
+          }
+         ]
+        },
+        {
+         "text": "On 04 February 2026 Idris asked whether the on-call handover template had changed.",
+         "tag": "n-oc-0-29 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 04 February 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether the on-call handover template had changed."
+          }
+         ]
+        },
+        {
+         "text": "On 12 February 2026 Idris asked who should be on the call during the payments upgrade.",
+         "tag": "n-pm-0-37 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 12 February 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked who should be on the call during the payments upgrade."
+          }
+         ]
+        },
+        {
+         "text": "On 18 February 2026 Idris complained that the Redis cache evicts entries sooner than expected.",
+         "tag": "n-ds-1-4 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 18 February 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " complained that the Redis cache evicts entries sooner than expected."
+          }
+         ]
+        },
+        {
+         "text": "On 26 February 2026 Idris asked whether review comments should block a merge or just be advisory.",
+         "tag": "n-cr-1-12 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 26 February 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether review comments should block a merge or just be advisory."
+          }
+         ]
+        },
+        {
+         "text": "On 06 March 2026 Idris said the rotation runbook is out of date.",
+         "tag": "n-se-1-20 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 06 March 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the rotation runbook is out of date."
+          }
+         ]
+        },
+        {
+         "text": "On 14 March 2026 Idris asked who the on-call lead is this week.",
+         "tag": "n-dp-1-28 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 14 March 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked who the on-call lead is this week."
+          }
+         ]
+        },
+        {
+         "text": "On 22 March 2026 Idris said the payments database has grown past two terabytes.",
+         "tag": "n-pm-1-36 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 22 March 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the payments database has grown past two terabytes."
+          }
+         ]
+        },
+        {
+         "text": "On 28 March 2026 Idris said the notifications service prototype still keeps state in memory.",
+         "tag": "n-ds-2-3 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 28 March 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the notifications service prototype still keeps state in memory."
+          }
+         ]
+        },
+        {
+         "text": "On 05 April 2026 Idris said the review queue dashboard was broken again.",
+         "tag": "n-cr-2-11 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 05 April 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the review queue dashboard was broken again."
+          }
+         ]
+        },
+        {
+         "text": "On 13 April 2026 Idris asked how to rotate a credential without downtime.",
+         "tag": "n-se-2-19 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 13 April 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked how to rotate a credential without downtime."
+          }
+         ]
+        },
+        {
+         "text": "On 21 April 2026 Idris said the deploy pipeline has been slower since the runner upgrade.",
+         "tag": "n-dp-2-27 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 21 April 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the deploy pipeline has been slower since the runner upgrade."
+          }
+         ]
+        },
+        {
+         "text": "On 29 April 2026 Idris asked whether the payments upgrade needs a maintenance window.",
+         "tag": "n-pm-2-35 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 29 April 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether the payments upgrade needs a maintenance window."
+          }
+         ]
+        },
+        {
+         "text": "On 05 May 2026 Idris asked whether anyone had used PostgreSQL logical replication here.",
+         "tag": "n-ds-3-2 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 05 May 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether anyone had used PostgreSQL logical replication here."
+          }
+         ]
+        },
+        {
+         "text": "On 13 May 2026 Idris asked whether draft pull requests show up in the review queue.",
+         "tag": "n-cr-3-10 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 13 May 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether draft pull requests show up in the review queue."
+          }
+         ]
+        },
+        {
+         "text": "On 21 May 2026 Idris asked whether the postmortem template had been updated.",
+         "tag": "n-in-3-18 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 21 May 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether the postmortem template had been updated."
+          }
+         ]
+        },
+        {
+         "text": "On 29 May 2026 Idris asked whether the holiday deploy freeze is still in effect.",
+         "tag": "n-dp-3-26 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 29 May 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether the holiday deploy freeze is still in effect."
+          }
+         ]
+        },
+        {
+         "text": "On 06 June 2026 Idris asked when the payments database upgrade is scheduled.",
+         "tag": "n-pm-3-34 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 06 June 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked when the payments database upgrade is scheduled."
+          }
+         ]
+        },
+        {
+         "text": "On 12 June 2026 Idris posted a benchmark showing Redis reads beating Postgres reads on the cache path.",
+         "tag": "n-ds-4-1 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 12 June 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " posted a benchmark showing Redis reads beating Postgres reads on the cache path."
+          }
+         ]
+        },
+        {
+         "text": "On 20 June 2026 Idris suggested a bot that pings reviewers on stale pull requests.",
+         "tag": "n-cr-4-9 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 20 June 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " suggested a bot that pings reviewers on stale pull requests."
+          }
+         ]
+        },
+        {
+         "text": "On 28 June 2026 Idris asked who chairs the incident review meeting.",
+         "tag": "n-in-4-17 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 28 June 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked who chairs the incident review meeting."
+          }
+         ]
+        },
+        {
+         "text": "On 06 July 2026 Idris said the Thursday deploy had to be rolled back.",
+         "tag": "n-dp-4-25 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 06 July 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the Thursday deploy had to be rolled back."
+          }
+         ]
+        },
+        {
+         "text": "On 14 July 2026 Idris said they had fourteen stale feature branches to clean up.",
+         "tag": "n-br-4-33 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 14 July 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said they had fourteen stale feature branches to clean up."
+          }
+         ]
+        },
+        {
+         "text": "On 20 July 2026 Idris asked which PostgreSQL version the analytics cluster runs.",
+         "tag": "n-ds-5-0 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 20 July 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked which PostgreSQL version the analytics cluster runs."
+          }
+         ]
+        },
+        {
+         "text": "On 28 July 2026 Idris said a pull request had been waiting three days for review.",
+         "tag": "n-cr-5-8 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 28 July 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said a pull request had been waiting three days for review."
+          }
+         ]
+        },
+        {
+         "text": "On 05 August 2026 Idris said they had been incident commander twice this month.",
+         "tag": "n-in-5-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 05 August 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said they had been incident commander twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 13 August 2026 Idris asked how long a production deploy usually takes end to end.",
+         "tag": "n-dp-5-24 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 13 August 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked how long a production deploy usually takes end to end."
+          }
+         ]
+        },
+        {
+         "text": "On 21 August 2026 Idris asked whether a deleted feature branch can be restored.",
+         "tag": "n-br-5-32 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 21 August 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether a deleted feature branch can be restored."
+          }
+         ]
+        },
+        {
+         "text": "On 04 September 2026 Idris asked how long reviewers normally take to respond to a pull request.",
+         "tag": "n-cr-6-7 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 04 September 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked how long reviewers normally take to respond to a pull request."
+          }
+         ]
+        },
+        {
+         "text": "On 12 September 2026 Idris asked whether a near miss needs a postmortem at all.",
+         "tag": "n-in-6-15 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 12 September 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether a near miss needs a postmortem at all."
+          }
+         ]
+        },
+        {
+         "text": "On 20 September 2026 Idris asked which team owns the secrets manager.",
+         "tag": "n-se-6-23 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 20 September 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked which team owns the secrets manager."
+          }
+         ]
+        },
+        {
+         "text": "On 28 September 2026 Idris asked how to page the database team out of hours.",
+         "tag": "n-oc-6-31 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 28 September 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked how to page the database team out of hours."
+          }
+         ]
+        },
+        {
+         "text": "On 12 October 2026 Idris asked whether a read replica would help the reporting queries.",
+         "tag": "n-ds-7-6 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 12 October 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " asked whether a read replica would help the reporting queries."
+          }
+         ]
+        },
+        {
+         "text": "On 20 October 2026 Idris said the last postmortem was unusually thorough.",
+         "tag": "n-in-7-14 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 20 October 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the last postmortem was unusually thorough."
+          }
+         ]
+        },
+        {
+         "text": "On 28 October 2026 Idris said two services missed their last rotation window.",
+         "tag": "n-se-7-22 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 28 October 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said two services missed their last rotation window."
+          }
+         ]
+        },
+        {
+         "text": "On 05 November 2026 Idris said their on-call shift was unusually quiet.",
+         "tag": "n-oc-7-30 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 05 November 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said their on-call shift was unusually quiet."
+          }
+         ]
+        },
+        {
+         "text": "On 13 November 2026 Idris said the staging rehearsal of the payments upgrade went fine.",
+         "tag": "n-pm-7-38 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 13 November 2026 "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Idris"
+          },
+          {
+           "op": "eq",
+           "text": " said the staging rehearsal of the payments upgrade went fine."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (Idris)",
+       "response": "Idris volunteered to lead the PostgreSQL 16 upgrade for the payments database. Lena offered to review the upgrade plan.",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "reviewer instead of volunteer",
+       "response": "Lena volunteered to lead the PostgreSQL 16 upgrade for the payments database.",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "c-upgrade-owner now says Owen (not Farid) volunteered to run the PostgreSQL 16 upgrade; Farid keeps his unrelated decline fact and chatter rows, and Lena still offers to review.",
+     "answer": "Owen",
+     "answer_diff": [
+      {
+       "op": "del",
+       "text": "Farid"
+      },
+      {
+       "op": "ins",
+       "text": "Owen"
+      }
+     ],
+     "notes": "No chatter template hard-codes a volunteer (only {name}), so only c-upgrade-owner changes. Owen is in the chatter name pool, same as Farid was, so difficulty is preserved. c-upgrade-decline (Farid, search reindex) stays as a distractor.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Who volunteered to run the PostgreSQL 16 upgrade for the payments database?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "Names Owen as the person who volunteered to run the upgrade.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Names "
+          },
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Owen"
+          },
+          {
+           "op": "eq",
+           "text": " as the person who volunteered to run the upgrade."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "someone other than Owen, such as Farid, volunteered to run the PostgreSQL 16 upgrade for the payments database, or that the memory does not say who volunteered",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "someone other than "
+          },
+          {
+           "op": "ins",
+           "text": "Owen, such as "
+          },
+          {
+           "op": "eq",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": ","
+          },
+          {
+           "op": "eq",
+           "text": " volunteered to run the PostgreSQL 16 upgrade"
+          },
+          {
+           "op": "ins",
+           "text": " for the payments database"
+          },
+          {
+           "op": "eq",
+           "text": ", or that the memory does not say who volunteered"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "Owen volunteered to run the PostgreSQL 16 upgrade for the payments database.",
+         "tag": "c-upgrade-owner · gold · source=conversation",
+         "diff": [
+          {
+           "op": "del",
+           "text": "Farid"
+          },
+          {
+           "op": "ins",
+           "text": "Owen"
+          },
+          {
+           "op": "eq",
+           "text": " volunteered to run the PostgreSQL 16 upgrade for the payments database."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The answer asserts, as currently true, that Farid volunteered to run the PostgreSQL 16 upgrade for the payments database."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (Owen)",
+       "response": "Owen volunteered to run the PostgreSQL 16 upgrade for the payments database; Lena offered to review the plan.",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock answer (Farid, stale)",
+       "response": "Farid volunteered to run the PostgreSQL 16 upgrade for the payments database.",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "memory silent",
+       "response": "The memory does not say who volunteered to run the PostgreSQL 16 upgrade.",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sp-postmortem",
+   "operation": "reflect",
+   "kind": "reflect_sources",
+   "category": "source_authority",
+   "origin": "",
+   "prompt": "Who writes the postmortem after an incident, and when is it due?",
+   "arms": [
+    {
+     "arm": "stock",
+     "change": "",
+     "answer": "incident commander, five working days",
+     "answer_diff": null,
+     "notes": "",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Who writes the postmortem after an incident, and when is it due?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that the incident commander writes it and that it is due within five working days of the incident being resolved."
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "a postmortem owner other than the incident commander, or a deadline other than five working days"
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: the gold rows.",
+       "items": [
+        {
+         "text": "The incident commander writes the postmortem, and it is due within five working days of the incident being resolved.",
+         "tag": "g-postmortem · gold · source=guide"
+        }
+       ]
+      }
+     ],
+     "probes": []
+    },
+    {
+     "arm": "wording",
+     "change": "\"incident commander\" became \"incident lead\" in the handbook sentence and the chatter rows that share the phrase, \"working days\" became \"business days\", and the question was reworded; owner and the five-day deadline are unchanged.",
+     "answer": "incident lead, five business days",
+     "answer_diff": null,
+     "notes": "Source structure intact: the handbook fact is still the only guide fact that answers it, the chatter never restated owner or deadline. The chatter row that says someone had been \"incident lead twice this month\" is renamed so it keeps sharing vocabulary with the gold.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Who writes the postmortem after an incident, and what is the deadline?",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "Who writes the postmortem after an incident, and "
+          },
+          {
+           "op": "del",
+           "text": "when"
+          },
+          {
+           "op": "ins",
+           "text": "what"
+          },
+          {
+           "op": "eq",
+           "text": " is "
+          },
+          {
+           "op": "del",
+           "text": "it"
+          },
+          {
+           "op": "ins",
+           "text": "the"
+          },
+          {
+           "op": "eq",
+           "text": " "
+          },
+          {
+           "op": "del",
+           "text": "due"
+          },
+          {
+           "op": "ins",
+           "text": "deadline"
+          },
+          {
+           "op": "eq",
+           "text": "?"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that the incident lead writes it and that it is due within five business days of the incident being resolved.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "States that the incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " writes it and that it is due within five "
+          },
+          {
+           "op": "del",
+           "text": "working"
+          },
+          {
+           "op": "ins",
+           "text": "business"
+          },
+          {
+           "op": "eq",
+           "text": " days of the incident being resolved."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "a postmortem owner other than the incident lead, or a deadline other than five business days",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "a postmortem owner other than the incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": ", or a deadline other than five "
+          },
+          {
+           "op": "del",
+           "text": "working"
+          },
+          {
+           "op": "ins",
+           "text": "business"
+          },
+          {
+           "op": "eq",
+           "text": " days"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "The incident lead writes the postmortem, and it is due within five business days of the incident being resolved.",
+         "tag": "g-postmortem · gold · source=guide",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "The incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " writes the postmortem, and it is due within five "
+          },
+          {
+           "op": "del",
+           "text": "working"
+          },
+          {
+           "op": "ins",
+           "text": "business"
+          },
+          {
+           "op": "eq",
+           "text": " days of the incident being resolved."
+          }
+         ]
+        },
+        {
+         "text": "On 22 January 2026 Dana said they had been incident lead twice this month.",
+         "tag": "n-in-0-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 22 January 2026 Dana said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 02 March 2026 Marek said they had been incident lead twice this month.",
+         "tag": "n-in-1-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 02 March 2026 Marek said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 10 April 2026 Priya said they had been incident lead twice this month.",
+         "tag": "n-in-2-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 10 April 2026 Priya said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 19 May 2026 Tomas said they had been incident lead twice this month.",
+         "tag": "n-in-3-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 19 May 2026 Tomas said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 27 June 2026 Lena said they had been incident lead twice this month.",
+         "tag": "n-in-4-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 27 June 2026 Lena said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 05 August 2026 Farid said they had been incident lead twice this month.",
+         "tag": "n-in-5-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 05 August 2026 Farid said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 13 September 2026 Ines said they had been incident lead twice this month.",
+         "tag": "n-in-6-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 13 September 2026 Ines said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        },
+        {
+         "text": "On 22 October 2026 Owen said they had been incident lead twice this month.",
+         "tag": "n-in-7-16 · source=conversation",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "On 22 October 2026 Owen said they had been incident "
+          },
+          {
+           "op": "del",
+           "text": "commander"
+          },
+          {
+           "op": "ins",
+           "text": "lead"
+          },
+          {
+           "op": "eq",
+           "text": " twice this month."
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct",
+       "response": "The incident lead writes the postmortem, and it is due within five business days of the incident being resolved.",
+       "expect_pass": true,
+       "expect_stale": null
+      },
+      {
+       "label": "wrong deadline",
+       "response": "The incident lead writes the postmortem, and it is due within ten business days of the incident being resolved.",
+       "expect_pass": false,
+       "expect_stale": null
+      }
+     ]
+    },
+    {
+     "arm": "counterfactual",
+     "change": "g-postmortem now says the postmortem is due within ten working days (was five); the owner (incident commander), guide provenance and all chatter are unchanged.",
+     "answer": "incident commander, ten working days",
+     "answer_diff": [
+      {
+       "op": "eq",
+       "text": "incident commander, "
+      },
+      {
+       "op": "del",
+       "text": "five"
+      },
+      {
+       "op": "ins",
+       "text": "ten"
+      },
+      {
+       "op": "eq",
+       "text": " working days"
+      }
+     ],
+     "notes": "Only one attribute (deadline) changes. No conversation fact restates owner or deadline (checked chatter templates), so the handbook remains the sole authority.",
+     "sections": [
+      {
+       "label": "Question",
+       "hint": "",
+       "items": [
+        {
+         "text": "Who writes the postmortem after an incident, and when is it due?"
+        }
+       ]
+      },
+      {
+       "label": "Correct when",
+       "hint": "",
+       "items": [
+        {
+         "text": "States that the incident commander writes it and that it is due within ten working days of the incident being resolved.",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "States that the incident commander writes it and that it is due within "
+          },
+          {
+           "op": "del",
+           "text": "five"
+          },
+          {
+           "op": "ins",
+           "text": "ten"
+          },
+          {
+           "op": "eq",
+           "text": " working days of the incident being resolved."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Trap: the answer asserts, as currently true, that",
+       "hint": "",
+       "items": [
+        {
+         "text": "a postmortem owner other than the incident commander, or a deadline other than ten working days, such as five working days",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "a postmortem owner other than the incident commander, or a deadline other than "
+          },
+          {
+           "op": "ins",
+           "text": "ten working days, such as "
+          },
+          {
+           "op": "eq",
+           "text": "five working days"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Memory rows",
+       "hint": "330 rows seeded. Shown: gold rows and rows this arm changed.",
+       "items": [
+        {
+         "text": "The incident commander writes the postmortem, and it is due within ten working days of the incident being resolved.",
+         "tag": "g-postmortem · gold · source=guide",
+         "diff": [
+          {
+           "op": "eq",
+           "text": "The incident commander writes the postmortem, and it is due within "
+          },
+          {
+           "op": "del",
+           "text": "five"
+          },
+          {
+           "op": "ins",
+           "text": "ten"
+          },
+          {
+           "op": "eq",
+           "text": " working days of the incident being resolved."
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "label": "Stale answer check",
+       "hint": "Recorded beside the verdict, never scored.",
+       "items": [
+        {
+         "text": "The answer asserts, as currently true, that the postmortem is due within five working days of the incident being resolved."
+        }
+       ]
+      }
+     ],
+     "probes": [
+      {
+       "label": "correct (ten days)",
+       "response": "The incident commander writes the postmortem, and it is due within ten working days of the incident being resolved.",
+       "expect_pass": true,
+       "expect_stale": false
+      },
+      {
+       "label": "stock answer (five days, stale)",
+       "response": "The incident commander writes the postmortem, and it is due within five working days of the incident being resolved.",
+       "expect_pass": false,
+       "expect_stale": true
+      },
+      {
+       "label": "wrong owner",
+       "response": "The on-call lead writes the postmortem, due within ten working days of the incident being resolved.",
+       "expect_pass": false,
+       "expect_stale": false
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
