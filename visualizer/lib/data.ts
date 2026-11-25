@@ -49,6 +49,7 @@ export type Row = {
   // Per case, for rows that also run a decision model: what each model did and cost.
   split?: { decisionModel: string; llm: Work; decision: Work }
   tokensPerTask: { input: number; output: number }
+  tokenTotals?: TokenTotals // the whole run's tokens, shown when hovering the tokens column
   extra?: Record<string, string> // more measures, shown in the chart's hover card
   source?: Source // where its price and run came from, shown in the expanded row
 }
@@ -63,6 +64,19 @@ export type Source = {
   ran: string
   judge: string
   repeats: number
+}
+
+// Totals over every case of a run. Output is as billed, reasoning included; cached and
+// reasoning are left out when the run did not report them separately.
+export type TokenTotals = {
+  cases: number
+  calls: number
+  input: number
+  cached?: number
+  output: number
+  reasoning?: number
+  decisionCalls?: number
+  decisionInput?: number
 }
 
 export type Work = { calls: number; input: number; output: number; cost: number }
@@ -111,7 +125,9 @@ export type OpResult = {
   cost_usd: number | null
   calls: number
   input_tokens: number
-  output_tokens: number
+  cached_tokens?: number
+  output_tokens: number // as billed: the answer plus any reasoning
+  reasoning_tokens?: number // the reasoning share of output_tokens, when reported
   decision_calls: number
   decision_input_tokens: number
   decision_cost_usd: number | null
@@ -120,6 +136,22 @@ export type OpResult = {
 type Decider = { model: string; provider: string; onLlmBoards?: boolean }
 type Result = Omit<(typeof RESULTS.rows)[number], 'decision' | 'operations' | 'source'> & { decision: Decider | null; source?: Source; operations: Record<string, OpResult> }
 const RUNS = RESULTS.rows as Result[]
+
+// Every operation's tokens summed. Cached and reasoning only when each operation reported them.
+export function tokenTotals(ops: OpResult[]): TokenTotals {
+  const sum = (f: (o: OpResult) => number) => ops.reduce((t, o) => t + f(o), 0)
+  const optional = (f: (o: OpResult) => number | undefined) => (ops.every((o) => f(o) !== undefined) ? sum((o) => f(o) ?? 0) : undefined)
+  const decisionCalls = sum((o) => o.decision_calls)
+  return {
+    cases: sum((o) => o.total),
+    calls: sum((o) => o.calls),
+    input: sum((o) => o.input_tokens),
+    cached: optional((o) => o.cached_tokens),
+    output: sum((o) => o.output_tokens),
+    reasoning: optional((o) => o.reasoning_tokens),
+    ...(decisionCalls > 0 && { decisionCalls, decisionInput: sum((o) => o.decision_input_tokens) }),
+  }
+}
 
 // Per case: the LLM's calls, tokens and cost, and the decision model's.
 function split(o: OpResult, decisionModel: string): Row['split'] {
@@ -153,6 +185,7 @@ function llmRows(op: string): Row[] {
       decisionCallsPerTask: r.decision ? round(o.decision_calls / o.total, 1) : undefined,
       split: r.decision ? split(o, r.decision.model) : undefined,
       tokensPerTask: { input: Math.round(o.input_tokens / o.total), output: Math.round(o.output_tokens / o.total) },
+      tokenTotals: tokenTotals([o]),
     }
   })
 }
@@ -190,6 +223,7 @@ export function summarizeOperations(operations: Record<string, OpResult | undefi
     callsPerTask: round(sum((o) => o.calls) / total, 1),
     decisionCallsPerTask: decisionModel ? round(sum((o) => o.decision_calls) / total, 1) : undefined,
     tokensPerTask: { input: Math.round(sum((o) => o.input_tokens) / total), output: Math.round(sum((o) => o.output_tokens) / total) },
+    tokenTotals: tokenTotals(done.map(({ operation }) => operation)),
     split: decisionModel ? split({
       ...done[0].operation,
       total,

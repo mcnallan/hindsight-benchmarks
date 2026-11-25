@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { ModelCell } from '@/components/ModelCell'
+import { ModelCell, tokenTip } from '@/components/ModelCell'
 import { BoardNav, PageHero } from '@/components/Page'
 import { localProfiles as profiles, readLocalResult, readOptional, readResult, resultsRoot } from '@/lib/local-results'
 
@@ -21,7 +21,7 @@ const benchmarks = [
 ]
 
 type Benchmark = { correct: number; total_queries: number; accuracy: number }
-type Cell = { correct: number; total: number; percent: number; errors?: number }
+type Cell = { correct: number; total: number; percent: number; errors?: number; tokens?: string }
 
 export default function LocalLeaderboardsPage() {
   const runsRoot = path.join(resultsRoot, 'runs')
@@ -32,7 +32,17 @@ export default function LocalLeaderboardsPage() {
     label,
     cells: system.map((profile) => {
       const result = profile?.[operation]
-      return result && { correct: result.passed, total: result.total, percent: result.score, errors: result.errors }
+      if (!result) return undefined
+      const { calls, input_tokens, cached_tokens, output_tokens, thoughts_tokens } = result.tokens
+      const tokens = tokenTip({
+        cases: result.total,
+        calls,
+        input: input_tokens,
+        cached: cached_tokens,
+        output: output_tokens + (thoughts_tokens ?? 0),
+        reasoning: thoughts_tokens,
+      })
+      return { correct: result.passed, total: result.total, percent: result.score, errors: result.errors, tokens }
     }),
   }))
   const benchmarkRows = benchmarks.map(([benchmark, label]) => ({
@@ -77,7 +87,7 @@ function ResultTable({ title, rows }: { title: string; rows: { label: string; ce
               <tr key={label}>
                 <th scope="row" className="px-4 py-3 text-left font-medium">{label}</th>
                 {cells.map((cell, i) => (
-                  <td key={profiles[i].id} className="px-4 py-3 tabular-nums">
+                  <td key={profiles[i].id} className={`px-4 py-3 tabular-nums ${cell?.tokens ? 'cursor-help' : ''}`} title={cell?.tokens}>
                     {cell ? (
                       <>
                         {cell.percent?.toFixed(1) ?? '—'}% <span className="text-muted-foreground">{cell.correct}/{cell.total}</span>

@@ -1,10 +1,26 @@
-import type { Row } from '@/lib/data'
+import type { Row, TokenTotals } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 // Shared by server pages and the client board, so no 'use client' here.
 export const fmtCost = (v: number | null) => (v === null ? '—' : v === 0 ? 'free' : v < 0.01 ? '<$0.01' : `$${v < 10 ? v.toFixed(2) : v.toFixed(0)}`)
 export const fmtJudge = (judge: string) => judge.split('/').pop()?.replace(':', ' ')
 export const fmtTokens = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}k` : String(v))
+
+// The hover text for a run's token totals: every count in full, reasoning split out of output.
+export function tokenTip(t: TokenTotals) {
+  const n = (v: number) => v.toLocaleString('en-US')
+  const lines = [
+    `Totals over ${n(t.cases)} cases`,
+    `LLM calls: ${n(t.calls)}`,
+    `Input tokens: ${n(t.input)}${t.cached !== undefined ? ` (${n(t.cached)} cached)` : ''}`,
+    `Output tokens: ${n(t.output)}`,
+    t.reasoning !== undefined
+      ? `  answer: ${n(t.output - t.reasoning)}\n  reasoning: ${n(t.reasoning)}`
+      : '  reasoning: not reported separately',
+  ]
+  if (t.decisionCalls) lines.push(`Decision calls: ${n(t.decisionCalls)}`, `Decision input tokens: ${n(t.decisionInput ?? 0)}`)
+  return lines.join('\n')
+}
 
 // Rows that carry no icon of their own get their provider's logo.
 export const PROVIDER_ICON: Record<string, string> = {

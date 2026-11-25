@@ -5,7 +5,7 @@ import { ChevronDown, ArrowDown, Info } from 'lucide-react'
 import type { Board, Row, Source, Tab } from '@/lib/data'
 import { SCORE } from '@/lib/data'
 import { cn } from '@/lib/utils'
-import { ModelCell, PROVIDER_ICON, fmtCost, fmtJudge, fmtTokens } from './ModelCell'
+import { ModelCell, PROVIDER_ICON, fmtCost, fmtJudge, fmtTokens, tokenTip } from './ModelCell'
 
 export function QualityBar({ value }: { value: number }) {
   return (
@@ -134,7 +134,11 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
               <th className="px-3 py-2.5 font-medium">Cases</th>
               <th className="px-3 py-2.5 font-medium text-right whitespace-nowrap">LLM calls</th>
               {hasDecision && <th className="px-3 py-2.5 font-medium text-right whitespace-nowrap">Decision calls</th>}
-              <th className="px-3 py-2.5 font-medium text-right whitespace-nowrap">Tokens in / out</th>
+              <th className="px-3 py-2.5 font-medium text-right whitespace-nowrap">
+                <span className="inline-flex items-center gap-1">
+                  Tokens in / out <InfoTip text="Per case. Output includes reasoning. Hover a row's tokens for the run's totals and its reasoning tokens." />
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -180,7 +184,12 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
                     <td className="px-3 py-3 font-mono text-right tabular-nums">{r.callsPerTask.toFixed(1)}</td>
                     {hasDecision && <td className="px-3 py-3 font-mono text-right tabular-nums text-muted-foreground">{r.decisionCallsPerTask ?? '—'}</td>}
                     <td className="px-3 py-3 font-mono text-right tabular-nums text-muted-foreground whitespace-nowrap">
-                      {fmtTokens(r.tokensPerTask.input)} / {fmtTokens(r.tokensPerTask.output)}
+                      <span
+                        title={r.tokenTotals && tokenTip(r.tokenTotals)}
+                        className={cn(r.tokenTotals && 'cursor-help underline decoration-dotted decoration-muted-foreground/50 underline-offset-4')}
+                      >
+                        {fmtTokens(r.tokensPerTask.input)} / {fmtTokens(r.tokensPerTask.output)}
+                      </span>
                     </td>
                   </tr>
                   {expanded && (

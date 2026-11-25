@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { addScores, summarizeOperations, type Board, type CategoryResult, type OpResult, type Row, type Source } from './data'
+import { addScores, summarizeOperations, tokenTotals, type Board, type CategoryResult, type OpResult, type Row, type Source } from './data'
 import STRUCTURE from './eval-structure.json'
 
 const inklingSource = {
@@ -60,7 +60,8 @@ function operationResult(result: Operation | undefined, total: number, rates: So
   if (!result?.total || result.total !== total) return
 
   const { calls, input_tokens, cached_tokens = 0 } = result.tokens
-  const output_tokens = result.tokens.output_tokens + (result.tokens.thoughts_tokens ?? 0)
+  const reasoning_tokens = result.tokens.thoughts_tokens
+  const output_tokens = result.tokens.output_tokens + (reasoning_tokens ?? 0)
   return {
     passed: result.passed,
     total,
@@ -71,7 +72,9 @@ function operationResult(result: Operation | undefined, total: number, rates: So
       : null,
     calls,
     input_tokens,
+    cached_tokens: result.tokens.cached_tokens,
     output_tokens,
+    reasoning_tokens,
     decision_calls: 0,
     decision_input_tokens: 0,
     decision_cost_usd: null,
@@ -99,6 +102,7 @@ export function withLocalResults(board: Board): Board {
       cost: first.cost_usd === null ? null : 1000 * first.cost_usd / first.total,
       callsPerTask: first.calls / first.total,
       tokensPerTask: { input: Math.round(first.input_tokens / first.total), output: Math.round(first.output_tokens / first.total) },
+      tokenTotals: tokenTotals([first]),
     }
     if (!stats) return []
     const day = (board.group === 'summary' ? run.timestamp : first.timestamp).slice(0, 8)
