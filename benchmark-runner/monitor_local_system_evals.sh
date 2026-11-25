@@ -35,4 +35,15 @@ for profile in "$run_dir"/*/evals.json; do
   if [[ -f $dir/amb.log ]]; then
     tail -n 2 "$dir/amb.log"
   fi
+  for job in "$dir"/*/job.json; do
+    jobdir=$(dirname "$job")
+    rundir=$repo/benchmark-runner/$(jq -r .run_dir "$job")
+    expected=$(jq -r '.settings | "\(.repeats) passes of \(.operations | join(",")) cases=\(if (.case_ids | length) > 0 then (.case_ids | join(",")) else "all" end)"' "$job")
+    rows=$(cat "$rundir"/records-*.jsonl 2>/dev/null | jq -s 'length' 2>/dev/null || echo 0)
+    graded=$(cat "$rundir"/records-*.jsonl 2>/dev/null | jq -s '[.[] | select(.passed != null)] | "\(map(select(.passed)) | length)/\(length) passed, " ' -r 2>/dev/null || true)
+    infra=$(cat "$rundir"/records-*.jsonl 2>/dev/null | jq -s '[.[] | select(.passed == null)] | length' 2>/dev/null || echo 0)
+    state=running; [[ -f $jobdir/done ]] && state=done
+    printf '  %s %s: %s executions, %s%s infrastructure (%s)\n' "$(basename "$jobdir")" "$state" "$rows" "$graded" "$infra" "$expected"
+    [[ $state == done ]] || tail -n 1 "$jobdir/run.log" 2>/dev/null | cut -c1-200
+  done
 done

@@ -26,6 +26,8 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from hindsight_benchmark import paired_job
+
 RUNNER_DIR = Path(__file__).resolve().parents[2]
 SRC_DIR = RUNNER_DIR / "src"
 CONFIG = RUNNER_DIR / "evals.json"
@@ -46,7 +48,8 @@ def checkout(repo: str, commit: str) -> Path:
 
 
 def run_pytest(hindsight: Path, files: list[str], model: str, provider: dict, cfg: dict, junit: Path, tokens: Path,
-               extra_env: dict[str, str] | None = None, cases: str | None = None) -> None:
+               extra_env: dict[str, str] | None = None, cases: str | None = None,
+               paired_env: dict[str, str] | None = None) -> None:
     # A subscription provider (codex) logs in on its own and has no key.
     key = os.environ.get(provider["api_key_env"]) if "api_key_env" in provider else "unused"
     if not key:
@@ -66,8 +69,14 @@ def run_pytest(hindsight: Path, files: list[str], model: str, provider: dict, cf
         **(extra_env or {}),
     )
     evals = hindsight / "hindsight-system-evals"
-    cmd = ["uv", "run", "--project", str(evals), "pytest", *files,
-           "-p", "hindsight_benchmark.evals_plugin", "--junitxml", str(junit),
+    plugins = ["-p", "hindsight_benchmark.evals_plugin"]
+    if paired_env is not None:
+        # The paired modules live in this fork, outside the pinned checkout: load the stock
+        # fixtures as a plugin and keep the stock pytest settings (asyncio mode, timeout).
+        env.update(paired_env, PYTHONPATH=f"{SRC_DIR}{os.pathsep}{evals}")
+        # --rootdir above both trees, so node ids and junit classnames keep the module path the tally keys on.
+        plugins = ["-c", str(evals / "pyproject.toml"), "--rootdir", str(RUNNER_DIR), "-p", "evals.conftest", *plugins]
+    cmd = ["uv", "run", "--project", str(evals), "pytest", *files, *plugins, "--junitxml", str(junit),
            # *_benchmark_* tests measure a rate or a cost; they are not graded cases.
            "-k", f"not _benchmark_ and ({cases})" if cases else "not _benchmark_"]
     if cfg.get("full"):
@@ -76,7 +85,8 @@ def run_pytest(hindsight: Path, files: list[str], model: str, provider: dict, cf
     result = subprocess.run(cmd, cwd=evals, env=env)
     if result.returncode not in (0, 1) or not junit.exists():
         raise RuntimeError(f"pytest did not complete the selected evals (exit {result.returncode})")
-    if os.getenv("HS_BENCH_CODEX_LB_URL") and "codex-lb grading failed with HTTP" in junit.read_text():
+    # Paired jobs classify and retry judge errors per execution instead of failing the pass.
+    if paired_env is None and os.getenv("HS_BENCH_CODEX_LB_URL") and "codex-lb grading failed with HTTP" in junit.read_text():
         raise RuntimeError(f"codex-lb grading had a provider error. See {junit}")
 
 
@@ -141,7 +151,10 @@ def splice(junit: Path, tokens: Path, retry_junit: Path, retry_tokens: Path, nam
 def _operation(name: str, by_stem: dict[str, str]) -> str | None:
     """Which operation a junit classname or pytest nodeid belongs to, by its eval file."""
     parts = name.replace("/", ".").replace("::", ".").split(".")
-    return next((by_stem[p] for p in parts if p in by_stem), None)
+    if found := next((by_stem[p] for p in parts if p in by_stem), None):
+        return found
+    # A module outside pytest's rootdir has an empty classname; its test function shares the module's stem.
+    return next((by_stem[p.split("[", 1)[0]] for p in parts if p.split("[", 1)[0] in by_stem), None)
 
 
 def tally(junits: list[Path], token_files: list[Path], operations: dict[str, list[str]]) -> dict:
@@ -153,7 +166,7 @@ def tally(junits: list[Path], token_files: list[Path], operations: dict[str, lis
         if not junit.exists():
             continue
         for case in ET.parse(junit).iter("testcase"):
-            op = _operation(case.get("classname", ""), by_stem)
+            op = _operation(case.get("classname", ""), by_stem) or _operation(case.get("name", ""), by_stem)
             if op is None or case.find("skipped") is not None:
                 continue
             outcome = "errors" if case.find("error") is not None else "failed" if case.find("failure") is not None else "passed"
@@ -250,7 +263,8 @@ def case_results(run_dir: Path, op: str, by_stem: dict[str, str]) -> dict[str, d
     cases = [c for j in sorted(run_dir.glob("junit-*.xml")) for c in ET.parse(j).iter("testcase")]
     for case in cases:
         m = re.search(r"\[([^/\]]+)/(.+)\]$", case.get("name", ""))
-        if not m or case.find("skipped") is not None or _operation(case.get("classname", ""), by_stem) != op:
+        case_op = _operation(case.get("classname", ""), by_stem) or _operation(case.get("name", ""), by_stem)
+        if not m or case.find("skipped") is not None or case_op != op:
             continue
         c = out.setdefault(m[1], {"passed": 0, "total": 0, "failed": []})
         c["total"] += 1
@@ -287,7 +301,10 @@ def export_site(out: Path, operations: dict[str, list[str]], commit: str) -> Non
                 "passed": o["passed"], "total": o["total"], "cost_usd": o["cost_usd"],
                 # Output as billed: the visible answer plus the reasoning.
                 "calls": t["calls"], "input_tokens": t["input_tokens"],
+                **({"cached_tokens": t["cached_tokens"]} if "cached_tokens" in t else {}),
                 "output_tokens": t["output_tokens"] + t.get("thoughts_tokens", 0),
+                # The reasoning share of output, for the site's token hover; absent when not reported.
+                **({"reasoning_tokens": t["thoughts_tokens"]} if "thoughts_tokens" in t else {}),
                 "decision_calls": t.get("decision_calls", 0),
                 "decision_input_tokens": t.get("decision_input_tokens", 0),
                 # What the decision model cost: the total less the LLM's share.
@@ -405,6 +422,15 @@ def main() -> None:
                         "prints the outcome and writes no result file")
     p.add_argument("--resume", metavar="RUN_DIR",
                    help="finish a run that was cut short: reuse its run dir and skip the passes that wrote their junit file")
+    p.add_argument("--suite", choices=paired_job.SUITES, default="stock",
+                   help="stock (default): the pinned upstream cases, written to the leaderboard. "
+                        "custom: the wording and counterfactual fixtures only. paired: stock, wording and "
+                        "counterfactual arms side by side. custom and paired write results/paired/<result id>.json")
+    p.add_argument("--case-ids", metavar="IDS",
+                   help="custom/paired only: comma-separated stock case ids (default: every fixture case)")
+    p.add_argument("--state", type=Path, metavar="DIR",
+                   help="custom/paired only: job state dir. Records the run dir, fixture revision and settings on "
+                        "first start; a later start resumes the same run and refuses changed inputs")
     p.add_argument("--embedder", metavar="PROVIDER:MODEL",
                    help="swap the embedder, e.g. internal:hs-embed-1 (default: Hindsight's own, bge-small-en-v1.5)")
     p.add_argument("--reranker", metavar="PROVIDER:MODEL",
@@ -421,7 +447,14 @@ def main() -> None:
     cfg = json.loads(os.path.expandvars(args.config.read_text()))
     provider = cfg["providers"][args.provider]
     operations = cfg["operations"]
-    if args.operations:
+    paired = args.suite != "stock"
+    if paired:
+        if args.cases or args.resume or args.export_site or args.export_structure:
+            p.error("--suite custom/paired selects with --case-ids and resumes with --state")
+        operations = paired_job.operations(args.operations)
+    elif args.case_ids or args.state:
+        p.error("--case-ids and --state need --suite custom or paired")
+    elif args.operations:
         operations = {op: operations[op] for op in args.operations.split(",")}
     if args.export_site:
         export_site(Path(args.export_site), operations, cfg["hindsight_commit"])
@@ -470,11 +503,26 @@ def main() -> None:
     slug = (f"{args.provider}-{args.model}" + (f"+{args.decision}" if args.decision else "")
             + (f"+embed-{args.embedder}" if args.embedder else "") + (f"+rerank-{args.reranker}" if args.reranker else ""))
     slug = slug.replace("/", "-").replace(":", "-")
+    if paired:
+        slug += f"-{args.suite}-{paired_job.FIXTURE_SET}"
     if args.result_id:
         if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_.-]*", args.result_id):
             p.error("--result-id must be a filename stem with no path components")
         slug = args.result_id
-    if args.resume:
+    case_ids = [c for c in (args.case_ids or "").split(",") if c]
+
+    def fresh_run_dir() -> Path:
+        stamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
+        run_dir = WORK_DIR / "runs" / f"{slug}-{stamp}"
+        run_dir.mkdir(parents=True)
+        return run_dir
+
+    job = None
+    if paired:
+        settings = paired_job.effective_settings(cfg, args, provider, repeats, operations, case_ids)
+        run_dir, job = paired_job.open_job(args.state, settings, fresh_run_dir)
+        stamp = run_dir.name.rsplit("-", 1)[1]
+    elif args.resume:
         run_dir = Path(args.resume).resolve()
         stamp = run_dir.name.rsplit("-", 1)[1]
     else:
@@ -487,13 +535,22 @@ def main() -> None:
                    cwd=hindsight / "hindsight-api-slim", check=True)
     files = [f for fs in operations.values() for f in fs]
     junits, token_files = [], []
+    resuming = bool(args.resume) or (job is not None and args.state is not None)
     for i in range(repeats):
         junits.append(run_dir / f"junit-{i}.xml")
         token_files.append(run_dir / f"tokens-{i}.jsonl")
-        if not (args.resume and junits[-1].exists()):
+        records = run_dir / f"records-{i}.jsonl"
+        if not (resuming and junits[-1].exists()):
             # The plugin appends token counts, so a cut-short pass's partial file would count twice.
             token_files[-1].unlink(missing_ok=True)
-            run_pytest(hindsight, files, args.model, provider, cfg, junits[-1], token_files[-1], extra_env, args.cases)
+            records.unlink(missing_ok=True)
+            run_pytest(hindsight, files, args.model, provider, cfg, junits[-1], token_files[-1], extra_env, args.cases,
+                       paired_job.pytest_env(args.suite, case_ids, records) if paired else None)
+        if paired:
+            def rerun(retry_junit, retry_tokens, retry_records, keys):
+                run_pytest(hindsight, files, args.model, provider, cfg, retry_junit, retry_tokens, extra_env, None,
+                           paired_job.pytest_env(args.suite, case_ids, retry_records, keys))
+            paired_job.retry_infra(i, junits[-1], token_files[-1], records, rerun, splice)
         # A subscription quota hit mid-pass scored the limit, not the model. A pass can use up a whole quota
         # window, so rerunning it would hit the limit again: after the reset, rerun only the cases that hit it.
         while hits := quota_hits(junits[-1]):
@@ -515,6 +572,12 @@ def main() -> None:
         # Hindsight's Copilot provider reports output with the reasoning in it; elsewhere it is apart.
         for o in ops.values():
             o["tokens"]["output_tokens"] -= o["tokens"].get("thoughts_tokens", 0)
+    if paired:
+        out = paired_job.write_report(slug, job, run_dir, ops, repeats, stamp)
+        for op, o in ops.items():
+            print(f"  {op:14} {o['passed']}/{o['total']}  errors={o['errors']}")
+        print(f"run and traces in {run_dir}\nwrote {out}")
+        return
     if args.cases:
         # A few cases are a look at those cases, not a score: keep them out of the results.
         for op, o in ops.items():

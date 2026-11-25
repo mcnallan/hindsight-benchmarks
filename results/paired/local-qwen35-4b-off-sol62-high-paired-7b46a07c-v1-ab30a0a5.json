@@ -1,0 +1,210 @@
+{
+ "result_id": "local-qwen35-4b-off-sol62-high-paired-7b46a07c-v1-ab30a0a5",
+ "timestamp": "20261125T163958Z",
+ "fixture_set": "7b46a07c-v1",
+ "fixture_revision": "7b46a07c-v1+b13fa126a995",
+ "pinned_commit": "7b46a07c82f997903230f0fb33deafe9dfd2e22b",
+ "settings": {
+  "suite": "paired",
+  "arms": [
+   "stock",
+   "wording",
+   "counterfactual"
+  ],
+  "operations": [
+   "retain",
+   "reflect"
+  ],
+  "case_ids": [
+   "in-text-correction",
+   "hq-owner-latest"
+  ],
+  "repeats": 1,
+  "hindsight_commit": "7b46a07c82f997903230f0fb33deafe9dfd2e22b",
+  "provider": "local-eval",
+  "hindsight_provider": "openai",
+  "base_url": "http://10.10.5.1:8000/v1",
+  "model": "qwen3.5-4b",
+  "model_settings": {
+   "LLM_EXTRA_BODY": "{\"chat_template_kwargs\":{\"enable_thinking\":false}}",
+   "RETAIN_MAX_COMPLETION_TOKENS": "16384",
+   "CONSOLIDATION_MAX_COMPLETION_TOKENS": "16384",
+   "REFLECT_MAX_COMPLETION_TOKENS": "16384",
+   "EMBEDDINGS_OPENAI_DIMENSIONS": "384",
+   "EMBEDDINGS_OPENAI_BATCH_SIZE": "32",
+   "EMBEDDINGS_QUERY_PREFIX": "Represent this sentence for searching relevant passages: "
+  },
+  "decision_model": null,
+  "embedder": "retrieval:BAAI/bge-small-en-v1.5",
+  "reranker": "retrieval:cross-encoder/ms-marco-MiniLM-L6-v2",
+  "judge_model": "gpt-6.2-sol",
+  "judge_url": "http://127.0.0.1:2455/v1",
+  "judge_reasoning_effort": "high",
+  "full": true
+ },
+ "settings_digest": "8f58205179cd37ec",
+ "run_dir": ".hindsight/runs/local-qwen35-4b-off-sol62-high-paired-7b46a07c-v1-ab30a0a5-20261125T163958Z",
+ "started": "2026-11-25T16:39:58+00:00",
+ "repeats": 1,
+ "arms": {
+  "stock": {
+   "passed": 0,
+   "graded": 2,
+   "infrastructure": 0,
+   "stale": 0,
+   "pass_rate": 0.0
+  },
+  "wording": {
+   "passed": 1,
+   "graded": 2,
+   "infrastructure": 0,
+   "stale": 0,
+   "pass_rate": 50.0
+  },
+  "counterfactual": {
+   "passed": 1,
+   "graded": 2,
+   "infrastructure": 0,
+   "stale": 1,
+   "pass_rate": 50.0
+  }
+ },
+ "operations": {
+  "retain": {
+   "passed": 0,
+   "failed": 3,
+   "errors": 0,
+   "tokens": {
+    "calls": 3,
+    "input_tokens": 10053,
+    "cached_tokens": 9504,
+    "output_tokens": 562,
+    "thoughts_tokens": 0,
+    "decision_calls": 0,
+    "decision_input_tokens": 0
+   },
+   "total": 3,
+   "score": 0.0
+  },
+  "reflect": {
+   "passed": 2,
+   "failed": 1,
+   "errors": 0,
+   "tokens": {
+    "calls": 13,
+    "input_tokens": 165816,
+    "cached_tokens": 97152,
+    "output_tokens": 3285,
+    "thoughts_tokens": 0,
+    "decision_calls": 0,
+    "decision_input_tokens": 0
+   },
+   "total": 3,
+   "score": 66.7
+  }
+ },
+ "executions": [
+  {
+   "repeat": 0,
+   "case_id": "in-text-correction",
+   "arm": "stock",
+   "kind": "retain_capability",
+   "operation": "retain",
+   "category": "fidelity",
+   "input_sha": "52a11fbb1eb61168",
+   "fixture_revision": "7b46a07c-v1+b13fa126a995",
+   "passed": false,
+   "hit_trap": true,
+   "stale": null,
+   "blame": "extraction",
+   "gold_retrieved": null,
+   "gold_total": null,
+   "seconds": 23.1
+  },
+  {
+   "repeat": 0,
+   "case_id": "in-text-correction",
+   "arm": "wording",
+   "kind": "retain_capability",
+   "operation": "retain",
+   "category": "fidelity",
+   "input_sha": "89a59f38d8c38767",
+   "fixture_revision": "7b46a07c-v1+b13fa126a995",
+   "passed": false,
+   "hit_trap": true,
+   "stale": null,
+   "blame": "extraction",
+   "gold_retrieved": null,
+   "gold_total": null,
+   "seconds": 17.6
+  },
+  {
+   "repeat": 0,
+   "case_id": "in-text-correction",
+   "arm": "counterfactual",
+   "kind": "retain_capability",
+   "operation": "retain",
+   "category": "fidelity",
+   "input_sha": "0f6d63e1aaa8cf4a",
+   "fixture_revision": "7b46a07c-v1+b13fa126a995",
+   "passed": false,
+   "hit_trap": true,
+   "stale": true,
+   "blame": "extraction",
+   "gold_retrieved": null,
+   "gold_total": null,
+   "seconds": 33.0
+  },
+  {
+   "repeat": 0,
+   "case_id": "hq-owner-latest",
+   "arm": "stock",
+   "kind": "reflect_corpus",
+   "operation": "reflect",
+   "category": "update",
+   "input_sha": "001db4636730c375",
+   "fixture_revision": "7b46a07c-v1+b13fa126a995",
+   "passed": false,
+   "hit_trap": true,
+   "stale": null,
+   "blame": "generation",
+   "gold_retrieved": 4,
+   "gold_total": 4,
+   "seconds": 20.6
+  },
+  {
+   "repeat": 0,
+   "case_id": "hq-owner-latest",
+   "arm": "wording",
+   "kind": "reflect_corpus",
+   "operation": "reflect",
+   "category": "update",
+   "input_sha": "16391ff733f78b9c",
+   "fixture_revision": "7b46a07c-v1+b13fa126a995",
+   "passed": true,
+   "hit_trap": false,
+   "stale": null,
+   "blame": "ok",
+   "gold_retrieved": 4,
+   "gold_total": 4,
+   "seconds": 16.5
+  },
+  {
+   "repeat": 0,
+   "case_id": "hq-owner-latest",
+   "arm": "counterfactual",
+   "kind": "reflect_corpus",
+   "operation": "reflect",
+   "category": "update",
+   "input_sha": "07d26b3f45ed7a97",
+   "fixture_revision": "7b46a07c-v1+b13fa126a995",
+   "passed": true,
+   "hit_trap": false,
+   "stale": false,
+   "blame": "ok",
+   "gold_retrieved": 4,
+   "gold_total": 4,
+   "seconds": 25.1
+  }
+ ]
+}

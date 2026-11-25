@@ -142,8 +142,98 @@ uv run --locked hindsight-evals \
 
 `--cases` uses pytest's `-k` selection and keeps the diagnostic out of the
 leaderboard JSON. Omit `--cases` for a complete operation and give it a distinct
-`--result-id` when changing the procedure. Custom fixture overlays and named
-benchmark selection in the queue are planned follow-up work.
+`--result-id` when changing the procedure.
+
+## Select benchmarks and run paired robustness cases
+
+The queue takes optional selectors after the queue name. Without them it runs
+the original queue, so the `qwen`, `inkling` and `inkling-minimal` commands
+above are unchanged.
+
+```bash
+run_local_system_evals.sh RUN_DIR QUEUE [--select stock,amb] [--operations OPS] \
+  [--cases IDS] [--repeats N] [--after-session NAME] [--judge MODEL:EFFORT]
+```
+
+`--select` takes a comma list from `stock`, `custom`, `paired` and `amb`, run in
+that order per profile. `stock` is the pinned upstream suite and writes the
+leaderboard result. `custom` runs only the wording and counterfactual fixtures.
+`paired` runs the stock case beside both variants, each in a fresh bank.
+`amb` runs the AMB splits on their own. `--operations` limits stock or the
+fixture suites. `--cases` (stock case IDs) and `--repeats` (default 2) apply to
+`custom` and `paired`. `--after-session` waits for another tmux session to exit,
+so two queues on one model endpoint never overlap. Any system selection runs
+the technical smoke first unless the profile already has `smoke.done`.
+
+`--judge` picks the codex-lb grader, `gpt-6.2-sol:high` by default. Any other
+judge gets its own result IDs (`local-PROFILE-terra61-medium-…` for
+`gpt-6.1-terra:medium`), job dirs and config file, so it never resumes or
+overwrites a Sol job. The report and visualizer show each judge as its own row;
+compare profiles only across rows graded by the same judge. Run the fixture
+grader check below with the new judge before switching. On 25 November
+`gpt-6.1-terra:medium` graded all 58 probes as expected, as Sol high did. Both
+judges hit request timeouts when codex-lb carried several graders at once.
+
+The fixtures live in this fork under
+[`src/hindsight_benchmark/paired/`](src/hindsight_benchmark/paired/), keyed to
+the pinned commit and the original case ID. The pinned checkout stays
+unmodified. Fixture set `7b46a07c-v2` covers 12 cases. (`v2` split one `coreference-roles` counterfactual criterion that `v1` made stricter than stock; `v1` results are kept only as evidence.) Retain has
+`coreference-roles`, `multi-speaker-attribution`, `context-names-the-speaker`,
+`in-text-correction`, `date-borrowed-from-nearby-subject` and
+`owner-borrowed-from-nearby-subject`. Reflect has `hq-owner-latest`,
+`hq-absent-2024`, `hq-scoped-2fa`, `sp-rotation`, `sp-upgrade-owner` and
+`sp-postmortem`. A wording variant renames entities or rephrases while keeping
+the answer. A counterfactual changes one fact, and its traps reject the stock
+answer. Each counterfactual also records a `stale_claim`, which is graded beside
+the verdict and never scored. The paired modules call the stock runners and
+criteria wording, loading the pinned fixtures as a pytest plugin.
+
+Each selection gets its own job directory under the profile,
+`<suite>-<fixture set>-<selection hash>`, and its own result ID,
+`local-<profile>-sol62-high-<job>`. The first start writes `job.json` with the
+run directory, fixture revision (a hash of the fixture sources) and effective
+settings: model, endpoint, request controls, judge, retrieval, commit, repeats,
+cases and arms. Restarting the same command resumes that run directory, skips
+passes that wrote their JUnit file, and refuses to continue if the fixtures or
+settings changed. Executions that hit a server, endpoint or judge error are
+rerun up to twice in fresh banks after a real judge completion. Anything still
+broken is reported as infrastructure, apart from graded outcomes.
+
+Before running models on changed fixtures, grade every fixture probe with the
+run's judge. Each probe is a canned correct, stock or wrong output, and the check
+expects the variant's criteria to accept the revised answer and reject the old.
+
+```bash
+cd benchmark-runner/.hindsight/7b46a07c82f997903230f0fb33deafe9dfd2e22b/hindsight-system-evals
+HINDSIGHT_EVAL_JUDGE_MODEL=gpt-6.2-sol HS_BENCH_CODEX_LB_URL=http://127.0.0.1:2455/v1 \
+  HS_BENCH_JUDGE_REASONING_EFFORT=high \
+  PYTHONPATH=$OLDPWD/../src:$PWD uv run --frozen python -m hindsight_benchmark.paired.check_graders OUT.json
+```
+
+A paired job writes no leaderboard row. It writes `results/paired/<result id>.json`
+with the fixture revision, settings, per-arm pass rates and one compact row per
+execution: verdict, trap, stale answer, failure stage, and gold facts retrieved.
+Model output, judge reasoning and traces stay in the run directory's
+`records-*.jsonl` and trace folders. Retain failures are extraction failures.
+Reflect failures are retrieval when a gold fact never reached the model, and
+generation otherwise. Read traces before attributing a case to grading. The
+monitor shows each job's progress. To combine jobs:
+
+The visualizer's Paired cases tab (`/paired`) shows every case's stock,
+wording and counterfactual text side by side, marked against stock, with the
+pilot results read from `results/paired/`. Regenerate its fixture data after
+changing a fixture:
+
+```bash
+cd benchmark-runner/.hindsight/7b46a07c82f997903230f0fb33deafe9dfd2e22b/hindsight-system-evals
+PYTHONPATH=$OLDPWD/../src:$PWD uv run --frozen python -m hindsight_benchmark.paired.export_visualizer \
+  ../../../../visualizer/lib/paired-cases.json
+```
+
+```bash
+benchmark-runner/.venv/bin/python benchmark-runner/report_paired.py \
+  results/paired/local-*-paired-7b46a07c-v2-*.json --out results/paired/REPORT.md
+```
 
 ## AMB and published results
 
