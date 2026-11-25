@@ -197,7 +197,8 @@ PY
     [[ $judge_tag == sol62-high ]] || jobdir=$dir/$judge_tag-$job
     [[ ! -f $jobdir/done ]] || continue
     mkdir -p "$jobdir"
-    printf '\n%s %s %s ops=%s cases=%s repeats=%s\n' "$(date -Is)" "$profile" "$job" "$suite_ops" "${cases:-all}" "$suite_repeats"
+    printf '\n%s %s %s judge=%s ops=%s cases=%s repeats=%s\n' "$(date -Is)" "$profile" "$job" "$judge" "$suite_ops" \
+      "${cases:-all}" "$suite_repeats"
     "$python" -m hindsight_benchmark.evals --config "$config" --provider local-eval --model "$model" \
       --result-id "$base_id-$job" "${retrieval[@]}" --suite "$suite" --operations "$suite_ops" \
       ${cases:+--case-ids "$cases"} --repeats "$suite_repeats" --state "$jobdir" >> "$jobdir/run.log" 2>&1

@@ -39,9 +39,15 @@ for profile in "$run_dir"/*/evals.json; do
     jobdir=$(dirname "$job")
     rundir=$repo/benchmark-runner/$(jq -r .run_dir "$job")
     expected=$(jq -r '.settings | "\(.repeats) passes of \(.operations | join(",")) cases=\(if (.case_ids | length) > 0 then (.case_ids | join(",")) else "all" end)"' "$job")
-    rows=$(cat "$rundir"/records-*.jsonl 2>/dev/null | jq -s 'length' 2>/dev/null || echo 0)
-    graded=$(cat "$rundir"/records-*.jsonl 2>/dev/null | jq -s '[.[] | select(.passed != null)] | "\(map(select(.passed)) | length)/\(length) passed, " ' -r 2>/dev/null || true)
-    infra=$(cat "$rundir"/records-*.jsonl 2>/dev/null | jq -s '[.[] | select(.passed == null)] | length' 2>/dev/null || echo 0)
+    # nullglob: a job stopped before its first execution has no records, and a bare `cat`
+    # would wait on the terminal. Read the files only when there are some.
+    records=("$rundir"/records-*.jsonl)
+    rows=0 graded="0/0 passed, " infra=0
+    if ((${#records[@]})); then
+      rows=$(jq -s 'length' "${records[@]}" 2>/dev/null || echo 0)
+      graded=$(jq -rs '[.[] | select(.passed != null)] | "\(map(select(.passed)) | length)/\(length) passed, "' "${records[@]}" 2>/dev/null || true)
+      infra=$(jq -s '[.[] | select(.passed == null)] | length' "${records[@]}" 2>/dev/null || echo 0)
+    fi
     state=running; [[ -f $jobdir/done ]] && state=done
     printf '  %s %s: %s executions, %s%s infrastructure (%s)\n' "$(basename "$jobdir")" "$state" "$rows" "$graded" "$infra" "$expected"
     [[ $state == done ]] || tail -n 1 "$jobdir/run.log" 2>/dev/null | cut -c1-200
