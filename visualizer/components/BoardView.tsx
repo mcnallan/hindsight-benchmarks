@@ -111,7 +111,7 @@ function TabView({ board: boardIn, tab }: { board: Board; tab: Tab }) {
       </span>
     </th>
   )
-  const costTip = 'Tokens each model really used in these evals, times its list price on OpenRouter. Includes decision model calls.'
+  const costTip = 'Recorded token counts multiplied by the rates in the expanded row. Includes decision model calls when used.'
 
   const priciest = Math.max(0, ...tab.rows.map((r) => r.cost ?? 0))
   const best = Math.max(...tab.rows.map((r) => r.score ?? -Infinity))
@@ -709,7 +709,7 @@ function SourceDetails({ row, source }: { row: Row; source: Source }) {
             <a href={`https://openrouter.ai/${source.openrouter_id}`} className="font-mono text-[13px] text-[hsl(var(--primary))] hover:underline">
               openrouter.ai/{source.openrouter_id}
             </a>
-          ) : <span className="font-mono text-[13px]">Unavailable</span>}
+          ) : <span className="font-mono text-[13px]">{p ? 'Configured local rates' : 'Unavailable'}</span>}
         </div>
         <div>
           <span className="text-muted-foreground">Price per 1M tokens:</span>{' '}

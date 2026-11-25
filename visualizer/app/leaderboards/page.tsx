@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { BOARDS, RUN, USE_CASES, type Board } from '@/lib/data'
+import { withLocalResults } from '@/lib/local-results'
 import { ModelCell, fmtCost } from '@/components/ModelCell'
 import { BoardNav, PageHero, SetupStrip } from '@/components/Page'
 
@@ -55,8 +56,7 @@ export default function LeaderboardsPage() {
             </li>
             <li>Each row swaps one part and keeps the reference setup below. A row marked “with” also runs a decision model.</li>
             <li>
-              Graded by <span className="text-foreground">{RUN.judge}</span>, never the model under test. Each model runs once. Cost comes from the tokens
-              really used, at OpenRouter list prices.
+              Reference runs are graded by <span className="text-foreground">{RUN.judge}</span>. Local rows identify their judge. Cost uses recorded token counts and the rates shown in each row.
             </li>
           </ul>
           <SetupStrip bare />
@@ -78,8 +78,8 @@ function Group({ title, about, children }: { title: string; about: string; child
 
 // wide: the all-operations board, a full-width card with its top six in two columns.
 function BoardCard({ b, wide }: { b: Board; wide?: boolean }) {
-  const tab = b.tabs[0]
-  const top = [...tab.rows].sort((x, y) => (y.score ?? 0) - (x.score ?? 0)).slice(0, wide ? 6 : 3)
+  const tab = withLocalResults(b).tabs[0]
+  const top = tab.rows.filter((r) => r.score != null).sort((x, y) => (y.score ?? 0) - (x.score ?? 0)).slice(0, wide ? 6 : 3)
   const cases = b.categories.reduce((s, c) => s + c.cases, 0)
   return (
     <Link

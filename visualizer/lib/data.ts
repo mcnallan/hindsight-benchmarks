@@ -104,7 +104,7 @@ const CATS: Record<string, Cat[]> = Object.fromEntries(
 )
 
 // ── results ────────────────────────────────────────────────────────────────
-type OpResult = {
+export type OpResult = {
   passed: number
   total: number
   cost_usd: number | null
@@ -169,15 +169,46 @@ const OPS = [
   ['refresh_pages', 'Refresh pages'],
 ] as const
 
+export function summarizeOperations(operations: Record<string, OpResult | undefined>, decisionModel?: string) {
+  const done = OPS.flatMap(([id]) => {
+    const operation = operations[id]
+    return operation?.total ? [{ id, operation }] : []
+  })
+  if (done.length !== OPS.length) return
+
+  const sum = (f: (o: OpResult) => number) => done.reduce((t, { operation }) => t + f(operation), 0)
+  const total = sum((o) => o.total)
+  return {
+    // Each operation weighs the same, however many cases it has.
+    quality: round(sum((o) => (100 * o.passed) / o.total) / done.length, 1),
+    categories: Object.fromEntries(done.map(({ id, operation: { passed, total } }) => [id, { passed, total }])),
+    // What running every operation 1k times costs.
+    cost: done.every(({ operation }) => operation.cost_usd !== null)
+      ? round(sum((o) => (1000 * (o.cost_usd ?? 0)) / o.total))
+      : null,
+    callsPerTask: round(sum((o) => o.calls) / total, 1),
+    decisionCallsPerTask: decisionModel ? round(sum((o) => o.decision_calls) / total, 1) : undefined,
+    tokensPerTask: { input: Math.round(sum((o) => o.input_tokens) / total), output: Math.round(sum((o) => o.output_tokens) / total) },
+    split: decisionModel ? split({
+      ...done[0].operation,
+      total,
+      calls: sum((o) => o.calls),
+      input_tokens: sum((o) => o.input_tokens),
+      output_tokens: sum((o) => o.output_tokens),
+      decision_calls: sum((o) => o.decision_calls),
+      decision_input_tokens: sum((o) => o.decision_input_tokens),
+      cost_usd: sum((o) => o.cost_usd ?? 0),
+      decision_cost_usd: sum((o) => o.decision_cost_usd ?? 0),
+    }, decisionModel) : undefined,
+  }
+}
+
 function summaryRows(): Row[] {
   return RUNS.filter((r) => !r.decision || r.decision.onLlmBoards).flatMap((r) => {
     // The decision model plays no part in retain: a row with one takes its LLM's own retain run.
-    const own = (op: string) => r.operations[op] ?? (op === 'retain' ? RUNS.find((x) => x.model === r.model && !x.decision)?.operations.retain : undefined)
-    const ops = OPS.map(([op]) => own(op))
-    if (ops.some((o) => !o)) return []
-    const done = ops as OpResult[]
-    const sum = (f: (o: OpResult) => number) => done.reduce((t, o) => t + f(o), 0)
-    const cases = sum((o) => o.total)
+    const retain = r.operations.retain ?? RUNS.find((x) => x.model === r.model && !x.decision)?.operations.retain
+    const summary = summarizeOperations({ ...r.operations, retain }, r.decision?.model)
+    if (!summary) return []
     return [{
       id: r.decision ? `${r.model}+${r.decision.model}` : r.model,
       model: r.model,
@@ -186,31 +217,7 @@ function summaryRows(): Row[] {
       icon: r.icon,
       openWeights: r.openWeights,
       source: r.source,
-      // Each operation weighs the same, however many cases it has.
-      quality: round(done.reduce((t, o) => t + (100 * o.passed) / o.total, 0) / done.length, 1),
-      categories: Object.fromEntries(OPS.map(([op], i) => [op, { passed: done[i].passed, total: done[i].total }])),
-      // What running every operation 1k times costs.
-      cost: round(sum((o) => (1000 * (o.cost_usd ?? 0)) / o.total)),
-      callsPerTask: round(sum((o) => o.calls) / cases, 1),
-      decisionCallsPerTask: r.decision ? round(sum((o) => o.decision_calls) / cases, 1) : undefined,
-      tokensPerTask: { input: Math.round(sum((o) => o.input_tokens) / cases), output: Math.round(sum((o) => o.output_tokens) / cases) },
-      // Every operation's cases pooled, for the LLM / decision model split.
-      split: r.decision
-        ? split(
-            {
-              ...done[0],
-              total: cases,
-              calls: sum((o) => o.calls),
-              input_tokens: sum((o) => o.input_tokens),
-              output_tokens: sum((o) => o.output_tokens),
-              decision_calls: sum((o) => o.decision_calls),
-              decision_input_tokens: sum((o) => o.decision_input_tokens),
-              cost_usd: sum((o) => o.cost_usd ?? 0),
-              decision_cost_usd: sum((o) => o.decision_cost_usd ?? 0),
-            },
-            r.decision.model,
-          )
-        : undefined,
+      ...summary,
     }]
   })
 }
@@ -303,7 +310,7 @@ export const SCORE = { quality: 0.7, cost: 0.3 }
 // A log scale against the best row: it gets 100, twice its value 90, ten times 67, a thousand 0.
 export const logScore = (best: number, v: number) => Math.max(0, Math.min(100, 100 * (1 - Math.log10(v / best) / 3)))
 
-function addScores(rows: Row[]): Row[] {
+export function addScores(rows: Row[]): Row[] {
   const costs = rows.flatMap(({ cost }) => cost === null ? [] : [cost])
   const cheapest = Math.min(...costs.filter((cost) => cost > 0))
   return rows.map((r) => {

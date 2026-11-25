@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { SECTIONS, rank } from "@/lib/benchmarks";
 import { BOARDS } from "@/lib/data";
+import { withLocalResults } from "@/lib/local-results";
 import { FAMILIES } from "@/lib/models";
 import { PageHero } from "@/components/Page";
 import { ModelScatter } from "@/components/BoardView";
@@ -102,7 +103,7 @@ function firsts() {
 }
 
 export default function Home() {
-  const allOps = BOARDS.find((b) => b.id === "all-operations")!;
+  const allOps = withLocalResults(BOARDS.find((b) => b.id === "all-operations")!);
   return (
     <>
       <PageHero
