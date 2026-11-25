@@ -92,7 +92,8 @@ def quota_hits(junit: Path) -> tuple[datetime.datetime | None, list[str]] | None
     end = start + float(suite.get("time") or 0) + 600 if start else None
     for case in tree.iter("testcase"):
         text = "".join((c.get("message") or "") + (c.text or "") for c in case)
-        trace = junit.parent / "traces" / f"{re.sub(r'[^\w.-]+', '_', case.get('name'))}.json"
+        trace_name = re.sub(r'[^\w.-]+', '_', case.get('name'))
+        trace = junit.parent / "traces" / f"{trace_name}.json"
         if start and trace.exists() and start <= trace.stat().st_mtime <= end:
             text += trace.read_text()
         if any(e in text for e in QUOTA_ERRORS):

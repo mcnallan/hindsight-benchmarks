@@ -1,5 +1,47 @@
 # Local retain-quality comparison
 
+## Which suite to run
+
+The new [operation leaderboards](https://benchmarks.hindsight.vectorize.io/leaderboards)
+use `hindsight-evals` and the Hindsight 1.2.0 system suite pinned in
+[`evals.json`](evals.json). The [Benchmarks page](https://benchmarks.hindsight.vectorize.io/benchmarks)
+imports results from the separate
+[Agent Memory Benchmark](https://github.com/vectorize-io/agent-memory-benchmark).
+Our historical four-conversation BEAM results use the runner below and appear
+at `/leaderboard/retain`. Keep the scores from these protocols separate.
+
+1. Run the 42 retain cases against production Qwen3.5-4B and both Inkling
+   settings. Start with a single repeat of attribution, fidelity, and
+   no-invention cases, then use the configured repeats for all 42.
+   These grade stored facts directly and help isolate the failure modes
+   observed in the Inkling comparison.
+2. Run the 17 reflect and 25 consolidation cases for the profiles we would
+   actually use for those operations. Test the 20 page refresh cases when
+   evaluating a knowledge-page deployment. Keep the decision model disabled
+   for the first comparison, then test it separately.
+3. Use AMB PrecisionMemBench for retrieval precision, then LoCoMo or BEAM 100K
+   to check the end-to-end pipeline. Record AMB's resolved commit and dataset
+   split. Run LongMemEval S for cross-session workloads that need broader
+   coverage. Reserve larger BEAM tiers and knowledge-bank benchmarks for
+   capacity or document-search questions.
+
+For the operation suites, the existing `internal` provider takes
+`INTERNAL_BASE_URL` (without `/v1`) and `INTERNAL_API_KEY`. The published
+protocol uses the configured Gemini judge and two repeats. Use
+`GEMINI_API_KEY` for that judge and confirm a real grading call in the
+pilot. A Codex-LB judge would be a separate comparison. Verify the actual
+request controls and use distinct result IDs for the two Inkling settings
+before scoring. The existing Inkling final text prefill is scoped to strict
+facts extraction. Validate tool behavior separately before using any such
+prefill for reflect or other operations. The upstream site exporter uses a
+model allowlist, so new internal results are saved locally even if the
+new leaderboard does not display them yet.
+
+For the exact commands, fixtures and isolation behavior, see the
+[pinned Hindsight system eval guide](https://github.com/vectorize-io/hindsight/blob/7b46a07c82f997903230f0fb33deafe9dfd2e22b/hindsight-system-evals/README.md).
+
+## Historical BEAM runner
+
 `run_local_quality.py` runs the repository's current frozen BEAM quality
 benchmark with production-like OpenAI embeddings and Cohere-compatible
 reranking. It launches an isolated Hindsight 0.9.2 container and an ephemeral

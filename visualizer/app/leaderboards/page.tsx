@@ -42,6 +42,10 @@ export default function LeaderboardsPage() {
           ))}
         </Group>
 
+        <Link className="inline-block text-sm text-[hsl(var(--primary))] underline" href="/leaderboard/retain">
+          Historical BEAM retain results
+        </Link>
+
         <section className="rounded-xl border border-border p-6 space-y-5">
           <h2 className="font-heading font-bold text-xl">How we test</h2>
           <ul className="space-y-2 text-sm text-muted-foreground list-disc pl-5">

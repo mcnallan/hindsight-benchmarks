@@ -50,3 +50,7 @@ cd visualizer
 npm install
 npm run dev     # http://localhost:9998
 ```
+
+The fork's earlier facts-only BEAM results remain at `/leaderboard/retain`.
+The upstream operation suite uses `/leaderboards/retain` and a different
+protocol. See [local evaluation notes](benchmark-runner/LOCAL_QUALITY.md).
